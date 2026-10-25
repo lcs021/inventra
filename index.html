@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: data: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="referrer" content="no-referrer">
+<script>try{if(top!==self)document.documentElement.style.display="none"}catch(e){document.documentElement.style.display="none"}</script>
 <script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
 <title>INVENTRA</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2048%2048%22%20aria-hidden=%22true%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22lgBg%22%20x1=%220%22%20y1=%220%22%20x2=%2248%22%20y2=%2248%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230F3B3A%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%2306181B%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id=%22lgTop%22%20x1=%228%22%20y1=%2240%22%20x2=%2240%22%20y2=%228%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230D9488%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%235EEAD4%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%2248%22%20height=%2248%22%20rx=%2212%22%20fill=%22url%28%23lgBg%29%22/%3E%3Cpath%20d=%22M12.5%2020v-5a2.5%202.5%200%200%201%202.5-2.5h5M28%2012.5h5a2.5%202.5%200%200%201%202.5%202.5v5M35.5%2028v5a2.5%202.5%200%200%201-2.5%202.5h-5M20%2035.5h-5a2.5%202.5%200%200%201-2.5-2.5v-5%22%20fill=%22none%22%20stroke=%22url%28%23lgTop%29%22%20stroke-width=%223%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Crect%20x=%2217.8%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2222%22%20y=%2218%22%20width=%224%22%20height=%2212%22%20rx=%221.6%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2227.6%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1762,6 +1765,87 @@ from (values ('Expedição',0),('Shopee',1),('Mercado Livre',2),('Cofre',3),('1�
   ('2º andar',5),('3º andar',6),('Carga e descarga',7),('Recebimento',8),('Parachoque',9)) as v(nome, ordem)
 where not exists (select 1 from public.setores);
 
+-- ===== Segurança (v103) =====
+-- 1. Ninguém muda autor, data de criação ou galpão de um registro depois de criado
+create or replace function public.protege_ocorrencia() returns trigger
+language plpgsql as $$
+begin
+  if (old.autor is not null and new.autor is distinct from old.autor and new.autor is not null)
+     or new.criado is distinct from old.criado
+     or new.galpao_id is distinct from old.galpao_id then
+    raise exception 'Autor, data de criação e galpão do registro não podem ser alterados';
+  end if;
+  return new;
+end $$;
+drop trigger if exists protege_ocorrencia on public.ocorrencias;
+create trigger protege_ocorrencia before update on public.ocorrencias
+  for each row execute function public.protege_ocorrencia();
+
+-- 2. Perfis: identidade fixa, e o administrador não tira o próprio acesso sem querer
+create or replace function public.protege_perfil() returns trigger
+language plpgsql as $$
+begin
+  if new.id is distinct from old.id or new.criado is distinct from old.criado
+     or new.galpao_id is distinct from old.galpao_id or new.email is distinct from old.email then
+    raise exception 'Identidade, e-mail e galpão do usuário não podem ser alterados';
+  end if;
+  if auth.uid() is not null and old.id = auth.uid()
+     and (new.admin is distinct from old.admin or new.aprovado is distinct from old.aprovado) then
+    raise exception 'Você não pode remover o seu próprio acesso de administrador';
+  end if;
+  return new;
+end $$;
+drop trigger if exists protege_perfil on public.perfis;
+create trigger protege_perfil before update on public.perfis
+  for each row execute function public.protege_perfil();
+
+-- 3. Senhas redefinidas pelo administrador: mínimo de 8 caracteres
+create or replace function public.admin_redefinir_senha(alvo uuid, nova text) returns void
+language plpgsql security definer set search_path = public, extensions, auth as $$
+begin
+  if not public.is_admin() then raise exception 'Apenas o administrador pode redefinir senhas'; end if;
+  if length(coalesce(nova, '')) < 8 then raise exception 'A senha precisa ter pelo menos 8 caracteres'; end if;
+  if not exists (select 1 from public.perfis where id = alvo and galpao_id = public.meu_galpao()) then
+    raise exception 'Usuário de outro galpão';
+  end if;
+  update auth.users set encrypted_password = extensions.crypt(nova, extensions.gen_salt('bf')), updated_at = now() where id = alvo;
+  if not found then raise exception 'Usuário não encontrado'; end if;
+end
+$$;
+revoke all on function public.admin_redefinir_senha(uuid, text) from public, anon;
+grant execute on function public.admin_redefinir_senha(uuid, text) to authenticated;
+
+-- 4. Fotos e vídeos: só imagem/vídeo, cada pessoa envia para a própria pasta,
+--    e só o mesmo galpão enxerga (antes qualquer galpão aprovado via qualquer arquivo)
+update storage.buckets set allowed_mime_types = array['image/*','video/*'] where id = 'midias';
+
+create or replace function public.pasta_do_meu_galpao(caminho text) returns boolean
+language sql stable security definer set search_path = public, storage as $$
+  select exists (select 1 from public.perfis p
+    where p.id::text = (storage.foldername(caminho))[1] and p.galpao_id = public.meu_galpao())
+$$;
+revoke all on function public.pasta_do_meu_galpao(text) from public, anon;
+grant execute on function public.pasta_do_meu_galpao(text) to authenticated;
+
+drop policy if exists "ver midias" on storage.objects;
+create policy "ver midias" on storage.objects for select to authenticated
+  using (bucket_id = 'midias' and public.is_aprovado() and public.pasta_do_meu_galpao(name));
+drop policy if exists "enviar midias" on storage.objects;
+create policy "enviar midias" on storage.objects for insert to authenticated
+  with check (bucket_id = 'midias' and public.is_aprovado() and (storage.foldername(name))[1] = auth.uid()::text);
+drop policy if exists "apagar midias" on storage.objects;
+create policy "apagar midias" on storage.objects for delete to authenticated
+  using (bucket_id = 'midias' and ((storage.foldername(name))[1] = auth.uid()::text
+         or (public.tem_perm('apagar') and public.pasta_do_meu_galpao(name))));
+
+-- 5. Funções internas não precisam ficar abertas para visitantes sem login
+revoke execute on function public.is_aprovado() from public, anon;
+revoke execute on function public.is_admin() from public, anon;
+revoke execute on function public.tem_perm(text) from public, anon;
+revoke execute on function public.tem_cargo(text[]) from public, anon;
+grant execute on function public.is_aprovado(), public.is_admin(), public.tem_perm(text), public.tem_cargo(text[]) to authenticated;
+-- ===== fim da segurança =====
+
 notify pgrst, 'reload schema';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
@@ -1785,7 +1869,7 @@ const ANDARES={'11':'1º andar','12':'2º andar','13':'3º andar'},LETRAS='ABCDE
 const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
 let sb=null,uid=null,eu=null,perfis={},ocs=[],carregou=false;
-let tela='login',msgLogin='';
+let tela='login',msgLogin='',falhasLogin=0,bloqLogin=0;
 let ui={baiPer:'semana',baiRef:'',tab:'painel',setor:'',mes:'',fano:'',fmes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
 let draft=null,saving=false,enviando=0;
 const urls={},pedindo=new Set();
@@ -1819,6 +1903,9 @@ async function init(){
   sb.auth.onAuthStateChange((ev,s)=>{const novo=s?.user?.id||null;if(novo!==uid){uid=novo;setTimeout(entrouOuSaiu,0)}});
   const {data}=await sb.auth.getSession();uid=data.session?.user?.id||null;entrouOuSaiu();
   setInterval(()=>{if(eu&&(eu.aprovado||eu.admin)&&!document.hidden&&!ui.det&&ui.tab!=='nova')carregar()},30000);
+  let ultAtiv=Date.now();const IDLE_MS=60*60e3;
+  ['pointerdown','keydown','touchstart','scroll','input'].forEach(e=>addEventListener(e,()=>{ultAtiv=Date.now()},{passive:true,capture:true}));
+  setInterval(async()=>{if(uid&&Date.now()-ultAtiv>IDLE_MS){ultAtiv=Date.now();try{await sb.auth.signOut()}catch(e){}tela='login';msgLogin='Você foi desconectado por ficar 1 hora sem usar o sistema. Entre de novo.';draft=null;ui={...ui,tab:'lista',det:null};render()}},30000);
 }
 async function entrouOuSaiu(){
   if(!uid){eu=null;perfis={};ocs=[];carregou=false;render();return}
@@ -2051,18 +2138,19 @@ function bindLogin(){const f=$('flogin');($('lemail').value?$('lsenha'):$('lemai
   $('irCad').onclick=()=>{tela='cadastro';msgLogin='';render()};
   f.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;const er=$('lerr');er.className='err';
     const usu=$('lemail').value.trim().replace(/\s+/g,' '),senha=$('lsenha').value;if(!usu||!senha){authErr(er,'Preencha usuário e senha.');return}
+    if(Date.now()<bloqLogin){authErr(er,'Muitas tentativas. Aguarde '+Math.ceil((bloqLogin-Date.now())/1000)+' s e tente de novo.');return}
     saving=true;const bt=f.querySelector('[type=submit]');bt.disabled=true;bt.classList.add('busy');
-    const falha=m=>{saving=false;authErr(er,m);bt.disabled=false;bt.classList.remove('busy')};
+    const falha=m=>{falhasLogin++;if(falhasLogin>=5)bloqLogin=Date.now()+Math.min(300,30*2**(falhasLogin-5))*1000;saving=false;authErr(er,m);bt.disabled=false;bt.classList.remove('busy')};
     gravaLembrado($('lembrar').checked?usu:'');
     let email=usu;
     if(!usu.includes('@')){const r=await sb.rpc('email_do_usuario',{u:usu});
       if(r.error)return falha(/email_do_usuario|function|schema cache/i.test(r.error.message||'')?'O banco precisa de uma atualização (login por usuário). Peça ao administrador para rodar o SQL novo.':erroMsg(r.error));
       if(!r.data)return falha('Usuário ou senha incorretos.');email=r.data}
     const {error}=await sb.auth.signInWithPassword({email,password:senha});saving=false;
-    if(error){falha(erroMsg(error))}})}
+    if(error){falha(erroMsg(error))}else falhasLogin=0})}
 function cadastroHTML(){return authShell('cad','Criar cadastro','Depois de criar, o administrador libera seu acesso.',`<form class="stack" id="fcad" novalidate>
   ${campo('cusuario','Usuário','text','username','user','placeholder="Ex.: Lucas Carvalho" autocapitalize="off" spellcheck="false"')}
-  <div class="two">${campo('csenha','Senha (mín. 6)','password','new-password','lock')}${campo('csenha2','Repita a senha','password','new-password','lock')}</div>
+  <div class="two">${campo('csenha','Senha (mín. 8)','password','new-password','lock')}${campo('csenha2','Repita a senha','password','new-password','lock')}</div>
   <div class="err" id="cerr" hidden></div>
   <button class="btn primary go" type="submit"><span>Criar cadastro</span>${IC.arrow}</button></form>`)}
 function bindCadastro(){const f=$('fcad');$('cusuario').focus();authFx(f);
@@ -2070,7 +2158,7 @@ function bindCadastro(){const f=$('fcad');$('cusuario').focus();authFx(f);
   $('irLogin').onclick=()=>{tela='login';msgLogin='';render()};
   f.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;const er=$('cerr');
     const usu=$('cusuario').value.trim().replace(/\s+/g,' '),n=usu,s=$('csenha').value,s2=$('csenha2').value;
-    const m=usu.length<3?'Escolha um usuário com pelo menos 3 letras.':usu.includes('@')?'O usuário não pode ter @.':s.length<6?'A senha precisa ter pelo menos 6 caracteres.':s!==s2?'As senhas não são iguais.':'';
+    const m=usu.length<3?'Escolha um usuário com pelo menos 3 letras.':usu.includes('@')?'O usuário não pode ter @.':s.length<8?'A senha precisa ter pelo menos 8 caracteres.':senhaFraca(s,usu)?'Essa senha é muito fácil de adivinhar. Misture letras e números.':s!==s2?'As senhas não são iguais.':'';
     if(m){authErr(er,m);return}
     saving=true;const bt=f.querySelector('[type=submit]');bt.disabled=true;bt.classList.add('busy');
     const ex=await sb.rpc('email_do_usuario',{u:usu});
@@ -3183,7 +3271,9 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   ${corpo}</div>`}
 const PERM_IC={'registrar':'<path d="M12 5v14M5 12h14"/>','resumo':'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>','garantia':'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>','apagar':'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>'};
 const PERM_COR={'mod:Garantia':'var(--gar)','mod:Relatório':'var(--accent)','mod:Minucioso':'var(--min)','mod:Consertos Baiano':'var(--bai)','mod:Avaria':'var(--alta)','registrar':'var(--accent)','resumo':'var(--min)','garantia':'#d97706','apagar':'var(--alta)'};
-const geraSenha=()=>{const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];for(let i=0;i<4;i++)s+=n[Math.floor(Math.random()*n.length)];return s};
+const senhaFraca=(s,u)=>{const x=s.toLowerCase();return /^(.)\1+$/.test(s)||['12345678','123456789','1234567890','87654321','qwertyui','qwerty123','password','senha123','senha1234','abc12345','11111111','inventra','inventra123'].includes(x)||(u&&x===String(u).toLowerCase())};
+const geraSenha=()=>{const r=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<6;i++)s+=c[r(c.length)];for(let i=0;i<4;i++)s+=n[r(n.length)];return s};
+const geraSenhaOld=()=>{const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];for(let i=0;i<4;i++)s+=n[Math.floor(Math.random()*n.length)];return s};
 function senhaBox(p){if(ui.senhaOk&&ui.senhaOk.id===p.id)return`<div class="sbox ok"><span class="lbl">Nova senha de ${esc(p.nome)}</span><div class="snova"><b class="mono" id="snTxt">${esc(ui.senhaOk.s)}</b><button type="button" class="btn sm" data-scopy="1">Copiar</button></div><small>Passe essa senha para a pessoa. Ela não fica salva em lugar nenhum, então anote se precisar.</small><button type="button" class="btn sm" data-sfim="1">Pronto</button></div>`;
   if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button>`;
   return`<div class="sbox"><span class="lbl">Nova senha para ${esc(p.nome)}</span><div class="snova"><input id="snInp" class="mono" value="${esc(ui.senhaRasc||'')}" placeholder="mín. 6 caracteres" autocomplete="new-password"><button type="button" class="btn sm" data-sgera="1">Gerar</button></div>
@@ -3211,7 +3301,7 @@ function bindEquipe(){
   const si=$('snInp');if(si)si.oninput=()=>{ui.senhaRasc=si.value};
   document.querySelectorAll('[data-scanc],[data-sfim]').forEach(b=>b.onclick=()=>{ui.senhaDe=null;ui.senhaOk=null;ui.senhaRasc='';render()});
   document.querySelectorAll('[data-scopy]').forEach(b=>b.onclick=async()=>{try{await navigator.clipboard.writeText(ui.senhaOk.s);toast('Senha copiada')}catch(e){toast('Não deu para copiar. Anote a senha.')}});
-  document.querySelectorAll('[data-ssalva]').forEach(b=>b.onclick=async()=>{const s=($('snInp').value||'').trim();if(s.length<6){toast('A senha precisa ter pelo menos 6 caracteres.');return}
+  document.querySelectorAll('[data-ssalva]').forEach(b=>b.onclick=async()=>{const s=($('snInp').value||'').trim();if(s.length<8){toast('A senha precisa ter pelo menos 8 caracteres.');return}
     b.disabled=true;const {error}=await sb.rpc('admin_redefinir_senha',{alvo:b.dataset.ssalva,nova:s});b.disabled=false;
     if(error){toast(/admin_redefinir_senha|function|schema cache/i.test(error.message||'')&&!/administrador|caracteres/.test(error.message||'')?'O banco precisa de uma atualização (redefinir senha). Rode o SQL novo no Supabase.':erroMsg(error));return}
     ui.senhaOk={id:b.dataset.ssalva,s};ui.senhaDe=null;ui.senhaRasc='';render()});
