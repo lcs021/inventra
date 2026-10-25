@@ -1849,19 +1849,6 @@ revoke execute on function public.is_admin() from public, anon;
 revoke execute on function public.tem_perm(text) from public, anon;
 revoke execute on function public.tem_cargo(text[]) from public, anon;
 grant execute on function public.is_aprovado(), public.is_admin(), public.tem_perm(text), public.tem_cargo(text[]) to authenticated;
--- 6. Administrador remove a verificação em 2 etapas de quem perdeu o celular
-create or replace function public.admin_remover_2fa(alvo uuid) returns void
-language plpgsql security definer set search_path = public, auth as $$
-begin
-  if not public.is_admin() then raise exception 'Apenas o administrador pode remover a verificação em 2 etapas'; end if;
-  if not exists (select 1 from public.perfis where id = alvo and galpao_id = public.meu_galpao()) then
-    raise exception 'Usuário de outro galpão';
-  end if;
-  delete from auth.mfa_factors where user_id = alvo;
-end
-$$;
-revoke all on function public.admin_remover_2fa(uuid) from public, anon;
-grant execute on function public.admin_remover_2fa(uuid) to authenticated;
 -- ===== fim da segurança =====
 
 notify pgrst, 'reload schema';
@@ -1887,7 +1874,7 @@ const ANDARES={'11':'1º andar','12':'2º andar','13':'3º andar'},LETRAS='ABCDE
 const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
 let sb=null,uid=null,eu=null,perfis={},ocs=[],carregou=false;
-let tela='login',msgLogin='',falhasLogin=0,bloqLogin=0,precisaMfa=false;
+let tela='login',msgLogin='',falhasLogin=0,bloqLogin=0;
 let ui={baiPer:'semana',baiRef:'',tab:'painel',setor:'',mes:'',fano:'',fmes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
 let draft=null,saving=false,enviando=0;
 const urls={},pedindo=new Set();
@@ -1926,9 +1913,7 @@ async function init(){
   setInterval(async()=>{if(uid&&Date.now()-ultAtiv>IDLE_MS){ultAtiv=Date.now();try{await sb.auth.signOut()}catch(e){}tela='login';msgLogin='Você foi desconectado por ficar 1 hora sem usar o sistema. Entre de novo.';draft=null;ui={...ui,tab:'lista',det:null};render()}},30000);
 }
 async function entrouOuSaiu(){
-  if(!uid){precisaMfa=false;eu=null;perfis={};ocs=[];carregou=false;render();return}
-  try{const a=sb.auth.mfa?await sb.auth.mfa.getAuthenticatorAssuranceLevel():null,d=a&&a.data;precisaMfa=!!(d&&d.nextLevel==='aal2'&&d.currentLevel!=='aal2')}catch(e){precisaMfa=false}
-  if(precisaMfa){render();return}
+  if(!uid){eu=null;perfis={};ocs=[];carregou=false;render();return}
   await carregarPerfil();await carregar();
 }
 async function carregarPerfil(){
@@ -1936,7 +1921,7 @@ async function carregarPerfil(){
   if(error){toast(erroMsg(error))}eu=data||null;
 }
 async function carregar(){
-  if(!uid||precisaMfa)return;await carregarPerfil();
+  if(!uid)return;await carregarPerfil();
   if(eu&&(eu.aprovado||eu.admin)){
     const [p,o]=await Promise.all([sb.from('perfis').select('*').order('criado',{ascending:false}),sb.from('ocorrencias').select('*').order('criado',{ascending:false}).limit(500)]);
     if(p.data){perfis={};p.data.forEach(x=>perfis[x.id]=x)}
@@ -2056,8 +2041,7 @@ function render(){
   {const rf=$('rodape');if(rf&&!rf.innerHTML)rf.innerHTML=rodapeHTML()}
   const v=$('view'),fora=()=>{const al=$('alertas');if(al)al.innerHTML='';$('nav').hidden=true;$('sair').hidden=!uid;$('who').textContent='';{const b=$('bell'),u=$('uBtn');if(b)b.hidden=true;if(u)u.hidden=true}$('side').hidden=true;if($('gs'))$('gs').hidden=true;abreMenu(false);$('menuBtn').hidden=true;$('sideBack').hidden=true;document.body.classList.remove('withside')};
   if(!sb)return;
-  document.body.classList.toggle('auth',!uid||precisaMfa);
-  if(uid&&precisaMfa){fora();v.innerHTML=mfaHTML();bindMfa();return}
+  document.body.classList.toggle('auth',!uid);
   if(!uid){fora();if(tela==='cadastro'){v.innerHTML=cadastroHTML();bindCadastro()}else{v.innerHTML=loginHTML();bindLogin()}return}
   if(!carregou){fora();v.innerHTML=skelHTML();return}
   if(!eu){fora();v.innerHTML='<div class="center box stack"><h2>Perfil não encontrado</h2><p>Sua conta existe, mas o perfil não foi criado. Peça ao administrador para conferir a configuração do banco (passo do SQL).</p></div>';return}
@@ -3205,37 +3189,10 @@ function fazerBackup(){dlg(`<h3>Backup dos dados</h3><p class="muted small">O ar
   $('bk_p').onclick=()=>{baixaTexto(dadosBackup(),'inventra-backup-'+hoje()+'.json');toast('Backup baixado ('+ocs.length+' registros) sem senha');fechaDlg()};
   $('bk_a').onclick=async()=>{const f=$('bk_f').files[0],s=$('bk_s2').value;if(!f||!s){er('Escolha o arquivo e digite a senha.');return}er('');try{const txt=await decifra(await f.text(),s);baixaTexto(txt,'inventra-backup-aberto-'+hoje()+'.json');toast('Arquivo aberto e baixado');fechaDlg()}catch(x){er('Senha incorreta ou arquivo inválido.')}}})}
 
-/* ---------- Segurança: diálogo e verificação em 2 etapas ---------- */
+/* ---------- Diálogo ---------- */
 function dlg(html,onBind){const old=$('dlg');if(old)old.remove();const d=document.createElement('div');d.id='dlg';d.className='dlgbg';d.innerHTML=`<div class="dlgbox stack" role="dialog" aria-modal="true">${html}</div>`;document.body.appendChild(d);d.addEventListener('click',e=>{if(e.target===d)fechaDlg()});const f=d.querySelector('input,button');if(f)f.focus();if(onBind)onBind(d.firstChild);return d}
 const fechaDlg=()=>{const d=$('dlg');if(d)d.remove()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')fechaDlg()});
-async function mfaFatores(){const r=await sb.auth.mfa.listFactors();return(r.data&&r.data.totp)||[]}
-const mfaHTML=()=>authShell('login','Verificação em 2 etapas','Digite o código de 6 números do seu app autenticador.',`<form class="stack" id="fmfa" novalidate>${campo('mcod','Código','text','one-time-code','lock','inputmode="numeric" maxlength="6" placeholder="000000"')}<div class="err" id="merr" hidden></div><button class="btn primary" type="submit">Confirmar</button><button class="btn" type="button" id="msair">Cancelar e sair</button></form>`);
-function bindMfa(){const f=$('fmfa');authFx(f);$('mcod').focus();
-  $('msair').onclick=async()=>{try{await sb.auth.signOut()}catch(e){}precisaMfa=false;tela='login';msgLogin='';render()};
-  f.addEventListener('submit',async e=>{e.preventDefault();if(saving)return;const er=$('merr'),c=$('mcod').value.replace(/\D/g,'');
-    if(Date.now()<bloqLogin){authErr(er,'Muitas tentativas. Aguarde '+Math.ceil((bloqLogin-Date.now())/1000)+' s.');return}
-    if(c.length!==6){authErr(er,'Digite os 6 números do código.');return}
-    saving=true;try{const fs=await mfaFatores();const r=await sb.auth.mfa.challengeAndVerify({factorId:fs[0].id,code:c});if(r.error)throw r.error;falhasLogin=0;precisaMfa=false;saving=false;await entrouOuSaiu()}
-    catch(x){saving=false;falhasLogin++;if(falhasLogin>=5)bloqLogin=Date.now()+Math.min(300,30*2**(falhasLogin-5))*1000;authErr(er,'Código incorreto ou vencido. Confira a hora do celular e tente de novo.')}})}
-async function abre2fa(){
-  if(!sb.auth.mfa){toast('Este banco ainda não oferece verificação em 2 etapas.');return}
-  const fs=await mfaFatores();
-  if(fs.length){dlg(`<h3>Verificação em 2 etapas</h3><p class="muted small">Ativada. Ao entrar, além da senha, você digita o código do app autenticador. Se perder o celular, o administrador pode desativar para você.</p><div class="err" id="m_e" hidden></div><div class="row"><button class="btn danger" id="m_off">Desativar</button><button class="btn" id="m_x">Fechar</button></div>`,()=>{
-    $('m_x').onclick=fechaDlg;let sure=false;$('m_off').onclick=async()=>{if(!sure){sure=true;$('m_off').textContent='Confirmar desativação';return}
-      const r=await sb.auth.mfa.unenroll({factorId:fs[0].id});if(r.error){const e=$('m_e');e.textContent='Não foi possível desativar: '+erroMsg(r.error);e.hidden=false;e.className='err';return}toast('Verificação em 2 etapas desativada');fechaDlg()}});return}
-  const all=await sb.auth.mfa.listFactors();for(const f of ((all.data&&all.data.all)||[]).filter(f=>f.status==='unverified'))await sb.auth.mfa.unenroll({factorId:f.id});
-  const r=await sb.auth.mfa.enroll({factorType:'totp',friendlyName:'INVENTRA '+hoje()});if(r.error){toast('Não foi possível iniciar: '+erroMsg(r.error));return}
-  const q=r.data.totp;
-  dlg(`<h3>Ativar verificação em 2 etapas</h3><p class="muted small">1. Abra um app autenticador (Google Authenticator, Microsoft Authenticator, Authy...). 2. Escaneie o QR code. 3. Digite o código de 6 números.</p>
-    <div style="text-align:center"><img src="${esc(q.qr_code)}" alt="QR code para o app autenticador" width="180" height="180" style="background:#fff;padding:8px;border-radius:12px"></div>
-    <p class="small muted">Não consegue escanear? Digite esta chave no app: <b class="mono" style="word-break:break-all">${esc(q.secret)}</b></p>
-    <div class="field"><label class="lbl" for="m_c">Código de 6 números</label><input id="m_c" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000"></div>
-    <div class="err" id="m_e" hidden></div><div class="row"><button class="btn primary" id="m_ok">Ativar</button><button class="btn" id="m_x">Cancelar</button></div>`,()=>{
-    $('m_x').onclick=async()=>{await sb.auth.mfa.unenroll({factorId:r.data.id}).catch(()=>{});fechaDlg()};
-    $('m_ok').onclick=async()=>{const c=$('m_c').value.replace(/\D/g,''),e=$('m_e');if(c.length!==6){e.textContent='Digite os 6 números do código.';e.hidden=false;e.className='err';return}
-      const v=await sb.auth.mfa.challengeAndVerify({factorId:r.data.id,code:c});if(v.error){e.textContent='Código incorreto. Confira a hora do celular e tente de novo.';e.hidden=false;e.className='err';return}
-      toast('Verificação em 2 etapas ativada');fechaDlg()}})}
 
 /* ---------- Log de atividade ---------- */
 let atv=null,atvErro='',galpaoNome='',multiOk=false;
@@ -3278,11 +3235,10 @@ function pintaTopo(){if(!eu)return;const N=notifs(),b=$('bell'),n=$('bellN');b.h
   $('bellpop').querySelectorAll('[data-ni]').forEach(el=>el.onclick=()=>{fechaPops();N[+el.dataset.ni].go()});
   const u=$('uBtn');u.hidden=false;u.innerHTML=`<span class="uav" style="background:${corNome(eu.nome)}">${esc(iniciais(eu.nome))}</span>`;
   $('uPop').innerHTML=`<div class="u-h"><span class="uav big" style="background:${corNome(eu.nome)}">${esc(iniciais(eu.nome))}</span><span class="pop-t"><b>${esc(eu.nome)}</b><small>${esc(cargoNome(eu.cargo))}${galpaoNome?' · '+esc(galpaoNome):''}</small></span></div>
-   <button type="button" class="pop-i" role="menuitem" id="uMfa"><span class="pop-t"><b>Verificação em 2 etapas</b><small>Código extra para entrar</small></span></button>
    <button type="button" class="pop-i" role="menuitem" id="uTodos"><span class="pop-t"><b>Sair de todos os aparelhos</b></span></button>
    <button type="button" class="pop-i" role="menuitem" id="uTema"><span class="pop-t"><b>Alternar tema claro e escuro</b></span></button>
    <button type="button" class="pop-i danger" role="menuitem" id="uSair"><span class="pop-t"><b>Sair</b></span></button>`;
-  $('uTema').onclick=()=>{fechaPops();alternaTema()};$('uMfa').onclick=()=>{fechaPops();abre2fa()};$('uTodos').onclick=async()=>{fechaPops();try{await sb.auth.signOut({scope:'global'})}catch(e){}tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null};render()};$('uSair').onclick=()=>{fechaPops();$('sair').click()}}
+  $('uTema').onclick=()=>{fechaPops();alternaTema()};$('uTodos').onclick=async()=>{fechaPops();try{await sb.auth.signOut({scope:'global'})}catch(e){}tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null};render()};$('uSair').onclick=()=>{fechaPops();$('sair').click()}}
 document.addEventListener('click',e=>{const bb=e.target.closest&&e.target.closest('#bell'),ub=e.target.closest&&e.target.closest('#uBtn');
   if(bb||ub){const alvo=bb?'bellpop':'uPop',btn=bb?'bell':'uBtn',abrir=$(alvo).hidden;fechaPops();if(abrir){$(alvo).hidden=false;$(btn).setAttribute('aria-expanded','true')}return}
   if(!(e.target.closest&&e.target.closest('.pop')))fechaPops()});
@@ -3349,7 +3305,7 @@ const senhaFraca=(s,u)=>{const x=s.toLowerCase();return /^(.)\1+$/.test(s)||['12
 const geraSenha=()=>{const r=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<6;i++)s+=c[r(c.length)];for(let i=0;i<4;i++)s+=n[r(n.length)];return s};
 const geraSenhaOld=()=>{const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];for(let i=0;i<4;i++)s+=n[Math.floor(Math.random()*n.length)];return s};
 function senhaBox(p){if(ui.senhaOk&&ui.senhaOk.id===p.id)return`<div class="sbox ok"><span class="lbl">Nova senha de ${esc(p.nome)}</span><div class="snova"><b class="mono" id="snTxt">${esc(ui.senhaOk.s)}</b><button type="button" class="btn sm" data-scopy="1">Copiar</button></div><small>Passe essa senha para a pessoa. Ela não fica salva em lugar nenhum, então anote se precisar.</small><button type="button" class="btn sm" data-sfim="1">Pronto</button></div>`;
-  if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button> <button class="btn sm" data-r2fa="${esc(p.id)}" title="Use se a pessoa perdeu o celular do app autenticador">Remover 2 etapas</button>`;
+  if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button>`;
   return`<div class="sbox"><span class="lbl">Nova senha para ${esc(p.nome)}</span><div class="snova"><input id="snInp" class="mono" value="${esc(ui.senhaRasc||'')}" placeholder="mín. 6 caracteres" autocomplete="new-password"><button type="button" class="btn sm" data-sgera="1">Gerar</button></div>
   <div class="ctl2"><button type="button" class="btn sm primary" data-ssalva="${esc(p.id)}">Salvar senha</button><button type="button" class="btn sm" data-scanc="1">Cancelar</button></div></div>`}
 function permHTML(){const pcg=ui.permCargo||'Auxiliar de Inventário',pa=CARGOS[pcg]||[],on=PERMS.filter(p=>pa.includes(p[0])).length,pct=Math.round(on/PERMS.length*100);
@@ -3371,7 +3327,6 @@ async function salvaPerms(perms,msg){document.querySelectorAll('[data-perm],[dat
 async function mudaPerfil(id,campos,msg){const {error}=await sb.from('perfis').update(campos).eq('id',id);if(error){toast(erroMsg(error));return}Object.assign(perfis[id],campos);toast(msg);render()}
 function bindEquipe(){
   document.querySelectorAll('[data-senha]').forEach(b=>b.onclick=()=>{ui.senhaDe=b.dataset.senha;ui.senhaRasc=geraSenha();ui.senhaOk=null;render();const i=$('snInp');if(i){i.focus();i.select()}});
-  document.querySelectorAll('[data-r2fa]').forEach(b=>b.onclick=async()=>{if(!b.dataset.ok){b.dataset.ok='1';b.textContent='Confirmar remoção';return}const r=await sb.rpc('admin_remover_2fa',{alvo:b.dataset.r2fa});if(r.error){toast(erroMsg(r.error));return}b.dataset.ok='';b.textContent='Remover 2 etapas';toast('Verificação em 2 etapas removida desta pessoa')});
   document.querySelectorAll('[data-sgera]').forEach(b=>b.onclick=()=>{const i=$('snInp');i.value=geraSenha();ui.senhaRasc=i.value});
   const si=$('snInp');if(si)si.oninput=()=>{ui.senhaRasc=si.value};
   document.querySelectorAll('[data-scanc],[data-sfim]').forEach(b=>b.onclick=()=>{ui.senhaDe=null;ui.senhaOk=null;ui.senhaRasc='';render()});
