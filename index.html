@@ -1891,7 +1891,7 @@ const ORIGINAL='<!doctype html>\n'+document.documentElement.outerHTML;
 const TIPOS_CAT={'Garantia':['Peça quebrada','Peça com defeito','Embalagem violada','Kit incompleto'],'Relatório':['Avaria / peça quebrada','Avaria / peça quebrada de fábrica','Material de devolução Mercado Livre','Material de devolução Shopee']};
 const ORIGENS={'Loja':'Retirado como quebrado na loja','Fábrica':'Veio quebrado ou com defeito do fabricante','Transporte':'Quebrou no frete ou na entrega','CD':'Quebrou dentro do CD'};
 const TIPOS=[...new Set([...TIPOS_CAT['Garantia'],...TIPOS_CAT['Relatório']])];
-const PERMS=[['mod:Garantia','Módulo Garantia','Ver e usar as garantias'],['mod:Relatório','Módulo Relatório','Ver e usar os relatórios'],['mod:Minucioso','Módulo Minucioso','Ver e usar as fichas do Minucioso'],['mod:Consertos Baiano','Módulo Consertos Baiano','Ver e usar os consertos'],['mod:Avaria','Módulo Relatório de Avaria','Ver e usar os relatórios de avaria'],['registrar','Criar registros','Lançar registros novos nos módulos liberados'],['resumo','Ver o Resumo','Abrir a tela de gráficos e totais'],['garantia','Editar registros','Atualizar a situação das garantias e os motivos do Minucioso'],['apagar','Apagar registros','Apagar registros, fotos e vídeos']];
+const PERMS=[['mod:Garantia','Módulo Garantia','Ver e usar as garantias'],['mod:Minucioso','Módulo Minucioso','Ver e usar as fichas do Minucioso'],['mod:Consertos Baiano','Módulo Consertos Baiano','Ver e usar os consertos'],['mod:Avaria','Módulo Relatório de Avaria','Ver e usar os relatórios de avaria'],['registrar','Criar registros','Lançar registros novos nos módulos liberados'],['resumo','Ver o Resumo','Abrir a tela de gráficos e totais'],['garantia','Editar registros','Atualizar a situação das garantias e os motivos do Minucioso'],['apagar','Apagar registros','Apagar registros, fotos e vídeos']];
 const TODAS=PERMS.map(p=>p[0]),PERM_AUX_PADRAO=['mod:Garantia','mod:Relatório','mod:Minucioso','mod:Consertos Baiano','mod:Avaria','registrar','resumo','garantia'];
 let CARGOS={'Chefe de Inventário':TODAS,'Auxiliar de Inventário':PERM_AUX_PADRAO,'Visitante':[]};
 const CARGO_DESC={'Chefe de Inventário':'pode tudo','Auxiliar de Inventário':'pode o que você liberar abaixo','Visitante':'só vê o que você marcar abaixo'};
@@ -1899,7 +1899,7 @@ const ANDARES={'11':'1º andar','12':'2º andar','13':'3º andar'},LETRAS='ABCDE
 const BUCKET='midias',H=3600e3,MAX_VIDEO=50*1024*1024;
 
 let sb=null,uid=null,eu=null,perfis={},ocs=[],carregou=false;
-let tela='login',msgLogin='',falhasLogin=0,bloqLogin=0;
+var ocsTodos=[];let tela='login',msgLogin='',falhasLogin=0,bloqLogin=0;
 let ui={baiPer:'semana',baiRef:'',tab:'painel',setor:'',mes:'',fano:'',fmes:'',cat:'Garantia',gst:'',busca:'',tipo:'',pessoa:'',de:'',ate:'',det:null,confDel:false};
 let draft=null,saving=false,enviando=0;
 const urls={},pedindo=new Set();
@@ -1950,7 +1950,7 @@ async function carregar(){
   if(eu&&(eu.aprovado||eu.admin)){
     const [p,o]=await Promise.all([sb.from('perfis').select('*').order('criado',{ascending:false}),sb.from('ocorrencias').select('*').order('criado',{ascending:false}).limit(500)]);
     if(p.data){perfis={};p.data.forEach(x=>perfis[x.id]=x)}
-    if(o.data)ocs=o.data.map(x=>x.gar_status==='Enviado ao fornecedor'?{...x,gar_status:'Enviado à garantia da loja'}:x);
+    if(o.data){ocsTodos=o.data;ocs=o.data.filter(x=>(x.categoria||'Relatório')!=='Relatório').map(x=>x.gar_status==='Enviado ao fornecedor'?{...x,gar_status:'Enviado à garantia da loja'}:x)}
     if(o.error)toast(erroMsg(o.error));
     const st=await sb.from('setores').select('*');if(st.data&&!st.error){chefes={};st.data.forEach(x=>chefes[x.nome]=x.chefe||'');if(st.data.length||carregou)SETORES=[...st.data].sort((a,b)=>(a.ordem||0)-(b.ordem||0)).map(x=>x.nome)}
     try{const g=await sb.from('galpoes').select('*');if(g&&g.data&&!g.error&&g.data.length){multiOk=true;galpaoNome=g.data[0].nome}else{multiOk=false;galpaoNome=''}}catch(e){multiOk=false;galpaoNome=''}
@@ -2056,7 +2056,7 @@ const baiBadge=o=>{if(!emBaiano(o))return'';const d=baiPrazoDias(o);if(d==null)r
   return` <span class="gst b">Prazo ${fDia(o.data_ref)} · ${d===0?'vence hoje':'faltam '+d+' dia'+(d===1?'':'s')}</span>`};
 const gstBadge=o=>o.categoria==='Garantia'?`<span class="gst ${gstCls(o.gar_status)}">${esc(o.gar_status||'Pendente')}</span>${baiBadge(o)}`:'';
 const cargoNome=c=>CARGOS[c]?c:'Auxiliar de Inventário';
-const podeMod=c=>pode('mod:'+c);
+const podeMod=c=>c!=='Relatório'&&pode('mod:'+c);
 const catCls=c=>c==='Garantia'?'gar':c==='Minucioso'?'min':c==='Consertos Baiano'?'bai':c==='Avaria'?'ava':'rel';
 const catBadge=c=>`<span class="cat ${catCls(c||'Relatório')}">${esc(c||'Relatório')}</span>`;
 const linhaBai=()=>({sku:'',produto:'',qtd:'1',custo:''});
@@ -3192,7 +3192,7 @@ function rankingHTML(){const per=ui.rkPer||'30',de=per==='todos'?'0000':diasAtra
    <select id="rkper" aria-label="Período do ranking"><option value="7" ${per==='7'?'selected':''}>7 dias</option><option value="30" ${per==='30'?'selected':''}>30 dias</option><option value="90" ${per==='90'?'selected':''}>90 dias</option><option value="todos" ${per==='todos'?'selected':''}>Tudo</option></select></div>
    <b class="small">Peças</b>${P.length?P.map(x=>`<button type="button" class="bar rk" data-peca="${esc(x.c)}"><span class="n">${esc(x.c)} · ${esc(nomePeca(x.c)||'—')}</span><div class="tr"><div class="f" style="width:${(x.g+x.a)/mxP*100}%"></div></div><span class="v">${x.g+x.a}</span></button>`).join(''):'<span class="muted small">Sem dados no período</span>'}
    <b class="small">Fornecedores (garantias)</b>${F.length?F.map(x=>`<div class="bar"><span class="n">${esc(x.n)}</span><div class="tr"><div class="f" style="width:${x.g/mxF*100}%"></div></div><span class="v">${x.g}</span></div>`).join(''):'<span class="muted small">Sem dados no período</span>'}</div>`}
-function dadosBackup(){return JSON.stringify({app:'INVENTRA',gerado:new Date().toISOString(),por:eu.nome,registros:ocs,equipe:Object.values(perfis).map(p=>({id:p.id,nome:p.nome,usuario:p.usuario,cargo:p.cargo}))},null,1)}
+function dadosBackup(){return JSON.stringify({app:'INVENTRA',gerado:new Date().toISOString(),por:eu.nome,registros:(ocsTodos.length?ocsTodos:ocs),equipe:Object.values(perfis).map(p=>({id:p.id,nome:p.nome,usuario:p.usuario,cargo:p.cargo}))},null,1)}
 function baixaTexto(txt,nome,tipo){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:tipo||'application/json'}));a.download=nome;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 const b64=u=>{let s='';const a=new Uint8Array(u);for(let i=0;i<a.length;i+=0x8000)s+=String.fromCharCode.apply(null,a.subarray(i,i+0x8000));return btoa(s)};
 const deb64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
