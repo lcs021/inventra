@@ -1363,6 +1363,29 @@ table td,table th{border-bottom:.5px solid var(--line)!important}
 .dlgbg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:16px}
 .dlgbox{width:min(480px,100%);max-height:90vh;overflow:auto;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:20px;padding:22px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
 .dlgbox h3{margin:0;font-size:20px}.dlgbox hr{border:0;border-top:1px solid var(--line);margin:6px 0;width:100%}
+/* Controle de assinaturas (Avaria) */
+.ctrlwrap{overflow-x:auto;border-radius:12px}
+table.ctrl{border-collapse:collapse;width:100%;min-width:1240px;table-layout:fixed;font-family:Lato,'Inter',Arial,sans-serif;background:#fff;color:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+table.ctrl th,table.ctrl td{border:1px solid #000;text-align:center;padding:0 4px;height:40px;font-size:13px;overflow:hidden;color:#000;background:#fff;vertical-align:middle}
+table.ctrl th.t1{background:#000;color:#fff;font-size:21px;font-weight:700;height:36px;text-align:center}
+table.ctrl th.t2{background:#000;color:#fff;font-size:17px;font-weight:700;height:26px}
+table.ctrl tr.hd th{background:#38761d;color:#fff;font-size:14px;font-weight:700;line-height:1.1;height:42px}
+table.ctrl td.rf{font-weight:700;font-size:17px}
+table.ctrl td.ds{text-align:left;padding-left:8px}
+table.ctrl tbody tr:nth-child(even) td{background:#f3f3f3}
+table.ctrl td input[type=date]{width:100%!important;min-width:0;border:0!important;background:transparent!important;color:#000!important;font:inherit;font-size:12px!important;height:38px!important;padding:0 2px!important;margin:0!important;text-align:center;color-scheme:light;box-shadow:none!important;border-radius:0!important}
+table.ctrl td:nth-child(2){white-space:nowrap}
+@page ctrlav{size:A4 landscape;margin:7mm}
+@media print{
+  #printArea .ctrlfolha{page:ctrlav;break-after:page;page-break-after:always}
+  #printArea .ctrlfolha:last-child{break-after:auto;page-break-after:auto}
+  #printArea table.ctrl{min-width:0;width:100%}
+  #printArea table.ctrl th,#printArea table.ctrl td{height:11mm;font-size:10pt}
+  #printArea table.ctrl th.t1{height:9mm;font-size:17pt}
+  #printArea table.ctrl th.t2{height:8mm;font-size:13pt}
+  #printArea table.ctrl tr.hd th{height:11mm;font-size:10pt}
+  #printArea table.ctrl td.rf{font-size:13pt}
+}
 </style>
 </head>
 <body>
@@ -1975,7 +1998,7 @@ function renderSide(){const s=$('side');s.innerHTML=sideHTML();s.querySelectorAl
   const mw=s.querySelector('.mwrap');if(mw){const pos=()=>{if(!mqHover.matches)return;const sub=mw.querySelector('.subitems');if(!sub)return;sub.style.top='-8px';
       requestAnimationFrame(()=>{const r=mw.getBoundingClientRect(),h=sub.offsetHeight,lim=innerHeight-12,topo=Math.max(72,Math.min(r.top-8,lim-h));sub.style.top=(topo-r.top)+'px'})};
     mw.addEventListener('mouseenter',pos);mw.addEventListener('focusin',pos);pos()}}
-function escolheMenu(cat,setor){ui={...ui,cat,peca:null,setor:setor||'',gst:'',tipo:'',det:null,confDel:false};
+function escolheMenu(cat,setor){ui={...ui,cat,peca:null,setor:setor||'',gst:'',tipo:'',det:null,confDel:false,ctrlav:false};
   if(ui.tab==='nova'){if(!draft)draft=novo();draft.cat=cat;if(cat!=='Garantia')draft.origem='';if(!(TIPOS_CAT[cat]||[]).includes(draft.tipo))draft.tipo='';
     if(cat==='Minucioso'){draft.setor=ui.setor;draft.chefe=chefeDe(ui.setor)||''}}
   else if(ui.tab!=='lista')ui.tab='lista';
@@ -2068,7 +2091,7 @@ function render(){
      al.querySelector('[data-balx]').onclick=()=>{ui.alertaBaiVisto=bt.length;render()}}}
   if(ui.det){const od=ocs.find(x=>x.id===ui.det);if(od&&od.categoria==='Avaria'){v.innerHTML=avDetHTML(od);bindAvDet(od)}else if(od&&od.categoria==='Consertos Baiano'){v.innerHTML=baiDetHTML(od);bindBaiDet(od)}else if(od&&od.categoria==='Minucioso'&&!(od.qtd_contada!=null&&od.falta==null)){v.innerHTML=minDetHTML(od);bindMinDet(od)}else{v.innerHTML=detHTML();bindDet()}}
   else if(ui.peca){v.innerHTML=pecaHTML();bindPeca()}
-  else if(ui.tab==='lista'){v.innerHTML=listaHTML();bindLista()}
+  else if(ui.tab==='lista'){if(ui.cat==='Avaria'&&ui.ctrlav){v.innerHTML=ctrlAvHTML();bindCtrlAv()}else{v.innerHTML=listaHTML();bindLista()}}
   else if(ui.tab==='nova'){if(draft.cat==='Avaria'){v.innerHTML=avFormHTML();bindAvForm()}else if(draft.cat==='Consertos Baiano'){v.innerHTML=baiFormHTML();bindBaiForm()}else if(draft.cat==='Minucioso'){v.innerHTML=minFormHTML();bindMinForm()}else{v.innerHTML=formHTML();bindForm()}}
   else if(ui.tab==='painel'){v.innerHTML=painelHTML();bindPainel()}
   else if(ui.tab==='resumo'){v.innerHTML=resumoHTML();bindCards();bindResumo()}
@@ -2212,7 +2235,7 @@ function listaHTML(){if(ui.cat==='Consertos Baiano')return baiListaHTML();const 
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
   <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
   <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
-  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):ui.cat==='Minucioso'?(l.length===1?'relatório minucioso':'relatórios minuciosos')+(ui.setor?' em '+esc(ui.setor):''):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>${ui.cat==='Minucioso'?`<button type="button" class="btn sm" id="imprLista" ${l.length?'':'disabled'}>🖨 Imprimir todos (${l.length})</button>`:''}<button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
+  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):ui.cat==='Minucioso'?(l.length===1?'relatório minucioso':'relatórios minuciosos')+(ui.setor?' em '+esc(ui.setor):''):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>${ui.cat==='Minucioso'?`<button type="button" class="btn sm" id="imprLista" ${l.length?'':'disabled'}>🖨 Imprimir todos (${l.length})</button>`:''}${ui.cat==='Avaria'?'<button type="button" class="btn sm" id="ctrlAv">📋 Controle de assinaturas</button>':''}<button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
   <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
 function setoresGridHTML(){
   const base=ocs.filter(o=>o.categoria==='Minucioso'&&(!ui.de||dia(o.criado)>=ui.de)&&(!ui.ate||dia(o.criado)<=ui.ate)&&(!ui.pessoa||o.autor===ui.pessoa));
@@ -2222,7 +2245,7 @@ function setoresGridHTML(){
   return`<div class="box sethead"><div class="row"><div><b>${ui.setor?esc(ui.setor):'Todos os setores'}</b><div class="muted small">${ui.setor?(chefeDe(ui.setor)?'Chefe: <b style="color:var(--fg)">'+esc(chefeDe(ui.setor))+'</b>':'Sem chefe definido · defina na aba Equipe'):'Escolha um setor no menu para ver só os relatórios dele'}</div></div><span class="cat min">Minucioso</span></div>
   <div class="setnums"><div><b>${l.length}</b><span>relatório${l.length===1?'':'s'}</span></div><div><b class="dif neg">${pf}</b><span>peças em falta</span></div><div><b style="font-size:1rem">${brl(vt)}</b><span>valor em falta</span></div><div><b style="color:var(--baixa)">✓ ${l.length}</b><span>concluído${l.length===1?'':'s'}</span></div></div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
-function bindLista(){bindBaiGraf();const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
+function bindLista(){bindBaiGraf();{const cb=$('ctrlAv');if(cb)cb.onclick=()=>{ui.ctrlav=true;window.scrollTo(0,0);render()}}const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
   const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
   $('ftipo').addEventListener('change',e=>{ui.tipo=e.target.value;render()});
   $('fpessoa').addEventListener('change',e=>{ui.pessoa=e.target.value;render()});
@@ -3193,6 +3216,35 @@ function fazerBackup(){dlg(`<h3>Backup dos dados</h3><p class="muted small">O ar
 function dlg(html,onBind){const old=$('dlg');if(old)old.remove();const d=document.createElement('div');d.id='dlg';d.className='dlgbg';d.innerHTML=`<div class="dlgbox stack" role="dialog" aria-modal="true">${html}</div>`;document.body.appendChild(d);d.addEventListener('click',e=>{if(e.target===d)fechaDlg()});const f=d.querySelector('input,button');if(f)f.focus();if(onBind)onBind(d.firstChild);return d}
 const fechaDlg=()=>{const d=$('dlg');if(d)d.remove()};
 document.addEventListener('keydown',e=>{if(e.key==='Escape')fechaDlg()});
+
+/* ---------- Avaria: Controle de assinaturas (tabela impressa) ---------- */
+const dbr=s=>s?String(s).slice(0,10).split('-').reverse().join('/'):'';
+const CTRL_COLS=[['Ref.','ref'],['Código','sku'],['Descrição','produto'],['Data de Entrega','ent'],['Ass. Ramon',''],['Data Ivano','ivano'],['Ass. Ivano',''],['Data de envio','envio'],['Ass. Ramon',''],['Data de Retorno','ret'],['Ass. Inv','']];
+const CTRL_W=[4.5,7.5,22.4,8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2];
+function ctrlTodas(){return ocs.filter(o=>catDe(o)==='Avaria').map(o=>({o,ref:parseInt(o.dados&&o.dados.ref,10),c:(o.dados&&o.dados.ctrl)||{}})).filter(x=>!isNaN(x.ref)).sort((a,b)=>a.ref-b.ref)}
+function ctrlLinhas(){const L=ctrlTodas();return ui.ctrlTodos?L:L.filter(x=>!x.c.ret)}
+const ctrlTop=()=>`<colgroup>${CTRL_W.map(w=>`<col style="width:${w}%">`).join('')}</colgroup><thead><tr><th colspan="11" class="t1">RELATÓRIO DE AVARIA&nbsp; CD</th></tr><tr><th colspan="11" class="t2">CONTROLE</th></tr><tr class="hd">${CTRL_COLS.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead>`;
+function ctrlCelulas(r,edit){const o=r.o,c=r.c||{};const dt=k=>edit?`<td><input type="date" data-ctrl="${esc(o.id)}|${k}" value="${esc(String(c[k]||'').slice(0,10))}" aria-label="${esc(CTRL_COLS.find(x=>x[1]===k)[0])} da ref. ${r.ref}" ${pode('garantia')?'':'disabled'}></td>`:`<td>${esc(dbr(c[k]))}</td>`;
+  return`<td class="rf">${r.ref}</td><td>${esc(o.sku||'')}</td><td class="ds">${esc(o.produto||'')}</td>${dt('ent')}<td></td>${dt('ivano')}<td></td>${dt('envio')}<td></td>${dt('ret')}<td></td>`}
+function folhaCtrl(L){const PP=14,todas=ctrlTodas(),mx=todas.length?Math.max(...todas.map(x=>x.ref)):0;let prox=Math.max(mx,...L.map(x=>x.ref),0)+1;const rows=[...L];
+  while(!rows.length||rows.length%PP)rows.push({vazio:true,ref:prox++});
+  let h='';for(let i=0;i<rows.length;i+=PP)h+=`<div class="ctrlfolha"><table class="ctrl">${ctrlTop()}<tbody>${rows.slice(i,i+PP).map(r=>r.vazio?`<tr><td class="rf">${r.ref}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`:`<tr>${ctrlCelulas(r,false)}</tr>`).join('')}</tbody></table></div>`;return h}
+function ctrlAvHTML(){const L=ctrlLinhas();
+  return`<div class="stack"><button class="btn sm" id="ctrlVoltar" style="align-self:flex-start">← Voltar</button>
+  <div class="listhead"><h2>Controle de assinaturas</h2><span class="muted small">Avaria · ${L.length} ${L.length===1?'linha':'linhas'}</span></div>
+  <div class="box stack"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><select id="ctrlFiltro" aria-label="Quais linhas mostrar"><option value="0" ${ui.ctrlTodos?'':'selected'}>Só o que ainda não retornou</option><option value="1" ${ui.ctrlTodos?'selected':''}>Todas as avarias</option></select><button type="button" class="btn primary" id="ctrlImp">🖨 Imprimir tabela</button></div>
+  <span class="muted small">Ref., código e descrição vêm dos relatórios de avaria. Preencha as datas aqui; as assinaturas ficam em branco para assinar à mão. Ao imprimir, a folha é completada com linhas em branco numeradas na sequência.</span></div>
+  <div class="ctrlwrap"><table class="ctrl">${ctrlTop()}<tbody>${L.length?L.map(r=>`<tr>${ctrlCelulas(r,true)}</tr>`).join(''):`<tr><td colspan="11" style="height:60px">Nenhuma avaria pendente de retorno.</td></tr>`}</tbody></table></div></div>`}
+function imprimirCtrl(){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+  a.innerHTML=folhaCtrl(ctrlLinhas());document.body.classList.add('imprimindo');
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
+  setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
+function bindCtrlAv(){$('ctrlVoltar').onclick=()=>{ui.ctrlav=false;render()};
+  $('ctrlFiltro').onchange=e=>{ui.ctrlTodos=e.target.value==='1';render()};$('ctrlImp').onclick=imprimirCtrl;
+  document.querySelectorAll('[data-ctrl]').forEach(i=>i.onchange=async()=>{const [id,k]=i.dataset.ctrl.split('|'),o=ocs.find(x=>String(x.id)===id);if(!o)return;
+    const dados={...(o.dados||{}),ctrl:{...((o.dados&&o.dados.ctrl)||{}),[k]:i.value||''}};
+    const {error}=await sb.from('ocorrencias').update({dados}).eq('id',id);if(error){toast(erroMsg(error));i.value=String(((o.dados&&o.dados.ctrl)||{})[k]||'').slice(0,10);return}
+    o.dados=dados;toast('Data salva');if(k==='ret'&&!ui.ctrlTodos)setTimeout(render,400)})}
 
 /* ---------- Log de atividade ---------- */
 let atv=null,atvErro='',galpaoNome='',multiOk=false;
