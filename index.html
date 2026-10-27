@@ -1371,6 +1371,8 @@ table.ctrl th.t1{background:#000;color:#fff;font-size:21px;font-weight:700;heigh
 table.ctrl th.t2{background:#000;color:#fff;font-size:17px;font-weight:700;height:26px}
 table.ctrl tr.hd th{background:#38761d;color:#fff;font-size:14px;font-weight:700;line-height:1.1;height:42px}
 table.ctrl td.rf{font-weight:700;font-size:17px}
+table.ctrl th.sc,table.ctrl td.sc{padding:0}
+table.ctrl td.sc input{width:20px;height:20px;accent-color:#38761d;margin:0;cursor:pointer}
 table.ctrl td.ds{text-align:left;padding-left:8px}
 table.ctrl tbody tr:nth-child(even) td{background:#f3f3f3}
 table.ctrl td input[type=date]{width:100%!important;min-width:0;border:0!important;background:transparent!important;color:#000!important;font:inherit;font-size:12px!important;height:38px!important;padding:0 2px!important;margin:0!important;text-align:center;color-scheme:light;box-shadow:none!important;border-radius:0!important}
@@ -2245,7 +2247,7 @@ function setoresGridHTML(){
   return`<div class="box sethead"><div class="row"><div><b>${ui.setor?esc(ui.setor):'Todos os setores'}</b><div class="muted small">${ui.setor?(chefeDe(ui.setor)?'Chefe: <b style="color:var(--fg)">'+esc(chefeDe(ui.setor))+'</b>':'Sem chefe definido · defina na aba Equipe'):'Escolha um setor no menu para ver só os relatórios dele'}</div></div><span class="cat min">Minucioso</span></div>
   <div class="setnums"><div><b>${l.length}</b><span>relatório${l.length===1?'':'s'}</span></div><div><b class="dif neg">${pf}</b><span>peças em falta</span></div><div><b style="font-size:1rem">${brl(vt)}</b><span>valor em falta</span></div><div><b style="color:var(--baixa)">✓ ${l.length}</b><span>concluído${l.length===1?'':'s'}</span></div></div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
-function bindLista(){bindBaiGraf();{const cb=$('ctrlAv');if(cb)cb.onclick=()=>{ui.ctrlav=true;window.scrollTo(0,0);render()}}const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
+function bindLista(){bindBaiGraf();{const cb=$('ctrlAv');if(cb)cb.onclick=()=>{ui.ctrlav=true;ui.ctrlSel=null;window.scrollTo(0,0);render()}}const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
   const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
   $('ftipo').addEventListener('change',e=>{ui.tipo=e.target.value;render()});
   $('fpessoa').addEventListener('change',e=>{ui.pessoa=e.target.value;render()});
@@ -3223,24 +3225,28 @@ const CTRL_COLS=[['Ref.','ref'],['Código','sku'],['Descrição','produto'],['Da
 const CTRL_W=[4.5,7.5,22.4,8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2];
 function ctrlTodas(){return ocs.filter(o=>catDe(o)==='Avaria').map(o=>({o,ref:parseInt(o.dados&&o.dados.ref,10),c:(o.dados&&o.dados.ctrl)||{}})).filter(x=>!isNaN(x.ref)).sort((a,b)=>a.ref-b.ref)}
 function ctrlLinhas(){const L=ctrlTodas();return ui.ctrlTodos?L:L.filter(x=>!x.c.ret)}
-const ctrlTop=()=>`<colgroup>${CTRL_W.map(w=>`<col style="width:${w}%">`).join('')}</colgroup><thead><tr><th colspan="11" class="t1">RELATÓRIO DE AVARIA&nbsp; CD</th></tr><tr><th colspan="11" class="t2">CONTROLE</th></tr><tr class="hd">${CTRL_COLS.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead>`;
+function ctrlSelec(){if(!ui.ctrlSel)ui.ctrlSel=new Set(ctrlLinhas().map(x=>String(x.o.id)));return ctrlLinhas().filter(x=>ui.ctrlSel.has(String(x.o.id)))}
+const ctrlTop=sel=>`<colgroup>${sel?'<col style="width:44px">':''}${CTRL_W.map(w=>`<col style="width:${w}%">`).join('')}</colgroup><thead><tr><th colspan="${sel?12:11}" class="t1">RELATÓRIO DE AVARIA&nbsp; CD</th></tr><tr><th colspan="${sel?12:11}" class="t2">CONTROLE</th></tr><tr class="hd">${sel?'<th class="sc" title="Marque o que vai na folha">✓</th>':''}${CTRL_COLS.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead>`;
 function ctrlCelulas(r,edit){const o=r.o,c=r.c||{};const dt=k=>edit?`<td><input type="date" data-ctrl="${esc(o.id)}|${k}" value="${esc(String(c[k]||'').slice(0,10))}" aria-label="${esc(CTRL_COLS.find(x=>x[1]===k)[0])} da ref. ${r.ref}" ${pode('garantia')?'':'disabled'}></td>`:`<td>${esc(dbr(c[k]))}</td>`;
-  return`<td class="rf">${r.ref}</td><td>${esc(o.sku||'')}</td><td class="ds">${esc(o.produto||'')}</td>${dt('ent')}<td></td>${dt('ivano')}<td></td>${dt('envio')}<td></td>${dt('ret')}<td></td>`}
+  return`${edit?`<td class="sc"><input type="checkbox" data-sel="${esc(o.id)}" ${ui.ctrlSel&&ui.ctrlSel.has(String(o.id))?'checked':''} aria-label="Colocar a ref. ${r.ref} na folha"></td>`:''}<td class="rf">${r.ref}</td><td>${esc(o.sku||'')}</td><td class="ds">${esc(o.produto||'')}</td>${dt('ent')}<td></td>${dt('ivano')}<td></td>${dt('envio')}<td></td>${dt('ret')}<td></td>`}
 function folhaCtrl(L){const PP=14,todas=ctrlTodas(),mx=todas.length?Math.max(...todas.map(x=>x.ref)):0;let prox=Math.max(mx,...L.map(x=>x.ref),0)+1;const rows=[...L];
   while(!rows.length||rows.length%PP)rows.push({vazio:true,ref:prox++});
   let h='';for(let i=0;i<rows.length;i+=PP)h+=`<div class="ctrlfolha"><table class="ctrl">${ctrlTop()}<tbody>${rows.slice(i,i+PP).map(r=>r.vazio?`<tr><td class="rf">${r.ref}</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>`:`<tr>${ctrlCelulas(r,false)}</tr>`).join('')}</tbody></table></div>`;return h}
-function ctrlAvHTML(){const L=ctrlLinhas();
+function ctrlAvHTML(){const L=ctrlLinhas(),ns=ctrlSelec().length;
   return`<div class="stack"><button class="btn sm" id="ctrlVoltar" style="align-self:flex-start">← Voltar</button>
   <div class="listhead"><h2>Controle de assinaturas</h2><span class="muted small">Avaria · ${L.length} ${L.length===1?'linha':'linhas'}</span></div>
-  <div class="box stack"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><select id="ctrlFiltro" aria-label="Quais linhas mostrar"><option value="0" ${ui.ctrlTodos?'':'selected'}>Só o que ainda não retornou</option><option value="1" ${ui.ctrlTodos?'selected':''}>Todas as avarias</option></select><button type="button" class="btn primary" id="ctrlImp">🖨 Imprimir tabela</button></div>
-  <span class="muted small">Ref., código e descrição vêm dos relatórios de avaria. Preencha as datas aqui; as assinaturas ficam em branco para assinar à mão. Ao imprimir, a folha é completada com linhas em branco numeradas na sequência.</span></div>
-  <div class="ctrlwrap"><table class="ctrl">${ctrlTop()}<tbody>${L.length?L.map(r=>`<tr>${ctrlCelulas(r,true)}</tr>`).join(''):`<tr><td colspan="11" style="height:60px">Nenhuma avaria pendente de retorno.</td></tr>`}</tbody></table></div></div>`}
-function imprimirCtrl(){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
-  a.innerHTML=folhaCtrl(ctrlLinhas());document.body.classList.add('imprimindo');
-  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
+  <div class="box stack"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><select id="ctrlFiltro" aria-label="Quais linhas mostrar"><option value="0" ${ui.ctrlTodos?'':'selected'}>Só o que ainda não retornou</option><option value="1" ${ui.ctrlTodos?'selected':''}>Todas as avarias</option></select><button type="button" class="btn sm" id="ctrlTodas">Marcar todas</button><button type="button" class="btn sm" id="ctrlNenhuma">Desmarcar todas</button><button type="button" class="btn primary" id="ctrlImp">${ns?`🖨 Imprimir ${ns} ${ns===1?'selecionada':'selecionadas'}`:'🖨 Imprimir folha em branco'}</button></div>
+  <span class="muted small">Ref., código e descrição vêm dos relatórios de avaria. Marque na coluna ✓ o que vai na folha. Ao imprimir, a Data de Entrega sai com a data de hoje (se ainda estiver vazia) e fica salva; preencha as outras datas; as assinaturas ficam em branco para assinar à mão. Ao imprimir, a folha é completada com linhas em branco numeradas na sequência.</span></div>
+  <div class="ctrlwrap"><table class="ctrl">${ctrlTop(true)}<tbody>${L.length?L.map(r=>`<tr>${ctrlCelulas(r,true)}</tr>`).join(''):`<tr><td colspan="12" style="height:60px">Nenhuma avaria pendente de retorno.</td></tr>`}</tbody></table></div></div>`}
+async function imprimirCtrl(){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+  const h=hoje(),sel=ctrlSelec(),L=sel.map(r=>({...r,c:{...r.c,ent:r.c.ent||h}}));
+  if(pode('garantia'))await Promise.all(sel.filter(r=>!r.c.ent).map(async r=>{const dados={...(r.o.dados||{}),ctrl:{...r.c,ent:h}};const {error}=await sb.from('ocorrencias').update({dados}).eq('id',r.o.id);if(!error)r.o.dados=dados}));
+  a.innerHTML=folhaCtrl(L);document.body.classList.add('imprimindo');
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim);if(ui.ctrlav)render()};addEventListener('afterprint',fim);
   setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
 function bindCtrlAv(){$('ctrlVoltar').onclick=()=>{ui.ctrlav=false;render()};
-  $('ctrlFiltro').onchange=e=>{ui.ctrlTodos=e.target.value==='1';render()};$('ctrlImp').onclick=imprimirCtrl;
+  $('ctrlFiltro').onchange=e=>{ui.ctrlTodos=e.target.value==='1';render()};$('ctrlImp').onclick=imprimirCtrl;$('ctrlTodas').onclick=()=>{ui.ctrlSel=new Set(ctrlLinhas().map(x=>String(x.o.id)));render()};$('ctrlNenhuma').onclick=()=>{ui.ctrlSel=new Set();render()};
+  document.querySelectorAll('[data-sel]').forEach(i=>i.onchange=()=>{const id=i.dataset.sel;i.checked?ui.ctrlSel.add(id):ui.ctrlSel.delete(id);const n=ctrlSelec().length;$('ctrlImp').textContent=n?`🖨 Imprimir ${n} ${n===1?'selecionada':'selecionadas'}`:'🖨 Imprimir folha em branco'});
   document.querySelectorAll('[data-ctrl]').forEach(i=>i.onchange=async()=>{const [id,k]=i.dataset.ctrl.split('|'),o=ocs.find(x=>String(x.id)===id);if(!o)return;
     const dados={...(o.dados||{}),ctrl:{...((o.dados&&o.dados.ctrl)||{}),[k]:i.value||''}};
     const {error}=await sb.from('ocorrencias').update({dados}).eq('id',id);if(error){toast(erroMsg(error));i.value=String(((o.dados&&o.dados.ctrl)||{})[k]||'').slice(0,10);return}
