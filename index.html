@@ -3223,7 +3223,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')fechaDlg()});
 const dbr=s=>s?String(s).slice(0,10).split('-').reverse().join('/'):'';
 const CTRL_COLS=[['Ref.','ref'],['Código','sku'],['Descrição','produto'],['Data de Entrega','ent'],['Ass. Ramon',''],['Data Ivano','ivano'],['Ass. Ivano',''],['Data de envio','envio'],['Ass. Ramon',''],['Data de Retorno','ret'],['Ass. Inv','']];
 const CTRL_W=[4.5,7.5,22.4,8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2];
-function ctrlTodas(){return ocs.filter(o=>catDe(o)==='Avaria').map(o=>({o,ref:parseInt(o.dados&&o.dados.ref,10),c:(o.dados&&o.dados.ctrl)||{}})).filter(x=>!isNaN(x.ref)).sort((a,b)=>a.ref-b.ref)}
+function ctrlTodas(){return ocs.filter(o=>catDe(o)==='Avaria').map(o=>({o,ref:parseInt(o.dados&&o.dados.ref,10),c:(o.dados&&o.dados.ctrl)||{}})).filter(x=>!isNaN(x.ref)).sort((a,b)=>new Date(a.o.criado)-new Date(b.o.criado)||a.ref-b.ref)}
 function ctrlLinhas(){const L=ctrlTodas();return ui.ctrlTodos?L:L.filter(x=>!x.c.ret)}
 function ctrlSelec(){if(!ui.ctrlSel)ui.ctrlSel=new Set(ctrlLinhas().map(x=>String(x.o.id)));return ctrlLinhas().filter(x=>ui.ctrlSel.has(String(x.o.id)))}
 const ctrlTop=sel=>`<colgroup>${sel?'<col style="width:44px">':''}${CTRL_W.map(w=>`<col style="width:${w}%">`).join('')}</colgroup><thead><tr><th colspan="${sel?12:11}" class="t1">RELATÓRIO DE AVARIA&nbsp; CD</th></tr><tr><th colspan="${sel?12:11}" class="t2">CONTROLE</th></tr><tr class="hd">${sel?'<th class="sc" title="Marque o que vai na folha">✓</th>':''}${CTRL_COLS.map(c=>`<th>${c[0]}</th>`).join('')}</tr></thead>`;
