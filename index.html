@@ -1460,6 +1460,18 @@ nav#nav button[aria-current="true"]{color:var(--accent)!important}
 .a2-laser{background:linear-gradient(90deg,transparent,#2997ff,transparent)!important;box-shadow:0 0 14px 3px rgba(41,151,255,.6)!important}
 .a2-feat li{border-top:1px solid rgba(255,255,255,.25)!important}
 .authshell.a2 .apanel{border-radius:24px!important;padding:32px 28px}
+@page pdflista{size:A4 landscape;margin:10mm}
+#printArea .pdfrel{page:pdflista;color:#000;font-family:Arial,Helvetica,sans-serif}
+#printArea .pdfh{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:10px}
+#printArea .pdft{font-size:22pt;font-weight:800;color:#000}
+#printArea .pdfs{font-size:9.5pt;color:#000;margin-top:3px}
+#printArea .pdfk{display:flex;gap:10px;margin-bottom:12px}
+#printArea .pdfk div{border:1.5px solid #000;border-radius:4px;padding:6px 14px;min-width:120px}
+#printArea .pdfk b{display:block;font-size:15pt;color:#000}#printArea .pdfk span{font-size:8.5pt;color:#000}
+#printArea table.pdft2{width:100%;border-collapse:collapse;min-width:0}
+#printArea table.pdft2 th{background:#e8e8e8!important;color:#000!important;text-align:left;font-size:9pt!important;font-weight:700!important;border:1px solid #000!important;padding:5px 6px;text-transform:none!important}
+#printArea table.pdft2 td{color:#000!important;font-size:9pt;border:1px solid #777!important;padding:4px 6px;vertical-align:top}
+#printArea table.pdft2 thead{display:table-header-group}#printArea table.pdft2 tr{break-inside:avoid}
 </style>
 </head>
 <body>
@@ -2309,7 +2321,7 @@ function listaHTML(){if(ui.cat==='Consertos Baiano')return baiListaHTML();const 
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
   <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
   <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
-  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):ui.cat==='Minucioso'?(l.length===1?'relatório minucioso':'relatórios minuciosos')+(ui.setor?' em '+esc(ui.setor):''):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>${ui.cat==='Minucioso'?`<button type="button" class="btn sm" id="imprLista" ${l.length?'':'disabled'}>🖨 Imprimir todos (${l.length})</button>`:''}${ui.cat==='Avaria'?'<button type="button" class="btn sm" id="ctrlAv">📋 Controle de assinaturas</button>':''}<button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
+  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):ui.cat==='Minucioso'?(l.length===1?'relatório minucioso':'relatórios minuciosos')+(ui.setor?' em '+esc(ui.setor):''):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>${ui.cat==='Minucioso'?`<button type="button" class="btn sm" id="imprLista" ${l.length?'':'disabled'}>🖨 Imprimir todos (${l.length})</button>`:''}${ui.cat==='Avaria'?'<button type="button" class="btn sm" id="ctrlAv">📋 Controle de assinaturas</button>':''}<button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button><button type="button" class="btn sm" id="exportarPdf" ${l.length?'':'disabled'}>📄 Exportar PDF</button></div>
   <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
 function setoresGridHTML(){
   const base=ocs.filter(o=>o.categoria==='Minucioso'&&(!ui.de||dia(o.criado)>=ui.de)&&(!ui.ate||dia(o.criado)<=ui.ate)&&(!ui.pessoa||o.autor===ui.pessoa));
@@ -2334,10 +2346,33 @@ function bindLista(){bindBaiGraf();{const cb=$('ctrlAv');if(cb)cb.onclick=()=>{u
   document.querySelectorAll('[data-fset]').forEach(b=>b.addEventListener('click',()=>{ui.setor=b.dataset.fset;render();const a=document.querySelector('.subtab[aria-pressed="true"]');if(a)a.scrollIntoView({inline:'center',block:'nearest'})}));
   document.querySelectorAll('[data-gst]').forEach(b=>b.addEventListener('click',()=>{ui.gst=b.dataset.gst;render()}));
   document.querySelectorAll('[data-relst]').forEach(b=>b.addEventListener('click',()=>{ui.relSt=b.dataset.relst;render()}));
-  $('exportar').onclick=()=>exportarExcel(filtrar());
+  $('exportar').onclick=()=>exportarExcel(filtrar());{const ep=$('exportarPdf');if(ep)ep.onclick=()=>exportarPDF(filtrar())}
   const pl=$('imprLista');if(pl)pl.onclick=()=>{const l=filtrar();if(!l.length)return;imprimirMin(l)};
   bindCards()}
 
+
+/* ---------- Exportar PDF (relatório da lista filtrada, via "Salvar como PDF") ---------- */
+function exportarPDF(lista){
+  if(!lista||!lista.length){toast('Nada para exportar');return}
+  const cat=ui.cat||'Relatório',dd=o=>new Date(o.criado).toLocaleDateString('pt-BR'),qt=o=>Number(o.qtd)||0,por=o=>nome(o.autor);
+  const C={
+   'Garantia':{cols:['Data','Tipo','Situação','Código','Peça','Qtd','Registrado por'],row:o=>[dd(o),o.tipo||'',o.gar_status||'Pendente',o.sku||'',o.produto||'',qt(o)||'',por(o)],tot:L=>[['Garantias',L.length],['Pendentes',L.filter(o=>(o.gar_status||'Pendente')==='Pendente').length],['Peças',L.reduce((a,o)=>a+qt(o),0)]]},
+   'Minucioso':{cols:['Data','Setor','Código','Descrição','Custo','Falta','Total','Registrado por'],row:o=>[dd(o),o.setor||'',o.sku||'',o.produto||'',o.custo!=null&&o.custo!==''?brl(o.custo):'—',o.falta??'',brl(totalMin(o)),por(o)],tot:L=>[['Relatórios',L.length],['Peças em falta',L.reduce((a,o)=>a+(Number(o.falta)||0),0)],['Valor em falta',brl(L.reduce((a,o)=>a+(totalMin(o)||0),0))]]},
+   'Consertos Baiano':{cols:['Data','Código','Peça','Qtd','Valor','Registrado por'],row:o=>[dd(o),o.sku||'',o.produto||'',qt(o)||'',brl(totalBai(o)),por(o)],tot:L=>[['Consertos',L.length],['Peças',L.reduce((a,o)=>a+qt(o),0)],['Valor total',brl(L.reduce((a,o)=>a+(totalBai(o)||0),0))]]}
+  }[cat]||{cols:['Data','Tipo','Código','Peça','Qtd','Registrado por'],row:o=>[dd(o),o.tipo||'',o.sku||'',o.produto||'',qt(o)||'',por(o)],tot:L=>[['Registros',L.length],['Peças',L.reduce((a,o)=>a+qt(o),0)]]};
+  const br=s=>s.split('-').reverse().join('/');
+  const periodo=ui.de||ui.ate?(ui.de===ui.ate?br(ui.de):(ui.de?br(ui.de):'início')+' a '+(ui.ate?br(ui.ate):'hoje')):'Todo o período';
+  const filtros=[ui.gst&&'Situação: '+ui.gst,ui.setor&&'Setor: '+ui.setor,ui.tipo&&'Tipo: '+ui.tipo,ui.pessoa&&'Pessoa: '+nome(ui.pessoa),ui.busca&&'Busca: "'+ui.busca+'"'].filter(Boolean);
+  const agora=new Date(),L=[...lista].sort((x,y)=>new Date(x.criado)-new Date(y.criado));
+  const nomeCat={'Garantia':'Garantias','Minucioso':'Relatório Minucioso','Consertos Baiano':'Consertos Baiano'}[cat]||cat;
+  const html=`<div class="pdfrel"><div class="pdfh"><div><div class="pdft">${esc(nomeCat)}</div><div class="pdfs">Período: ${esc(periodo)}${filtros.length?' · '+esc(filtros.join(' · ')):''}</div></div><div class="pdfs" style="text-align:right">INVENTRA<br>Gerado em ${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}${eu&&eu.nome?'<br>por '+esc(eu.nome):''}</div></div>
+   <div class="pdfk">${C.tot(L).map(([a,v])=>`<div><b>${esc(String(v))}</b><span>${esc(a)}</span></div>`).join('')}</div>
+   <table class="pdft2"><thead><tr><th>#</th>${C.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${L.map((o,i)=>`<tr><td>${i+1}</td>${C.row(o).map(v=>`<td>${esc(String(v))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+  a.innerHTML=html;document.body.classList.add('imprimindo');
+  const tit=document.title;document.title='INVENTRA - '+nomeCat+' - '+agora.toISOString().slice(0,10);
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';document.title=tit;removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
+  toast('Na janela que abrir, escolha "Salvar como PDF"');setTimeout(()=>print(),400)}
 /* ---------- Exportar Excel ---------- */
 function carregarXlsx(){return window.XLSX?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
 /* ---------- Relatório em Excel (gerado no navegador, com gráficos nativos) ---------- */
@@ -2747,7 +2782,7 @@ function baiListaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
   <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
   <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
-  <div class="exprow"><div class="muted small">${l.length} conserto${l.length===1?'':'s'} na lista</div><button type="button" class="btn sm" id="imprBai" ${l.length?'':'disabled'}>🖨 Imprimir lista (${l.length})</button><button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button></div>
+  <div class="exprow"><div class="muted small">${l.length} conserto${l.length===1?'':'s'} na lista</div><button type="button" class="btn sm" id="imprBai" ${l.length?'':'disabled'}>🖨 Imprimir lista (${l.length})</button><button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button><button type="button" class="btn sm" id="exportarPdf" ${l.length?'':'disabled'}>📄 Exportar PDF</button></div>
   ${l.length?`<div class="tabwrap"><table class="btab"><thead><tr><th>Código</th><th>Descrição</th><th class="num">Qtde</th><th class="num">Custo</th><th>Requisitante</th><th class="num">Valor</th><th class="num">Total</th><th>Data</th></tr></thead>
   <tbody>${l.map(o=>`<tr class="lk" data-id="${esc(o.id)}"><td class="mono">${esc(o.sku||'')}</td><td class="ds">${esc(o.produto||'')}</td><td class="num">${esc(o.qtd??1)}</td><td class="num">${brl(o.custo)}</td><td>${esc(o.requisitante||'')}</td><td class="num">${brl(o.valor_conserto)}</td><td class="num"><b>${brl(totalBai(o))}</b></td><td class="nw">${dataBai(o)}</td></tr>`).join('')}</tbody>
   <tfoot><tr><td colspan="6">Total</td><td class="num" style="color:var(--bai)">${brl(tot)}</td><td></td></tr></tfoot></table></div>`:`<div class="empty">${ocs.some(o=>o.categoria==='Consertos Baiano')?'Nenhum conserto com esses filtros.':'Nenhum conserto registrado ainda.<br>Clique em <b>Novo registro</b> no menu para lançar o primeiro.'}</div>`}</div>`}
