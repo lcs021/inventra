@@ -8,8 +8,8 @@
 <script>try{if(top!==self)document.documentElement.style.display="none"}catch(e){document.documentElement.style.display="none"}</script>
 <script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
 <title>INVENTRA</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2048%2048%22%20aria-hidden=%22true%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22lgBg%22%20x1=%220%22%20y1=%220%22%20x2=%2248%22%20y2=%2248%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230F3B3A%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%2306181B%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id=%22lgTop%22%20x1=%228%22%20y1=%2240%22%20x2=%2240%22%20y2=%228%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230D9488%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%235EEAD4%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%2248%22%20height=%2248%22%20rx=%2212%22%20fill=%22url%28%23lgBg%29%22/%3E%3Cpath%20d=%22M12.5%2020v-5a2.5%202.5%200%200%201%202.5-2.5h5M28%2012.5h5a2.5%202.5%200%200%201%202.5%202.5v5M35.5%2028v5a2.5%202.5%200%200%201-2.5%202.5h-5M20%2035.5h-5a2.5%202.5%200%200%201-2.5-2.5v-5%22%20fill=%22none%22%20stroke=%22url%28%23lgTop%29%22%20stroke-width=%223%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Crect%20x=%2217.8%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2222%22%20y=%2218%22%20width=%224%22%20height=%2212%22%20rx=%221.6%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2227.6%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2048%2048%22%3E%3Cpath%20d=%22M10%204h22l12%2012v26a2%202%200%200%201-2%202H10a2%202%200%200%201-2-2V6a2%202%200%200%201%202-2z%22%20fill=%22%232B2B2B%22/%3E%3Cpath%20d=%22M32%204v10a2%202%200%200%200%202%202h10z%22%20fill=%22%23fff%22%20fill-opacity=%22.25%22/%3E%3Ccircle%20cx=%2217%22%20cy=%2212%22%20r=%222.6%22%20fill=%22%23FFD93B%22/%3E%3Cg%20fill=%22%23FFD93B%22%3E%3Crect%20x=%2214%22%20y=%2222%22%20width=%223%22%20height=%2218%22%20rx=%22.6%22/%3E%3Crect%20x=%2219.5%22%20y=%2222%22%20width=%226%22%20height=%2218%22%20rx=%22.6%22/%3E%3Crect%20x=%2228%22%20y=%2222%22%20width=%222.5%22%20height=%2218%22%20rx=%22.6%22/%3E%3Crect%20x=%2232.5%22%20y=%2222%22%20width=%223.5%22%20height=%2218%22%20rx=%22.6%22/%3E%3C/g%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 /* Layout: barra superior escura, conteúdo em coluna de 680px, navegação inferior com botão central de registrar */
 :root{
@@ -1395,11 +1395,131 @@ table.ficha td.falta{color:#d40000!important}
 table.ficha th{font-size:10.5pt!important;font-weight:700!important;letter-spacing:0!important;text-transform:none!important}
 table.ficha tr.mot th{font-size:9.5pt!important}
 table.cbaiano th{font-size:9.5pt!important;font-weight:700!important;letter-spacing:0!important;text-transform:none!important}
+
+/* ===== Estilo vitrine de marketplace: barra amarela, fundo cinza-claro, cartões brancos ===== */
+:root{--bg:#ececec;--surface:#ffffff;--sunken:#f3f3f3;--line:rgba(0,0,0,.09);--line2:rgba(0,0,0,.18);
+  --fg:#2b2b2b;--muted:#6b6b6b;--ink:#2b2b2b;--ink-fg:#fff;
+  --yel:#ffd93b;--accent:#2467d6;--accent-ink:#ffffff;--accent-soft:#e4edfc;--gold:#2467d6;--gold-ink:#fff;
+  --gar:#f5801f;--gar-soft:#fff0e1;--gar-ink:#a6520a;
+  --min:#0aa05b;--min-soft:#dcf5e8;--min-ink:#0a6e3f;
+  --bai:#7b5ce6;--bai-soft:#ece8fc;--bai-ink:#5133c0;
+  --alta:#e5384b;--baixa:#0aa05b;
+  --sh1:0 1px 2px rgba(0,0,0,.12);--sh2:0 1px 2px 0 rgba(0,0,0,.14);--topA:#ffd93b;--topB:#ffd93b;
+  --font:"Figtree","Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--head:"Figtree","Inter",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;--r:6px}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#161617;--surface:#232325;--sunken:#2d2d30;--line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.2);
+  --fg:#f1f1f1;--muted:#a3a3a8;--ink:#f1f1f1;--ink-fg:#161617;
+  --accent:#6aa3ff;--accent-ink:#0b1a33;--accent-soft:#16284a;--gold:#6aa3ff;--gold-ink:#0b1a33;
+  --gar:#ff9a4d;--gar-soft:#3a2108;--gar-ink:#ffc08f;
+  --min:#2fd388;--min-soft:#0d3322;--min-ink:#8cecbd;
+  --bai:#a18cff;--bai-soft:#241d4a;--bai-ink:#cbbfff;
+  --alta:#ff6577;--baixa:#2fd388;--sh1:none;--sh2:none}}
+:root[data-theme="dark"]{--bg:#161617;--surface:#232325;--sunken:#2d2d30;--line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.2);
+  --fg:#f1f1f1;--muted:#a3a3a8;--ink:#f1f1f1;--ink-fg:#161617;
+  --accent:#6aa3ff;--accent-ink:#0b1a33;--accent-soft:#16284a;--gold:#6aa3ff;--gold-ink:#0b1a33;
+  --gar:#ff9a4d;--gar-soft:#3a2108;--gar-ink:#ffc08f;
+  --min:#2fd388;--min-soft:#0d3322;--min-ink:#8cecbd;
+  --bai:#a18cff;--bai-soft:#241d4a;--bai-ink:#cbbfff;
+  --alta:#ff6577;--baixa:#2fd388;--sh1:none;--sh2:none}
+body{background:var(--bg)!important;background-image:none!important;font-family:var(--font);font-size:15px;line-height:1.45;letter-spacing:0}
+h1,h2,h3,.listhead h2,.hero h1,.cc h1,.a2-mid h2,.a2-top,.brand h1,.wk2-val,.wk-val,.stat .v,.mesnum b,.setnums b,.acgeral b,.pring span{font-family:var(--head)!important;letter-spacing:-.01em!important}
+h2,.listhead h2{font-size:clamp(1.5rem,2.3vw,1.9rem)!important;font-weight:700!important;line-height:1.15}
+.hero h1,.cc h1{font-weight:700!important;font-size:clamp(1.7rem,2.6vw,2.2rem)!important}
+h3,.wpn-h b,.pgh b{font-family:var(--font)!important;font-weight:600!important}
+.brand h1{font-weight:800!important;font-size:1.25rem!important;letter-spacing:-.02em!important;text-transform:none!important;color:#2b2b2b!important}
+.wk2-val,.cc-k .wk2-val,.wk-val,.stat .v,.mesnum b,.setnums b,.acgeral b{font-weight:700!important;font-size:clamp(1.6rem,2.4vw,2rem)!important;line-height:1.05;font-variant-numeric:tabular-nums}
+.lbl{color:var(--muted)!important;font-weight:600!important;font-size:.8rem!important;margin-left:0}
+/* barra amarela do topo */
+.topbar{background:var(--yel)!important;border-bottom:0!important;box-shadow:0 1px 0 rgba(0,0,0,.12)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+.topbar,.topbar *{color:#2b2b2b}
+.topbar .gs{background:#fff!important;border:0!important;border-radius:4px!important;box-shadow:0 1px 2px rgba(0,0,0,.25)!important}
+.topbar .gs input{color:#2b2b2b!important}
+.topbar .gs input::placeholder{color:#8a8a8a!important}
+.topbar .gs:focus-within{box-shadow:0 0 0 3px rgba(36,103,214,.4)!important}
+.topbar .btn,.topbar button.temabtn,#sair,.iconbtn{background:transparent!important;border:0!important;color:#2b2b2b!important;border-radius:50%!important}
+.iconbtn:hover,.topbar button.temabtn:hover{background:rgba(0,0,0,.09)!important}
+.bellN{background:var(--alta)!important;color:#fff!important;border:2px solid var(--yel)!important}
+.uav{border-radius:50%!important}
+.topbar .who,.topbar .who *{font-weight:500}
+/* menu lateral branco */
+.side{background:var(--surface)!important;border-right:0!important;box-shadow:1px 0 0 var(--line)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+.sidesec{color:var(--muted)!important;font-weight:600!important;font-size:.78rem!important;letter-spacing:0!important;text-transform:none!important}
+.side .snav,.side .sitem{border-radius:6px!important;border-left:3px solid transparent!important;padding-block:8px!important}
+.side .snav:hover,.side .sitem:hover{background:var(--sunken)!important}
+.side .snav[aria-current="true"],.side .sitem[aria-current="true"]{background:var(--accent-soft)!important;color:var(--accent)!important;font-weight:600!important;border-radius:6px!important;border-left-color:var(--accent)!important}
+.side .sitem[aria-current="true"]{background:color-mix(in srgb,var(--c) 12%,transparent)!important;color:var(--fg)!important;border-left-color:var(--c)!important}
+.side .snav svg{width:22px!important;height:22px!important;padding:0!important;background:none!important;border-radius:0!important;color:var(--muted)!important}
+.side .snav[aria-current="true"] svg{color:var(--accent)!important}
+.side .sitem .ico{background:color-mix(in srgb,var(--c) 15%,transparent)!important;border-radius:50%!important;width:28px!important;height:28px!important;border:0}
+.side .sitem .ico svg{color:var(--c)!important;width:16px!important;height:16px!important}
+/* cartões brancos com sombra curta */
+.box,.card,.wk,.wk2,.stat,.pcard,.w-hero,.hero,.wpn,.kpi,.gsres,.apanel{background:var(--surface)!important;border:0!important;border-radius:6px!important;box-shadow:0 1px 2px 0 rgba(0,0,0,.14)!important}
+:root[data-theme="dark"] .box,:root[data-theme="dark"] .card,:root[data-theme="dark"] .wk2,:root[data-theme="dark"] .w-hero,:root[data-theme="dark"] .hero,:root[data-theme="dark"] .wpn,:root[data-theme="dark"] .stat,:root[data-theme="dark"] .pcard{border:1px solid var(--line)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .box,:root:not([data-theme="light"]) .card,:root:not([data-theme="light"]) .wk2,:root:not([data-theme="light"]) .w-hero,:root:not([data-theme="light"]) .hero,:root:not([data-theme="light"]) .wpn,:root:not([data-theme="light"]) .stat,:root:not([data-theme="light"]) .pcard{border:1px solid var(--line)!important}}
+.hero,.w-hero,.wk2,.kpi,.wpn:not(.wpn2),.stat,.mg{border-left:0!important}
+.wk2 .wk-ic,.wk2-ic{border-radius:50%!important}
+.kpis .kpi{box-shadow:0 1px 2px 0 rgba(0,0,0,.14)!important;border:0!important}
+/* botões: azul de ação e botão suave */
+.btn,button.btn,input,select,textarea{border-radius:6px!important}
+.btn.primary,button.primary{background:var(--accent)!important;color:var(--accent-ink)!important;border:0!important;border-radius:6px!important;font-weight:600!important;letter-spacing:0!important;padding-inline:20px!important;text-transform:none!important;box-shadow:none!important}
+.btn.primary:hover,button.primary:hover{filter:brightness(1.1);transform:none}
+.btn.primary:active,button.primary:active{filter:brightness(.92)}
+.btn:not(.primary):not(.link){background:color-mix(in srgb,var(--accent) 13%,transparent)!important;border:0!important;color:var(--accent)!important;font-weight:600}
+.btn:not(.primary):not(.link):hover{background:color-mix(in srgb,var(--accent) 20%,transparent)!important}
+.btn.danger{color:var(--alta)!important;background:color-mix(in srgb,var(--alta) 12%,transparent)!important}
+.topbar .btn:not(.primary){background:transparent!important}
+input,select,textarea{background:var(--surface)!important;border:1px solid var(--line2)!important;color:var(--fg)!important}
+:root[data-theme="dark"] input,:root[data-theme="dark"] select,:root[data-theme="dark"] textarea{background:var(--sunken)!important}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) input,:root:not([data-theme="light"]) select,:root:not([data-theme="light"]) textarea{background:var(--sunken)!important}}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)!important;outline:0}
+.btn:focus-visible,button:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 55%,transparent);outline-offset:2px}
+input[type=search],.gs input,.topbar input{background:transparent!important;border:0!important;box-shadow:none!important}
+input[type=checkbox],input[type=radio]{accent-color:var(--accent)}
+.sw:checked{background:var(--min)!important}
+/* filtros e selos (parecem as etiquetas de desconto) */
+.chip{background:var(--surface)!important;border:1px solid var(--line2)!important;color:var(--fg)!important;border-radius:999px!important;padding:6px 14px!important;font-weight:500!important}
+.chip:hover{border-color:var(--accent)!important;color:var(--accent)!important}
+.chip[aria-pressed="true"]{background:var(--accent-soft)!important;border-color:var(--accent)!important;color:var(--accent)!important;font-weight:600!important}
+.cat,.gst,.cpill{border-radius:4px!important;font-weight:700!important}
+.addr{background:var(--sunken)!important;color:var(--fg)!important;border:0!important;border-radius:4px!important;font-family:var(--mono)!important;font-weight:600!important;font-size:.76rem!important;padding:2px 8px!important}
+.gsc{color:var(--accent)!important}
+/* avisos */
+#alertas .alerta{background:var(--surface)!important;border:0!important;border-left:5px solid var(--alta)!important;border-radius:6px!important;box-shadow:0 6px 20px rgba(0,0,0,.25)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+#alertas .alerta .aic{border-radius:50%!important}
+.toast{background:#333!important;color:#fff!important;border:0!important;border-radius:6px!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+.pop{background:var(--surface)!important;border:0!important;border-radius:6px!important;box-shadow:0 8px 28px rgba(0,0,0,.25)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+.pop-ic{border-radius:50%!important;background:var(--accent)!important;color:#fff!important}
+.pop-i.alta .pop-ic{background:var(--alta)!important}
+.dlgbox{border:0!important;border-radius:8px!important;box-shadow:0 20px 60px rgba(0,0,0,.4)!important}
+.empty{border:1px dashed var(--line2)!important;border-radius:6px!important}
+.migalhas{font-size:.8rem}.migalhas button{color:var(--accent)!important}
+.skip{background:var(--accent)!important;color:#fff!important}
+table th{text-transform:none!important;letter-spacing:0!important;font-size:.8rem!important;font-weight:600!important;color:var(--muted)}
+table td,table th{border-bottom:1px solid var(--line)!important}
+nav#nav{background:var(--surface)!important;border-top:0!important;box-shadow:0 -1px 3px rgba(0,0,0,.15);-webkit-backdrop-filter:none;backdrop-filter:none}
+nav#nav button[aria-current="true"],nav#nav button.on{color:var(--accent)!important}
+/* tela de entrada: vitrine amarela */
+.a2-brand{background:linear-gradient(160deg,#ffe36b 0%,#ffd93b 55%,#f7c600 100%)!important;color:#2b2b2b!important}
+.a2-brand::before{background-image:none!important}
+.a2-glow{background:radial-gradient(closest-side,rgba(255,255,255,.55),transparent)!important}
+.a2-top{font-weight:800!important;font-size:1.4rem!important;letter-spacing:-.02em!important;text-transform:none;color:#2b2b2b!important}
+.a2-mid h2{font-weight:800!important;font-size:clamp(2.4rem,4.2vw,3.8rem)!important;line-height:1.04!important;color:#2b2b2b!important}
+.a2-mid h2 em{color:#2467d6!important;font-style:normal}
+.a2-mid p{color:#4a4a4a!important}
+.a2-scan,.a2-r{border:0!important;background:#fff!important;color:#2b2b2b!important;border-radius:8px!important;box-shadow:0 2px 10px rgba(0,0,0,.18)!important;-webkit-backdrop-filter:none;backdrop-filter:none}
+.a2-r *{color:#2b2b2b}
+.a2-scan i{border-color:#2467d6!important}
+.a2-laser{background:linear-gradient(90deg,transparent,#2467d6,transparent)!important;box-shadow:0 0 14px 3px rgba(36,103,214,.5)!important}
+.a2-r .ok{color:#0aa05b!important}
+.a2-feat li{border-top:2px solid rgba(0,0,0,.25)!important;color:#2b2b2b!important}
+.a2-feat li *{color:#2b2b2b!important}
+.authshell.a2 .apanel{border-radius:8px!important;border-top:0!important;padding:30px 26px}
+
+.a2-brand .a2-foot,.a2-brand .a2-foot *,.a2-brand small,.a2-brand small *{color:#4a4a4a!important}
 </style>
 </head>
 <body>
 <a class="skip" href="#view">Pular para o conteúdo</a>
-<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBgH" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2C2C2E"/><stop offset="1" stop-color="#0B0B0C"/></linearGradient><linearGradient id="lgTopH" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0A84FF"/><stop offset="1" stop-color="#64D2FF"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBgH)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTopH)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTopH)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTopH)"/></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><button type="button" id="gscam" class="gscam" title="Ler código de barras com a câmera" aria-label="Ler código de barras com a câmera"></button><div id="gsres" class="gsres" hidden></div></div><div class="bellw"><button type="button" id="bell" class="iconbtn" aria-label="Notificações" aria-haspopup="true" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span id="bellN" class="bellN" hidden></span></button><div id="bellpop" class="pop" role="menu" hidden></div></div><div class="who" id="who"></div><div class="umw"><button type="button" id="uBtn" class="ubtn" aria-label="Menu da conta" aria-haspopup="true" aria-expanded="false" hidden></button><div id="uPop" class="pop upop" role="menu" hidden></div></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
+<header class="topbar"><div class="topin"><div class="brand"><button id="menuBtn" class="menubtn" aria-label="Abrir menu" aria-controls="side" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button><button type="button" id="home" class="homebtn" title="Voltar à tela principal" aria-label="INVENTRA, voltar à tela principal"><span class="logo"><svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 4h22l12 12v26a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#2B2B2B"/><path d="M32 4v10a2 2 0 0 0 2 2h10z" fill="#fff" fill-opacity=".25"/><circle cx="17" cy="12" r="2.6" fill="#FFD93B"/><g fill="#FFD93B"><rect x="14" y="22" width="3" height="18" rx=".6"/><rect x="19.5" y="22" width="6" height="18" rx=".6"/><rect x="28" y="22" width="2.5" height="18" rx=".6"/><rect x="32.5" y="22" width="3.5" height="18" rx=".6"/></g></svg></span><h1>INVENTRA</h1></button></div><div class="hdr"><div class="gs" id="gs" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="gsq" type="search" placeholder="Buscar peça por código ou nome  ( / )" autocomplete="off" aria-label="Buscar peça"><button type="button" id="gscam" class="gscam" title="Ler código de barras com a câmera" aria-label="Ler código de barras com a câmera"></button><div id="gsres" class="gsres" hidden></div></div><div class="bellw"><button type="button" id="bell" class="iconbtn" aria-label="Notificações" aria-haspopup="true" aria-expanded="false" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg><span id="bellN" class="bellN" hidden></span></button><div id="bellpop" class="pop" role="menu" hidden></div></div><div class="who" id="who"></div><div class="umw"><button type="button" id="uBtn" class="ubtn" aria-label="Menu da conta" aria-haspopup="true" aria-expanded="false" hidden></button><div id="uPop" class="pop upop" role="menu" hidden></div></div><button id="temaBtn" class="temabtn" type="button" aria-label="Mudar para modo escuro" title="Modo claro / escuro"></button><button id="sair" hidden>Sair</button></div></div></header>
 <div id="hoverzone" class="hoverzone"></div><aside id="side" class="side" aria-label="Menu" hidden></aside><div id="sideBack" class="sideback" hidden></div>
 <div class="wrap">
   <div id="alertas"></div>
@@ -2133,7 +2253,7 @@ const IC={
  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>'};
 const lerLembrado=()=>{try{return localStorage.getItem('inv_email')||''}catch(e){return''}};
 const gravaLembrado=v=>{try{v?localStorage.setItem('inv_email',v):localStorage.removeItem('inv_email')}catch(e){}};
-let logoN=0;const LOGO_BASE=`<svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><defs><linearGradient id="lgBg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2C2C2E"/><stop offset="1" stop-color="#0B0B0C"/></linearGradient><linearGradient id="lgTop" x1="8" y1="40" x2="40" y2="8" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#0A84FF"/><stop offset="1" stop-color="#64D2FF"/></linearGradient></defs><rect width="48" height="48" rx="12" fill="url(#lgBg)"/><path d="M12.5 20v-5a2.5 2.5 0 0 1 2.5-2.5h5M28 12.5h5a2.5 2.5 0 0 1 2.5 2.5v5M35.5 28v5a2.5 2.5 0 0 1-2.5 2.5h-5M20 35.5h-5a2.5 2.5 0 0 1-2.5-2.5v-5" fill="none" stroke="url(#lgTop)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="17.8" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTop)"/><rect x="22" y="18" width="4" height="12" rx="1.6" fill="url(#lgTop)"/><rect x="27.6" y="18" width="2.6" height="12" rx="1.3" fill="url(#lgTop)"/></svg>`;
+let logoN=0;const LOGO_BASE=`<svg class="lg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" aria-hidden="true"><path d="M10 4h22l12 12v26a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#2B2B2B"/><path d="M32 4v10a2 2 0 0 0 2 2h10z" fill="#fff" fill-opacity=".25"/><circle cx="17" cy="12" r="2.6" fill="#FFD93B"/><g fill="#FFD93B"><rect x="14" y="22" width="3" height="18" rx=".6"/><rect x="19.5" y="22" width="6" height="18" rx=".6"/><rect x="28" y="22" width="2.5" height="18" rx=".6"/><rect x="32.5" y="22" width="3.5" height="18" rx=".6"/></g></svg>`;
 const logoSVG=()=>{const k='lg'+(++logoN);return LOGO_BASE.replace(/lgBg/g,k+'b').replace(/lgTop/g,k+'t')};
 const IC_RD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg>';
 const rodapeHTML=()=>`<span class="rd-logo">${logoSVG()}</span><span>INVENTRA</span><span class="rd-sep">·</span><span>Criado por <b>Lucas Carvalho</b></span><span class="rd-sep">·</span><span>© ${new Date().getFullYear()}</span>`;
