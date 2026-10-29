@@ -1472,6 +1472,10 @@ nav#nav button[aria-current="true"]{color:var(--accent)!important}
 #printArea table.pdft2 th{background:#e8e8e8!important;color:#000!important;text-align:left;font-size:9pt!important;font-weight:700!important;border:1px solid #000!important;padding:5px 6px;text-transform:none!important}
 #printArea table.pdft2 td{color:#000!important;font-size:9pt;border:1px solid #777!important;padding:4px 6px;vertical-align:top}
 #printArea table.pdft2 thead{display:table-header-group}#printArea table.pdft2 tr{break-inside:avoid}
+
+table.ficha th,table.ficha td{border:1px solid #000!important}
+table.ficha td.vazio{border-left:0!important;border-right:0!important}
+table.cbaiano th,table.cbaiano td{border:1px solid #000!important}
 </style>
 </head>
 <body>
@@ -2861,7 +2865,7 @@ function minFormHTML(){const d=draft;const tot=(d.custo!==''&&d.falta!=='')?brl(
   <h2>Novo registro</h2>
   <div class="fhead">${catBadge(d.cat)}<span class="muted">${esc(CATS[d.cat]||'')}</span><button type="button" class="btn link" data-abremenu="1" style="margin-left:auto">Trocar no menu</button></div>
   <div class="box stack mbox"><div><b>Relatório minucioso de falta de produtos</b><div class="muted small">Preencha e imprima para o chefe do setor assinar.</div></div>
-  <div class="field"><span class="lbl">Setor *</span>${d.setor?`<div class="row"><b style="font-size:1.1rem;color:var(--min)">${esc(d.setor)}</b><button type="button" class="btn sm" data-abremenu="1">Trocar setor</button></div>`:`<button type="button" class="btn" data-abremenu="1" style="border-style:dashed">☰ Escolher o setor no menu</button>`}</div>
+  <div class="field"><span class="lbl">Setor *</span><div class="setgrid">${SETORES.map(s=>`<button type="button" class="setcard" data-nset="${esc(s)}" aria-pressed="${d.setor===s}"><b>${esc(s)}</b><span class="ch">${chefeDe(s)?'Chefe: '+esc(chefeDe(s)):'Sem chefe definido'}</span></button>`).join('')}</div></div>
   <div class="field"><label class="lbl" for="mchefe">Chefe do setor</label><input id="mchefe" list="chefList" value="${esc(d.chefe)}" placeholder="${d.setor?'Defina o chefe na aba Equipe ou digite aqui':'Escolha o setor primeiro'}"><datalist id="chefList">${[...new Set([...Object.values(chefes),...Object.values(perfis).map(p=>p.nome)].filter(Boolean))].map(n=>`<option value="${esc(n)}">`).join('')}</datalist></div></div>
   <div class="two"><div class="field"><label class="lbl" for="msku">Produto (código) *</label><input id="msku" autocapitalize="characters" class="mono" value="${esc(d.sku)}"></div>
   <div class="field"><label class="lbl" for="mfab">Fabricante</label><input id="mfab" value="${esc(d.fab)}"></div></div>
