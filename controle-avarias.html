@@ -129,6 +129,12 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .eye{position:absolute;right:5px;width:28px;height:28px;border:0;background:none;color:var(--muted);border-radius:5px;display:grid;place-items:center;cursor:pointer}
 .eye:hover{background:var(--hover);color:var(--fg)}
 .chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--fg2);cursor:pointer;user-select:none}
+.lform form[hidden]{display:none}
+.lswap{font-size:13px;color:var(--muted);text-align:center}
+.lnk{border:0;background:none;padding:0;color:var(--g);font-weight:600;cursor:pointer;font-size:13px}
+.lnk:hover{text-decoration:underline}
+.lab .hint{font-weight:400;color:var(--muted);font-size:11.5px;margin-left:4px}
+.note.ok{background:var(--g-50);color:var(--g-deep);border-color:color-mix(in srgb,var(--g) 25%,transparent)}
 .lnote{font-size:12.5px;color:var(--muted);text-align:center;border-top:1px solid var(--line);padding-top:16px;margin-top:4px}
 .lmob{display:none;align-items:center;gap:10px;margin-bottom:8px;font-weight:600}
 .note{display:flex;gap:9px;align-items:flex-start;border-radius:var(--r);padding:9px 11px;font-size:13px;line-height:1.4;border:1px solid}
@@ -611,6 +617,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
       <div class="lmob"><span class="logo" data-logo></span>Controle de Avarias</div>
       <h1>Entrar</h1>
       <p class="sub">Use seu usuário e senha do INVENTRA.</p>
+      <div class="note ok" id="lok" hidden></div>
       <label class="lab">Usuário
         <span class="ifield" id="fu"><input class="inp" type="text" id="lusu" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Seu usuário"></span></label>
       <label class="lab">Senha
@@ -619,7 +626,22 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
       <label class="chk"><input type="checkbox" id="lembrar"> Lembrar meu usuário neste computador</label>
       <div class="note err" id="lerr" hidden></div>
       <button class="btn primary" type="submit" id="lbtn">Entrar</button>
+      <div class="lswap">Não tem conta? <button type="button" class="lnk" id="irCad">Criar cadastro</button></div>
       <div class="lnote">Esqueceu a senha? Fale com o administrador do INVENTRA.</div>
+    </form>
+    <form id="fcad" novalidate hidden>
+      <div class="lmob"><span class="logo" data-logo></span>INVENTRA CONTROL</div>
+      <h1>Criar cadastro</h1>
+      <p class="sub">Depois de criar, o administrador do INVENTRA libera seu acesso.</p>
+      <label class="lab">Usuário
+        <span class="ifield" id="cfu"><input class="inp" type="text" id="cusu" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Ex.: Lucas Carvalho"></span></label>
+      <label class="lab"><span>Senha <span class="hint">mín. 8 caracteres, letras e números</span></span>
+        <span class="ifield" id="cfs"><input class="inp" type="password" id="csenha" autocomplete="new-password"></span></label>
+      <label class="lab">Repita a senha
+        <span class="ifield" id="cfs2"><input class="inp" type="password" id="csenha2" autocomplete="new-password"></span></label>
+      <div class="note err" id="cerr" hidden></div>
+      <button class="btn primary" type="submit" id="cbtn">Criar cadastro</button>
+      <div class="lswap">Já tem conta? <button type="button" class="lnk" id="irLogin">Entrar</button></div>
     </form>
   </div>
 </div>
@@ -755,7 +777,7 @@ const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
 
 /* ícones fixos */
 document.querySelectorAll('[data-logo]').forEach(e=>e.innerHTML=I.logo);
-$('fu').insertAdjacentHTML('afterbegin',I.user);$('fs').insertAdjacentHTML('afterbegin',I.lock);
+$('fu').insertAdjacentHTML('afterbegin',I.user);$('fs').insertAdjacentHTML('afterbegin',I.lock);$('cfu').insertAdjacentHTML('afterbegin',I.user);$('cfs').insertAdjacentHTML('afterbegin',I.lock);$('cfs2').insertAdjacentHTML('afterbegin',I.lock);
 $('olho').innerHTML=I.eye;$('btnSair').innerHTML=I.sair;$('atIc').outerHTML=I.refresh;
 function pintaTema(){const dark=(document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';
   $('temaIc').innerHTML=dark?I.sun:I.moon;$('temaTx').textContent=dark?'Tema claro':'Tema escuro';
@@ -772,8 +794,8 @@ async function iniciar(){
 }
 function mostraLogin(){
   eu=null;regs=[];selec.clear();if(canal){sb.removeChannel(canal);canal=null}
-  tela('tlogin');const u=ls.get('usuario');$('lembrar').checked=!!u;$('lusu').value=u||'';$('lsenha').value='';
-  (u?$('lsenha'):$('lusu')).focus();
+  tela('tlogin');const u=cadUsu||ls.get('usuario');$('lembrar').checked=!!u;$('lusu').value=u||'';$('lsenha').value='';
+  modoAuth('login');
 }
 $('olho').onclick=()=>{const s=$('lsenha'),v=s.type==='password';s.type=v?'text':'password';$('olho').innerHTML=v?I.eyeOff:I.eye;$('olho').setAttribute('aria-label',v?'Esconder senha':'Mostrar senha')};
 $('flogin').addEventListener('submit',async e=>{
@@ -787,9 +809,43 @@ $('flogin').addEventListener('submit',async e=>{
     let email=usu;
     if(!usu.includes('@')){const r=await sb.rpc('email_do_usuario',{u:usu});if(r.error)throw r.error;if(!r.data)throw{message:'Invalid login'};email=r.data}
     const {data,error}=await sb.auth.signInWithPassword({email,password:senha});if(error)throw error;
-    falhas=0;ls.set('usuario',$('lembrar').checked?usu:null);$('lsenha').value='';
+    falhas=0;msgLogin='';cadUsu='';ls.set('usuario',$('lembrar').checked?usu:null);$('lsenha').value='';
     await entrouComo(data.user.id);
   }catch(err){falhas++;if(falhas>=5)bloq=Date.now()+Math.min(300,30*2**(falhas-5))*1000;mostra(erroMsg(err))}
+  ocupado(bt,false);
+});
+
+/* ===== Cadastro: mesmo fluxo do INVENTRA (usuário sem e-mail, admin libera) ===== */
+const senhaFraca=(s,u)=>{const x=s.toLowerCase();return /^(.)\1+$/.test(s)||['12345678','123456789','1234567890','87654321','qwertyui','qwerty123','password','senha123','senha1234','abc12345','11111111','inventra','inventra123'].includes(x)||(u&&x===String(u).toLowerCase())};
+let msgLogin='',cadUsu='';
+function modoAuth(m){$('flogin').hidden=m!=='login';$('fcad').hidden=m!=='cad';$('lerr').hidden=true;$('cerr').hidden=true;
+  $('lok').hidden=!msgLogin;if(msgLogin)$('lok').innerHTML=I.check+'<span>'+esc(msgLogin)+'</span>';
+  if(m==='cad'){$('cusu').focus();carregaGalpoes()}else{($('lusu').value?$('lsenha'):$('lusu')).focus()}}
+$('irCad').onclick=()=>{msgLogin='';modoAuth('cad')};
+$('irLogin').onclick=()=>modoAuth('login');
+async function carregaGalpoes(){try{const r=await sb.rpc('lista_galpoes');if(r&&r.data&&r.data.length>1&&!$('cgal')){
+  const l=document.createElement('label');l.className='lab';l.innerHTML='Galpão<select class="inp" id="cgal">'+r.data.map(g=>`<option value="${esc(g.id)}">${esc(g.nome)}</option>`).join('')+'</select>';
+  $('fcad').insertBefore(l,$('fcad').querySelector('.lab'))}}catch(e){}}
+$('fcad').addEventListener('submit',async e=>{
+  e.preventDefault();const er=$('cerr'),bt=$('cbtn');er.hidden=true;
+  const mostra=m=>{er.innerHTML=I.alert+'<span>'+esc(m)+'</span>';er.hidden=false};
+  const usu=$('cusu').value.trim().replace(/\s+/g,' '),s=$('csenha').value,s2=$('csenha2').value;
+  const m=usu.length<3?'Escolha um usuário com pelo menos 3 letras.':usu.includes('@')?'O usuário não pode ter @.':s.length<8?'A senha precisa ter pelo menos 8 caracteres.':senhaFraca(s,usu)?'Essa senha é muito fácil de adivinhar. Misture letras e números.':s!==s2?'As senhas não são iguais.':'';
+  if(m)return mostra(m);
+  ocupado(bt,true);
+  try{
+    const ex=await sb.rpc('email_do_usuario',{u:usu});
+    if(ex.error)throw{message:'O banco precisa de uma atualização (login por usuário). Peça ao administrador para rodar o SQL novo.'};
+    if(ex.data)throw{message:'Esse usuário já existe. Escolha outro.'};
+    const en=await sb.rpc('email_novo_usuario',{u:usu});
+    if(en.error||!en.data)throw{message:'O banco precisa de uma atualização (cadastro sem e-mail). Peça ao administrador para rodar o SQL novo.'};
+    const {data,error}=await sb.auth.signUp({email:en.data,password:s,options:{data:{nome:usu,usuario:usu,...($('cgal')?{galpao:$('cgal').value}:{})}}});
+    if(error)throw error;
+    msgLogin=`Cadastro criado. Peça ao administrador para liberar seu acesso e depois entre com o usuário ${usu}.`;cadUsu=usu;
+    if(data&&data.session){try{await sb.auth.signOut()}catch(_){}}
+    ['cusu','csenha','csenha2'].forEach(id=>$(id).value='');
+    tela('tlogin');$('lusu').value=usu;$('lsenha').value='';modoAuth('login');
+  }catch(err){mostra(erroMsg(err))}
   ocupado(bt,false);
 });
 async function sair(){try{await sb.auth.signOut()}catch(e){}mostraLogin()}
