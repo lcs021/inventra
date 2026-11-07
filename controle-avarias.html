@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Controle de Avarias</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='5' fill='%23e11d48'/%3E%3Cpath d='M12 5 4.5 18h15z' fill='none' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M12 10v3.5M12 15.8v.2' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700;800&family=Lato:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:oklch(96% .012 90);--surface:oklch(99% .004 90);--sunken:oklch(93% .012 90);
+  --line:oklch(25% .01 95/.16);--line2:oklch(25% .01 95/.3);
+  --fg:oklch(20% .01 95);--muted:oklch(46% .01 95);
+  --av:#e11d48;--verde:#38761d;--verde-soft:color-mix(in srgb,#38761d 12%,var(--surface));
+  --amar:#b45309;--amar-soft:color-mix(in srgb,#d97706 15%,var(--surface));
+  --err:#be123c;--err-soft:color-mix(in srgb,#e11d48 12%,var(--surface));
+  --font:"Albert Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--r:8px;--side:248px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:oklch(9% .006 95);--surface:oklch(13% .006 95);--sunken:oklch(17% .008 95);
+  --line:oklch(78% 0 0/.16);--line2:oklch(78% 0 0/.28);--fg:oklch(91% 0 0);--muted:oklch(72% 0 0);
+  --verde-soft:color-mix(in srgb,#38761d 30%,var(--surface));
+  --amar:#fcd34d;--amar-soft:color-mix(in srgb,#d97706 25%,var(--surface));
+  --err:#fb7185;--err-soft:color-mix(in srgb,#e11d48 22%,var(--surface));
+}}
+:root[data-theme="dark"]{
+  --bg:oklch(9% .006 95);--surface:oklch(13% .006 95);--sunken:oklch(17% .008 95);
+  --line:oklch(78% 0 0/.16);--line2:oklch(78% 0 0/.28);--fg:oklch(91% 0 0);--muted:oklch(72% 0 0);
+  --verde-soft:color-mix(in srgb,#38761d 30%,var(--surface));
+  --amar:#fcd34d;--amar-soft:color-mix(in srgb,#d97706 25%,var(--surface));
+  --err:#fb7185;--err-soft:color-mix(in srgb,#e11d48 22%,var(--surface));
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.4}
+button,input,select{font:inherit;color:inherit}
+[hidden]{display:none!important}
+svg.i{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.logo{width:38px;height:38px;border-radius:9px;background:var(--av);display:grid;place-items:center;flex:none;color:#fff}
+.logo svg{width:22px;height:22px}
+
+/* ---------- login ---------- */
+#tlogin{min-height:100%;display:grid;place-items:center;padding:24px 16px}
+.lcard{display:grid;grid-template-columns:1fr 1fr;width:min(860px,100%);background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px oklch(20% .01 95/.12)}
+.lside{background:#000;color:#fff;padding:36px 32px;display:flex;flex-direction:column;gap:22px;position:relative;overflow:hidden}
+.lside::after{content:"";position:absolute;right:-60px;bottom:-60px;width:220px;height:220px;border:28px solid #38761d;border-radius:50%;opacity:.55}
+.lside h1{margin:0;font-size:1.9rem;font-weight:800;line-height:1.05;letter-spacing:-.01em}
+.lside p{margin:0;color:#bbb;max-width:30ch}
+.lside ul{list-style:none;margin:auto 0 0;padding:0;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.lside li{display:flex;gap:10px;align-items:center;font-size:.9rem;color:#ddd}
+.lside li b{width:24px;height:24px;border-radius:6px;background:#1c1c1c;display:grid;place-items:center;color:#4ade80;font-size:.8rem}
+.lform{padding:36px 32px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+.lform h2{margin:0;font-size:1.4rem;font-weight:800}
+.campo{display:flex;flex-direction:column;gap:5px;font-size:.82rem;font-weight:650;color:var(--muted)}
+.inp{position:relative}
+.inp svg.i{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.inp input{padding-left:38px!important}
+.olho{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:none;color:var(--muted);cursor:pointer;padding:7px;border-radius:5px;display:grid}
+.olho:hover{background:var(--sunken)}
+.check{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:600;color:var(--fg)}
+.check input{width:17px;height:17px;accent-color:var(--verde)}
+.go{min-height:44px;font-size:1rem}
+@media (max-width:720px){.lcard{grid-template-columns:1fr}.lside{padding:24px}.lside ul{display:none}.lside::after{display:none}}
+
+/* ---------- casca do sistema ---------- */
+#tapp{display:grid;grid-template-columns:var(--side) 1fr;min-height:100%}
+.side{background:#000;color:#ddd;display:flex;flex-direction:column;padding:16px 12px;gap:4px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 18px;color:#fff}
+.brand b{display:block;font-weight:800;font-size:1rem;line-height:1.1}
+.brand small{color:#999;font-size:.75rem}
+.nav{display:flex;align-items:center;gap:10px;border:0;background:none;color:#ccc;padding:10px 12px;border-radius:7px;cursor:pointer;text-align:left;font-weight:600;width:100%}
+.nav:hover{background:#151515;color:#fff}
+.nav[aria-current="page"]{background:#38761d;color:#fff}
+.nav .n{margin-left:auto;background:#e11d48;color:#fff;font-size:.72rem;font-weight:800;border-radius:999px;padding:1px 7px}
+.side .sp{flex:1}
+.eu{display:flex;align-items:center;gap:10px;padding:10px 8px;border-top:1px solid #222;margin-top:6px}
+.av{width:34px;height:34px;border-radius:50%;background:#38761d;color:#fff;display:grid;place-items:center;font-weight:800;font-size:.85rem;flex:none}
+.eu .tx{min-width:0;flex:1}
+.eu b{display:block;color:#fff;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.eu small{color:#999;font-size:.74rem}
+.ibtn{border:0;background:none;color:#aaa;cursor:pointer;padding:7px;border-radius:6px;display:grid}
+.ibtn:hover{background:#1a1a1a;color:#fff}
+.main{min-width:0;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:10px;padding:14px 22px;border-bottom:1px solid var(--line);background:var(--surface);position:sticky;top:0;z-index:5}
+.bar h2{margin:0;font-size:1.2rem;font-weight:800}
+.bar .sp{flex:1}
+.vivo{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:var(--muted);font-weight:600}
+.vivo i{width:8px;height:8px;border-radius:50%;background:#999}
+.vivo.on i{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.2)}
+.conteudo{padding:20px 22px 40px;max-width:1320px;width:100%}
+.mtab{display:none}
+@media (max-width:860px){
+  #tapp{grid-template-columns:1fr}
+  .side{display:none}
+  .conteudo{padding:16px 14px 90px}
+  .bar{padding:12px 14px}
+  .mtab{display:flex;position:fixed;left:0;right:0;bottom:0;background:#000;z-index:20;padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+  .mtab button{flex:1;border:0;background:none;color:#aaa;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:.7rem;font-weight:650;padding:6px 2px;border-radius:7px;cursor:pointer}
+  .mtab button[aria-current="page"]{color:#fff;background:#38761d}
+}
+
+/* ---------- componentes ---------- */
+.box{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.box h3{margin:0 0 12px;font-size:.98rem;font-weight:800;display:flex;align-items:center;gap:8px}
+.box h3 .sp{flex:1}
+input[type=text],input[type=password],input[type=date],input[type=search],select{background:var(--surface);border:1px solid var(--line2);border-radius:6px;padding:8px 10px;min-height:40px;width:100%}
+input:focus,select:focus{outline:2px solid var(--verde);outline-offset:-1px;border-color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line2);background:var(--surface);border-radius:6px;padding:8px 14px;min-height:38px;font-weight:650;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--sunken)}
+.btn.primary{background:var(--verde);border-color:var(--verde);color:#fff}
+.btn.primary:hover{filter:brightness(1.1);background:var(--verde)}
+.btn.ramon{background:var(--av);border-color:var(--av);color:#fff}
+.btn.ramon:hover{filter:brightness(1.08);background:var(--av)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.sm{min-height:32px;padding:5px 10px;font-size:.85rem}
+.btn.link{border:0;background:none;color:var(--verde);padding:4px 6px;min-height:0}
+.muted{color:var(--muted)}.small{font-size:.82rem}
+.aviso{background:var(--amar-soft);color:var(--amar);border-radius:6px;padding:10px 12px;font-size:.88rem;font-weight:600;margin-bottom:14px}
+.erro{background:var(--err-soft);color:var(--err);border-radius:6px;padding:10px 12px;font-size:.88rem;font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c,#999);border-radius:var(--r);padding:12px 14px;cursor:pointer;text-align:left}
+.card:hover{background:var(--sunken)}
+.card b{display:block;font-size:1.8rem;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.card span{color:var(--muted);font-size:.82rem;font-weight:600}
+.g2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px}.g2>*{min-width:0}
+@media (max-width:1050px){.cards{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:1fr}}
+@media (max-width:560px){.cards{grid-template-columns:repeat(2,1fr)}.barras{gap:3px}.barras .b small{font-size:0}.barras .b:nth-child(odd) small{font-size:.6rem}}
+.barras{display:flex;align-items:flex-end;gap:5px;height:150px;padding-top:18px}
+.barras .b{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.barras .b i{width:100%;max-width:30px;background:var(--av);border-radius:4px 4px 0 0;min-height:2px;position:relative}
+.barras .b i em{position:absolute;top:-17px;left:50%;transform:translateX(-50%);font-style:normal;font-size:.72rem;font-weight:700;color:var(--fg)}
+.barras .b small{font-size:.66rem;color:var(--muted);white-space:nowrap}
+.lst{display:flex;flex-direction:column}
+.lst .it{display:flex;gap:10px;align-items:center;padding:9px 2px;border-top:1px solid var(--line)}
+.lst .it:first-child{border-top:0}
+.lst .it .rf{font-weight:800;font-variant-numeric:tabular-nums;min-width:44px}
+.lst .it .tx{flex:1;min-width:0}
+.lst .it .tx div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:0 0 10px}
+.tools input[type=search]{flex:1;min-width:200px}
+.tools select{width:auto}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:7px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:var(--surface);padding:7px 12px;font-weight:650;font-size:.85rem;cursor:pointer;border-left:1px solid var(--line)}
+.seg button:first-child{border-left:0}
+.seg button[aria-pressed="true"]{background:var(--verde);color:#fff}
+/* tabela no visual do Controle de Avaria */
+.tw{overflow-x:auto;border-radius:var(--r);border:1px solid #000}
+table.ctrl{border-collapse:collapse;width:100%;min-width:980px;font-family:Lato,"Albert Sans",Arial,sans-serif;background:#fff;color:#000}
+table.ctrl th,table.ctrl td{border:1px solid #000;text-align:center;padding:2px 5px;height:40px;font-size:13px;color:#000;background:#fff;vertical-align:middle}
+table.ctrl th.t1{background:#000;color:#fff;font-size:20px;font-weight:700;height:36px;border-color:#000}
+table.ctrl th.t2{background:#000;color:#fff;font-size:16px;font-weight:700;height:24px;border-color:#000}
+table.ctrl tr.hd th{background:#38761d;color:#fff;font-size:13px;font-weight:700;line-height:1.1;height:42px}
+table.ctrl td.rf{font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
+table.ctrl td.ds{text-align:left}
+table.ctrl td.sc,table.ctrl th.sc{width:40px;padding:0}
+table.ctrl td.sc input,table.ctrl th.sc input{width:18px;height:18px;accent-color:#38761d;cursor:pointer}
+table.ctrl input[type=date]{border:0;background:transparent;color:#000;min-height:32px;padding:2px;font-size:12.5px;text-align:center;width:100%}
+table.ctrl input[type=date]:focus{outline:2px solid #38761d}
+table.ctrl input[type=date]:disabled{opacity:1}
+table.ctrl tbody tr:hover td{background:#f4f8f1}
+table.ctrl tr.sel td{background:#eaf3e4}
+table.ctrl tr.novo td{animation:pisca 2.4s ease-out}
+@keyframes pisca{0%,30%{background:#fff3b0}100%{background:#fff}}
+.tp{display:inline-block;font-size:11px;font-weight:700;padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:1px}
+.tp.ml{background:#fef9c3;color:#854d0e}.tp.sh{background:#ffedd5;color:#c2410c}
+.meta{font-size:11.5px;color:#666}
+.st{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.st.s0{background:#f1f1f1;color:#555}.st.s1{background:#ffe4e6;color:#be123c}.st.s2{background:#fef3c7;color:#92400e}.st.s3{background:#dbeafe;color:#1e40af}.st.s4{background:#dcfce7;color:#166534}
+.vazio{padding:28px;text-align:center;color:var(--muted)}
+table.ctrl .vazio{color:#666}
+/* entregas por dia */
+.dia{margin-bottom:14px;padding:0;overflow:hidden}
+.dia>header{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.dia>header .dt{font-weight:800;font-size:1.05rem}
+.dia>header .qt{background:var(--err-soft);color:var(--err);border-radius:999px;padding:2px 10px;font-size:.8rem;font-weight:800}
+.dia>header .sp{flex:1}
+.dia table{width:100%;border-collapse:collapse;font-size:.9rem}
+.dia td,.dia th{padding:8px 16px;border-top:1px solid var(--line);text-align:left}
+.dia th{font-size:.75rem;color:var(--muted);font-weight:700;border-top:0;background:var(--sunken)}
+.dia td.r{font-weight:800;font-variant-numeric:tabular-nums;width:70px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:8px;font-weight:600;font-size:.9rem;opacity:0;pointer-events:none;transition:opacity .2s;z-index:50;max-width:calc(100% - 32px)}
+.toast.on{opacity:1}
+@media (max-width:860px){.toast{bottom:84px}}
+.rod{margin-top:26px;text-align:center;color:var(--muted);font-size:.8rem}
+#folha{display:none}
+#tcarrega,#tfalha{max-width:480px;margin:80px auto;text-align:center}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  body{background:#fff}
+  body>*:not(#folha),.toast{display:none!important}
+  #folha{display:block}
+  #folha .pg{page-break-after:always}
+  #folha .pg:last-child{page-break-after:auto}
+  #folha table.ctrl{min-width:0;table-layout:fixed;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #folha table.ctrl td{height:36px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOGIN ============ -->
+<div id="tlogin" hidden>
+  <div class="lcard">
+    <div class="lside">
+      <div class="logo"><svg viewBox="0 0 24 24" class="i"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/></svg></div>
+      <div><h1>Controle de<br>Avarias</h1><p style="margin-top:10px">Cada ref. do relatório de avaria, da entrega ao Ramon até o retorno.</p></div>
+      <ul>
+        <li><b>✓</b>Refs. entram sozinhas do INVENTRA</li>
+        <li><b>✓</b>Saiba o que já foi entregue ao Ramon</li>
+        <li><b>✓</b>Folha oficial pronta para assinar</li>
+      </ul>
+    </div>
+    <form class="lform" id="flogin" novalidate>
+      <div><h2>Entrar no sistema</h2><div class="muted small" style="margin-top:4px">Use o mesmo usuário e senha do INVENTRA.</div></div>
+      <label class="campo">Usuário
+        <span class="inp"><svg viewBox="0 0 24 24" class="i"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        <input type="text" id="lusu" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Ex.: Lucas Carvalho"></span></label>
+      <label class="campo">Senha
+        <span class="inp"><svg viewBox="0 0 24 24" class="i"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        <input type="password" id="lsenha" autocomplete="current-password" style="padding-right:40px">
+        <button type="button" class="olho" id="olho" aria-label="Mostrar senha"><svg viewBox="0 0 24 24" class="i"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span></label>
+      <label class="check"><input type="checkbox" id="lembrar"> Lembrar meu usuário</label>
+      <div class="erro" id="lerr" hidden></div>
+      <button class="btn primary go" type="submit" id="lbtn">Entrar</button>
+      <div class="muted small" style="text-align:center">Esqueceu a senha? Peça ao administrador do INVENTRA.</div>
+    </form>
+  </div>
+</div>
+
+<div class="box muted" id="tcarrega">Conectando…</div>
+<div id="tfalha" hidden><div class="erro" id="tfalhaMsg"></div><button class="btn sm" style="margin-top:12px" onclick="sair()">Voltar ao login</button></div>
+
+<!-- ============ SISTEMA ============ -->
+<div id="tapp" hidden>
+  <aside class="side">
+    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" class="i"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/></svg></div><div><b>Controle de Avarias</b><small>ligado ao INVENTRA</small></div></div>
+    <div id="navs"></div>
+    <div class="sp"></div>
+    <div class="eu"><span class="av" id="euAv"></span><div class="tx"><b id="euNome"></b><small id="euCargo"></small></div>
+      <button class="ibtn" id="tema" title="Trocar tema" aria-label="Trocar tema"><svg viewBox="0 0 24 24" class="i"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg></button>
+      <button class="ibtn" onclick="sair()" title="Sair" aria-label="Sair"><svg viewBox="0 0 24 24" class="i"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l-5-5 5-5M5 12h12"/></svg></button></div>
+  </aside>
+  <main class="main">
+    <div class="bar"><h2 id="titulo"></h2><div class="sp"></div>
+      <span class="vivo" id="vivo" title="Novos relatórios aparecem sozinhos"><i></i><span>Conectando</span></span>
+      <button class="btn sm" id="atualizar" title="Atualizar"><svg viewBox="0 0 24 24" class="i"><path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/></svg><span>Atualizar</span></button></div>
+    <div class="conteudo" id="pagina"></div>
+  </main>
+  <nav class="mtab" id="mtab"></nav>
+</div>
+
+<div id="folha"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script>
+/* Mesmo banco do INVENTRA (lcs021/inventario · config.js) */
+const CFG=window.INV_CONFIG||{url:"https://fyuqaitylsxlsixwhzww.supabase.co",key:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5dXFhaXR5bHN4bHNpeHdoend3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjk4NDMsImV4cCI6MjEwNzYwNTg0M30.gRQ3CIc8d3VXQlckLFoRNL-QPBqXcfdeZy12EaP19rc"};
+const LS='ctrl-av-';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ls={get:k=>{try{return localStorage.getItem(LS+k)}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(LS+k):localStorage.setItem(LS+k,v)}catch(e){}}};
+const iso=d=>{d=new Date(d);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
+const hoje=()=>iso(new Date());
+const dbr=s=>s?String(s).slice(0,10).split('-').reverse().join('/'):'';
+const DIAS=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
+const dExt=s=>{const d=new Date(s+'T12:00');const h=hoje(),o=iso(Date.now()-864e5);return (s===h?'Hoje · ':s===o?'Ontem · ':'')+dbr(s)+' ('+DIAS[d.getDay()]+')'};
+const ETAPAS=[['ent','Entregue ao Ramon'],['ivano','Data Ivano'],['envio','Data de envio'],['ret','Data de Retorno']];
+const SIT=[['Não entregue','s0','#9ca3af'],['Com o Ramon','s1','#e11d48'],['Com o Ivano','s2','#d97706'],['Enviado','s3','#2563eb'],['Retornou','s4','#16a34a']];
+const ic=p=>`<svg viewBox="0 0 24 24" class="i">${p}</svg>`;
+const PAGS=[
+  ['painel','Painel',ic('<rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/>')],
+  ['controle','Controle',ic('<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 10v10"/>')],
+  ['entregas','Entregas ao Ramon',ic('<path d="M3 7h11v10H3z"/><path d="M14 10h4l3 3v4h-7"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>')],
+];
+const erroMsg=e=>{const m=(e&&(e.message||e.error_description))||String(e||'');
+  if(/Invalid login/i.test(m))return'Usuário ou senha incorretos.';
+  if(/Failed to fetch|NetworkError|Load failed/i.test(m))return'Sem conexão com o banco. Verifique a internet.';
+  if(/row-level security|permission/i.test(m))return'Seu usuário não tem permissão para isso.';
+  if(/email_do_usuario|schema cache/i.test(m))return'O banco do INVENTRA precisa da atualização de login por usuário.';return m||'Erro desconhecido'};
+
+let sb=null,eu=null,podeEditar=false,regs=[],canal=null,pag=ls.get('pag')||'painel';
+let ui={filtro:'',busca:'',tipo:'',de:'',ate:''},selec=new Set(),novos=new Set(),falhas=0,bloq=0;
+
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2800)}
+function tela(n){['tlogin','tcarrega','tfalha','tapp'].forEach(id=>$(id).hidden=id!==n)}
+function falha(m){$('tfalhaMsg').textContent=m;tela('tfalha')}
+
+const ctrlDe=o=>(o.dados&&o.dados.ctrl)||{};
+const refDe=o=>parseInt(o.dados&&o.dados.ref,10);
+const tipoDe=o=>(o.dados&&o.dados.tipo)||'Avaria';
+const sit=o=>{const c=ctrlDe(o);return c.ret?4:c.envio?3:c.ivano?2:c.ent?1:0};
+const tpTag=t=>t==='Mercado Livre'?'<span class="tp ml">MLV</span>':t==='Shopee'?'<span class="tp sh">Shopee</span>':'';
+const iniciais=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(p=>p[0]).join('').toUpperCase();
+
+/* ================= LOGIN ================= */
+async function iniciar(){
+  const t=ls.get('tema');if(t)document.documentElement.dataset.theme=t;
+  if(!window.supabase){falha('Não consegui carregar o componente do banco (cdn.jsdelivr.net). Verifique a internet ou se a rede da empresa bloqueia esse site.');return}
+  sb=window.supabase.createClient(CFG.url,CFG.key);
+  sb.auth.onAuthStateChange(ev=>{if(ev==='SIGNED_OUT')mostraLogin()});
+  const {data:{session}}=await sb.auth.getSession();
+  if(session)await entrouComo(session.user.id);else mostraLogin();
+}
+function mostraLogin(){
+  eu=null;regs=[];selec.clear();if(canal){sb.removeChannel(canal);canal=null}
+  tela('tlogin');const u=ls.get('usuario');$('lembrar').checked=!!u;$('lusu').value=u||'';$('lsenha').value='';
+  (u?$('lsenha'):$('lusu')).focus();
+}
+$('olho').onclick=()=>{const s=$('lsenha'),v=s.type==='password';s.type=v?'text':'password';$('olho').setAttribute('aria-label',v?'Esconder senha':'Mostrar senha')};
+$('flogin').addEventListener('submit',async e=>{
+  e.preventDefault();const er=$('lerr'),bt=$('lbtn');er.hidden=true;
+  const usu=$('lusu').value.trim().replace(/\s+/g,' '),senha=$('lsenha').value;
+  const mostra=m=>{er.textContent=m;er.hidden=false};
+  if(!usu||!senha)return mostra('Preencha usuário e senha.');
+  if(Date.now()<bloq)return mostra(`Muitas tentativas. Aguarde ${Math.ceil((bloq-Date.now())/1000)} s.`);
+  bt.disabled=true;bt.textContent='Entrando…';
+  try{
+    let email=usu;
+    if(!usu.includes('@')){const r=await sb.rpc('email_do_usuario',{u:usu});if(r.error)throw r.error;if(!r.data)throw{message:'Invalid login'};email=r.data}
+    const {data,error}=await sb.auth.signInWithPassword({email,password:senha});if(error)throw error;
+    falhas=0;ls.set('usuario',$('lembrar').checked?usu:null);$('lsenha').value='';
+    await entrouComo(data.user.id);
+  }catch(err){falhas++;if(falhas>=5)bloq=Date.now()+Math.min(300,30*2**(falhas-5))*1000;mostra(erroMsg(err))}
+  bt.disabled=false;bt.textContent='Entrar';
+});
+async function sair(){try{await sb.auth.signOut()}catch(e){}mostraLogin()}
+
+async function entrouComo(uid){
+  tela('tcarrega');
+  const {data:p,error}=await sb.from('perfis').select('*').eq('id',uid).maybeSingle();
+  if(error)return falha(erroMsg(error));
+  if(!p||!(p.admin||p.aprovado))return falha('Seu acesso ainda não foi liberado no INVENTRA. Peça ao administrador.');
+  eu=p;
+  // mesma regra do INVENTRA: admin, Chefe de Inventário ou cargo com "Editar registros"
+  const cargo=['Chefe de Inventário','Visitante','Auxiliar de Inventário'].includes(p.cargo)?p.cargo:'Auxiliar de Inventário';
+  let perms=null;try{const cg=await sb.from('cargos').select('perms').eq('nome',cargo).maybeSingle();if(cg.data)perms=cg.data.perms||[]}catch(e){}
+  if(perms==null)perms=cargo==='Auxiliar de Inventário'?['garantia']:[];
+  podeEditar=!!(p.admin||cargo==='Chefe de Inventário'||perms.includes('garantia'));
+  $('euNome').textContent=p.nome||'';$('euAv').textContent=iniciais(p.nome);$('euCargo').textContent=p.admin?'Administrador':cargo;
+  const ok=await carregar();if(!ok)return;tela('tapp');ouvir();render();
+}
+
+/* ================= DADOS ================= */
+async function carregar(silencioso){
+  const todos=[];let de=0;const P=1000;
+  for(;;){const {data,error}=await sb.from('ocorrencias').select('id,sku,produto,dados,criado,autor').eq('categoria','Avaria').order('criado',{ascending:true}).range(de,de+P-1);
+    if(error){silencioso?toast(erroMsg(error)):falha(erroMsg(error));return false}
+    todos.push(...data);if(data.length<P)break;de+=P}
+  regs=todos.filter(o=>!isNaN(refDe(o)));return true;
+}
+function ouvir(){
+  if(canal)sb.removeChannel(canal);
+  canal=sb.channel('ctrl-avarias').on('postgres_changes',{event:'*',schema:'public',table:'ocorrencias'},pl=>{
+    const n=pl.new||{},v=pl.old||{};
+    if(pl.eventType==='DELETE'){if(regs.some(o=>o.id===v.id)){regs=regs.filter(o=>o.id!==v.id);render()}return}
+    if(n.categoria!=='Avaria'||isNaN(refDe(n)))return;
+    const i=regs.findIndex(o=>o.id===n.id),reg={id:n.id,sku:n.sku,produto:n.produto,dados:n.dados,criado:n.criado,autor:n.autor};
+    if(i>=0)regs[i]=reg;else{regs.push(reg);novos.add(n.id);toast(`Nova avaria: Ref. ${refDe(n)} · ${n.sku||''}`)}
+    render();
+  }).subscribe(st=>{const on=st==='SUBSCRIBED';$('vivo').classList.toggle('on',on);$('vivo').querySelector('span').textContent=on?'Ao vivo':'Sem tempo real'});
+}
+document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&eu&&!$('tapp').hidden){if(await carregar(true))render()}});
+$('atualizar').onclick=async()=>{if(await carregar(true)){render();toast('Lista atualizada')}};
+
+/* grava no mesmo campo do Controle de assinaturas do INVENTRA (dados.ctrl), lendo antes para não apagar nada */
+async function salvaCtrl(id,mud){
+  const {data,error}=await sb.from('ocorrencias').select('dados').eq('id',id).single();if(error)throw error;
+  const d=data.dados||{},c=d.ctrl||{},quando=new Date().toISOString();
+  const log=[...(c.log||[]),...Object.keys(mud).map(k=>({k,v:mud[k]||'',por:eu.nome||'',t:quando}))].slice(-20);
+  const dados={...d,ctrl:{...c,...mud,log}};
+  const r=await sb.from('ocorrencias').update({dados}).eq('id',id).select('id');if(r.error)throw r.error;
+  if(!r.data||!r.data.length)throw{message:'permission'};
+  const o=regs.find(x=>x.id===id);if(o)o.dados=dados;
+}
+
+/* ================= NAVEGAÇÃO ================= */
+function ir(p){pag=p;ls.set('pag',p);selec.clear();render();scrollTo(0,0)}
+function render(){
+  if(!eu)return;
+  const pend=regs.filter(o=>sit(o)===0).length;
+  const nav=(cls)=>PAGS.map(([k,t,i])=>`<button class="${cls}" data-pag="${k}" ${pag===k?'aria-current="page"':''}>${i}<span>${t}</span>${cls==='nav'&&k==='controle'&&pend?`<span class="n" title="Não entregues">${pend}</span>`:''}</button>`).join('');
+  $('navs').innerHTML=nav('nav');$('mtab').innerHTML=nav('');
+  document.querySelectorAll('[data-pag]').forEach(b=>b.onclick=()=>ir(b.dataset.pag));
+  $('titulo').textContent=(PAGS.find(p=>p[0]===pag)||PAGS[0])[1];
+  const P={painel:pgPainel,controle:pgControle,entregas:pgEntregas}[pag]||pgPainel;
+  P();novos.clear();
+}
+
+/* ================= PÁGINA: PAINEL ================= */
+function pgPainel(){
+  const cont=[0,0,0,0,0];regs.forEach(o=>cont[sit(o)]++);
+  const cards=[['', 'Total de refs.',regs.length,'#111'],['0','Não entregues',cont[0],SIT[0][2]],['1','Com o Ramon',cont[1],SIT[1][2]],['2','Com o Ivano / enviadas',cont[2]+cont[3],SIT[2][2]],['4','Retornaram',cont[4],SIT[4][2]]];
+  const dias=Array.from({length:14},(_,i)=>iso(Date.now()-(13-i)*864e5));
+  const porDia=dias.map(d=>regs.filter(o=>String(ctrlDe(o).ent||'').slice(0,10)===d).length),mx=Math.max(1,...porDia);
+  const naoEnt=regs.filter(o=>sit(o)===0).sort((a,b)=>refDe(a)-refDe(b));
+  const movs=regs.flatMap(o=>(ctrlDe(o).log||[]).map(l=>({...l,o}))).sort((a,b)=>b.t<a.t?-1:1).slice(0,8);
+  const nomeK={ent:'entregue ao Ramon',ivano:'com o Ivano',envio:'enviada',ret:'retornou'};
+  $('pagina').innerHTML=`
+  ${podeEditar?'':'<div class="aviso">Você pode ver tudo, mas não pode alterar datas. Peça ao administrador a permissão "Editar registros".</div>'}
+  <div class="cards">${cards.map(c=>`<button class="card" style="--c:${c[3]}" data-f="${c[0]}"><b>${c[2]}</b><span>${c[1]}</span></button>`).join('')}</div>
+  <div class="g2">
+    <div class="box"><h3>Entregas ao Ramon · últimos 14 dias<span class="sp"></span><button class="btn link sm" data-ir="entregas">Ver todas →</button></h3>
+      <div class="barras">${dias.map((d,i)=>`<div class="b" title="${dbr(d)}: ${porDia[i]}"><i style="height:${porDia[i]/mx*100}%">${porDia[i]?`<em>${porDia[i]}</em>`:''}</i><small>${d.slice(8)}/${d.slice(5,7)}</small></div>`).join('')}</div></div>
+    <div class="box"><h3>Ainda não entregues<span class="sp"></span><span class="muted small">${naoEnt.length}</span></h3>
+      <div class="lst">${naoEnt.length?naoEnt.slice(0,6).map(o=>`<div class="it"><span class="rf">${refDe(o)}</span><div class="tx"><div>${esc(o.produto||'Sem descrição')}${tpTag(tipoDe(o))}</div><div class="muted small">${esc(o.sku)} · relatório de ${dbr(o.criado)}</div></div></div>`).join(''):'<div class="vazio">Tudo entregue ao Ramon 👍</div>'}</div>
+      ${naoEnt.length?`<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap"><button class="btn sm" data-f="0">Ver todas</button>${podeEditar?`<button class="btn ramon sm" id="entTudo">Entregar ${naoEnt.length} ao Ramon hoje</button>`:''}</div>`:''}</div>
+  </div>
+  <div class="box" style="margin-top:14px"><h3>Últimas movimentações</h3>
+    <div class="lst">${movs.length?movs.map(m=>`<div class="it"><span class="rf">${refDe(m.o)}</span><div class="tx"><div>${m.v?`<b>${nomeK[m.k]||m.k}</b> em ${dbr(m.v)}`:`Data de <b>${(ETAPAS.find(e=>e[0]===m.k)||[0,m.k])[1]}</b> apagada`} · ${esc(m.o.produto||m.o.sku||'')}</div><div class="muted small">por ${esc(m.por||'alguém')} · ${new Date(m.t).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</div></div></div>`).join(''):'<div class="vazio">As alterações feitas por aqui aparecem nesta lista.</div>'}</div></div>
+  <div class="rod">Criado por Lucas Carvalho</div>`;
+  document.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{ui.filtro=b.dataset.f;ir('controle')});
+  document.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>ir(b.dataset.ir));
+  const et=$('entTudo');if(et)et.onclick=()=>entregar(naoEnt);
+}
+
+/* ================= PÁGINA: CONTROLE ================= */
+function visiveis(){
+  const q=ui.busca.trim().toLowerCase();
+  return regs.filter(o=>(ui.filtro===''||sit(o)===+ui.filtro)&&(!ui.tipo||tipoDe(o)===ui.tipo)&&(!q||[refDe(o),o.sku,o.produto].join(' ').toLowerCase().includes(q)))
+    .sort((a,b)=>refDe(a)-refDe(b));
+}
+function pgControle(){
+  const L=visiveis(),nSel=L.filter(o=>selec.has(o.id)).length;
+  const seg=[['','Todas'],...SIT.map((s,i)=>[String(i),s[0]])];
+  $('pagina').innerHTML=`
+  ${podeEditar?'':'<div class="aviso">Você pode ver tudo, mas não pode alterar datas. Peça ao administrador a permissão "Editar registros".</div>'}
+  <div class="tools"><div class="seg" role="group" aria-label="Situação">${seg.map(s=>`<button data-sf="${s[0]}" aria-pressed="${ui.filtro===s[0]}">${s[1]}</button>`).join('')}</div></div>
+  <div class="tools">
+    <input type="search" id="busca" placeholder="Buscar ref., código ou descrição…" aria-label="Buscar" value="${esc(ui.busca)}">
+    <select id="fTp" aria-label="Filtrar por tipo"><option value="">Todos os tipos</option>${['Avaria','Mercado Livre','Shopee'].map(t=>`<option value="${t}" ${ui.tipo===t?'selected':''}>${t==='Avaria'?'Avaria normal':t}</option>`).join('')}</select>
+    <button class="btn ramon" id="entregar" ${nSel&&podeEditar?'':'disabled'}>${nSel?`Entregar ${nSel} ao Ramon (hoje)`:'Entregar ao Ramon'}</button>
+    <button class="btn" id="imprimir">🖨 ${nSel?`Imprimir ${nSel}`:'Imprimir folha'}</button>
+    <button class="btn" id="excel">⬇ Excel</button>
+  </div>
+  <div class="small muted" style="margin-bottom:8px">${L.length} ${L.length===1?'ref.':'refs.'}${nSel?' · '+nSel+' selecionada'+(nSel>1?'s':''):''} · marque as linhas para entregar ou imprimir só elas</div>
+  <div class="tw"><table class="ctrl"><thead>
+    <tr><th colspan="9" class="t1">RELATÓRIO DE AVARIA&nbsp; CD</th></tr><tr><th colspan="9" class="t2">CONTROLE DE REF.</th></tr>
+    <tr class="hd"><th class="sc"><input type="checkbox" id="selTodos" aria-label="Selecionar todos" ${L.length&&nSel===L.length?'checked':''}></th>
+    <th style="width:60px">Ref.</th><th style="width:100px">Código</th><th>Descrição</th>${ETAPAS.map(e=>`<th style="width:108px">${e[1]}</th>`).join('')}<th style="width:104px">Situação</th></tr></thead>
+    <tbody>${L.length?L.map(o=>{const s=sit(o),c=ctrlDe(o),r=refDe(o);return`<tr class="${selec.has(o.id)?'sel':''} ${novos.has(o.id)?'novo':''}">
+      <td class="sc"><input type="checkbox" data-sel="${esc(o.id)}" ${selec.has(o.id)?'checked':''} aria-label="Selecionar ref. ${r}"></td>
+      <td class="rf">${r}</td><td>${esc(o.sku)}</td>
+      <td class="ds">${esc(o.produto||'Sem descrição')}${tpTag(tipoDe(o))}<div class="meta">Relatório de ${dbr(o.criado)}</div></td>
+      ${ETAPAS.map(e=>`<td><input type="date" data-id="${esc(o.id)}" data-k="${e[0]}" value="${esc(String(c[e[0]]||'').slice(0,10))}" aria-label="${e[1]} da ref. ${r}" ${podeEditar?'':'disabled'}></td>`).join('')}
+      <td><span class="st ${SIT[s][1]}">${SIT[s][0]}</span></td></tr>`}).join('')
+      :`<tr><td colspan="9" class="vazio">${regs.length?'Nada encontrado com esse filtro.':'Nenhum relatório de avaria no INVENTRA ainda.'}</td></tr>`}</tbody></table></div>
+  <div class="rod">As datas são as mesmas do Controle de assinaturas do INVENTRA.</div>`;
+  document.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{ui.filtro=b.dataset.sf;selec.clear();render()});
+  const bu=$('busca');bu.oninput=()=>{ui.busca=bu.value;const p=bu.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)};
+  $('fTp').onchange=e=>{ui.tipo=e.target.value;render()};
+  $('selTodos').onchange=e=>{L.forEach(o=>e.target.checked?selec.add(o.id):selec.delete(o.id));render()};
+  $('entregar').onclick=()=>entregar(L.filter(o=>selec.has(o.id)));
+  $('imprimir').onclick=()=>imprimir(nSel?L.filter(o=>selec.has(o.id)):L);
+  $('excel').onclick=()=>excel(L);
+  document.querySelectorAll('[data-sel]').forEach(i=>i.onchange=()=>{i.checked?selec.add(i.dataset.sel):selec.delete(i.dataset.sel);render()});
+  document.querySelectorAll('input[data-k]').forEach(i=>i.onchange=async()=>{const o=regs.find(x=>x.id===i.dataset.id);if(!o)return;i.disabled=true;
+    try{await salvaCtrl(o.id,{[i.dataset.k]:i.value||''});toast(`Ref. ${refDe(o)}: data salva`)}catch(err){toast(erroMsg(err))}render()});
+}
+
+/* ================= PÁGINA: ENTREGAS AO RAMON ================= */
+function pgEntregas(){
+  const ent=regs.filter(o=>ctrlDe(o).ent).filter(o=>{const d=String(ctrlDe(o).ent).slice(0,10);return(!ui.de||d>=ui.de)&&(!ui.ate||d<=ui.ate)});
+  const grupos={};ent.forEach(o=>{const d=String(ctrlDe(o).ent).slice(0,10);(grupos[d]=grupos[d]||[]).push(o)});
+  const datas=Object.keys(grupos).sort().reverse();
+  $('pagina').innerHTML=`
+  <div class="tools">
+    <label class="small muted" style="display:flex;gap:6px;align-items:center;font-weight:650">De <input type="date" id="eDe" value="${ui.de}" style="width:auto"></label>
+    <label class="small muted" style="display:flex;gap:6px;align-items:center;font-weight:650">Até <input type="date" id="eAte" value="${ui.ate}" style="width:auto"></label>
+    ${ui.de||ui.ate?'<button class="btn sm" id="eLimpa">Limpar</button>':''}
+    <span class="sp" style="flex:1"></span>
+    <span class="muted small"><b style="color:var(--fg)">${ent.length}</b> ${ent.length===1?'ref. entregue':'refs. entregues'} em ${datas.length} ${datas.length===1?'dia':'dias'}</span>
+  </div>
+  ${datas.length?datas.map(d=>{const L=grupos[d].sort((a,b)=>refDe(a)-refDe(b));return`<section class="box dia">
+    <header><span class="dt">${dExt(d)}</span><span class="qt">${L.length} ${L.length===1?'ref.':'refs.'}</span><span class="muted small">Refs. ${L.map(refDe).join(', ')}</span><span class="sp"></span>
+      <button class="btn sm" data-imp="${d}">🖨 Imprimir folha do dia</button></header>
+    <table><thead><tr><th>Ref.</th><th>Código</th><th>Descrição</th><th>Situação agora</th></tr></thead><tbody>
+    ${L.map(o=>{const s=sit(o);return`<tr><td class="r">${refDe(o)}</td><td>${esc(o.sku)}</td><td>${esc(o.produto||'Sem descrição')}${tpTag(tipoDe(o))}</td><td><span class="st ${SIT[s][1]}">${SIT[s][0]}</span></td></tr>`}).join('')}
+    </tbody></table></section>`}).join(''):`<div class="box vazio">${regs.some(o=>ctrlDe(o).ent)?'Nenhuma entrega nesse período.':'Nada foi entregue ao Ramon ainda. Marque as refs. no Controle e clique em "Entregar ao Ramon".'}</div>`}
+  <div class="rod">Criado por Lucas Carvalho</div>`;
+  $('eDe').onchange=e=>{ui.de=e.target.value;render()};$('eAte').onchange=e=>{ui.ate=e.target.value;render()};
+  const lp=$('eLimpa');if(lp)lp.onclick=()=>{ui.de=ui.ate='';render()};
+  document.querySelectorAll('[data-imp]').forEach(b=>b.onclick=()=>imprimir(grupos[b.dataset.imp].sort((a,b)=>refDe(a)-refDe(b))));
+}
+
+/* ================= AÇÕES ================= */
+async function entregar(L){
+  if(!L.length||!podeEditar)return;
+  const ja=L.filter(o=>ctrlDe(o).ent);let alvo=L;
+  if(ja.length&&!confirm(`${ja.length} dessas já têm data de entrega. Trocar para hoje também?\n\nOK = trocar todas · Cancelar = só as que estão sem data`))alvo=L.filter(o=>!ctrlDe(o).ent);
+  else if(!ja.length&&!confirm(`Marcar ${L.length} ${L.length===1?'ref.':'refs.'} como entregue ao Ramon hoje (${dbr(hoje())})?`))return;
+  if(!alvo.length)return toast('Nada para marcar');
+  toast('Salvando…');
+  const h=hoje(),res=await Promise.allSettled(alvo.map(o=>salvaCtrl(o.id,{ent:h})));
+  const ok=res.filter(r=>r.status==='fulfilled').length,ruim=res.length-ok;
+  selec.clear();render();
+  toast(ruim?`${ok} marcadas, ${ruim} com erro: ${erroMsg(res.find(r=>r.status==='rejected').reason)}`:`${ok} ${ok===1?'ref. entregue':'refs. entregues'} ao Ramon`);
+}
+function imprimir(L){
+  const PP=14,rows=[...L];let prox=Math.max(0,...regs.map(refDe))+1;
+  while(!rows.length||rows.length%PP)rows.push({vazio:true,ref:prox++});
+  const W=[4.5,7.5,22.4,8.2,8.2,8.2,8.2,8.2,8.2,8.2,8.2];
+  const topo=`<colgroup>${W.map(w=>`<col style="width:${w}%">`).join('')}</colgroup><thead><tr><th colspan="11" class="t1">RELATÓRIO DE AVARIA&nbsp; CD</th></tr><tr><th colspan="11" class="t2">CONTROLE</th></tr><tr class="hd"><th>Ref.</th><th>Código</th><th>Descrição</th><th>Data de Entrega</th><th>Ass. Ramon</th><th>Data Ivano</th><th>Ass. Ivano</th><th>Data de envio</th><th>Ass. Ramon</th><th>Data de Retorno</th><th>Ass. Inv</th></tr></thead>`;
+  const lin=r=>{if(r.vazio)return`<tr><td class="rf">${r.ref}</td>${'<td></td>'.repeat(10)}</tr>`;const c=ctrlDe(r);
+    return`<tr><td class="rf">${refDe(r)}</td><td>${esc(r.sku)}</td><td class="ds">${esc(r.produto)}</td><td>${dbr(c.ent)}</td><td></td><td>${dbr(c.ivano)}</td><td></td><td>${dbr(c.envio)}</td><td></td><td>${dbr(c.ret)}</td><td></td></tr>`};
+  let h='';for(let i=0;i<rows.length;i+=PP)h+=`<div class="pg"><table class="ctrl">${topo}<tbody>${rows.slice(i,i+PP).map(lin).join('')}</tbody></table></div>`;
+  $('folha').innerHTML=h;window.print();
+}
+function excel(L){
+  if(!L.length)return toast('Nada para exportar');
+  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const linhas=[['Ref.','Tipo','Código','Descrição','Data do relatório','Entregue ao Ramon','Data Ivano','Data de envio','Data de Retorno','Situação'].map(q).join(';'),
+    ...L.map(o=>{const c=ctrlDe(o);return[refDe(o),tipoDe(o),o.sku,o.produto,dbr(o.criado),dbr(c.ent),dbr(c.ivano),dbr(c.envio),dbr(c.ret),SIT[sit(o)][0]].map(q).join(';')})];
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8'}));
+  a.download=`Controle de Avarias ${hoje()}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
+}
+$('tema').onclick=()=>{const a=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),n=a==='dark'?'light':'dark';document.documentElement.dataset.theme=n;ls.set('tema',n)};
+
+iniciar();
+</script>
+</body>
+</html>
