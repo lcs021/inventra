@@ -2998,19 +2998,33 @@ const avImpr=o=>((o.dados&&o.dados.impr)||[]);
 const avImpBadge=o=>{const l=avImpr(o);return l.length?`<span class="gst e">🖨 Impresso ${l.length}x · última ${fData(l[l.length-1].t)}</span>`:'<span class="gst p">Ainda não impresso</span>'};
 async function avMarcaImpresso(o){const impr=[...avImpr(o),{t:new Date().toISOString(),por:uid}];const dados={...(o.dados||{}),impr};
   o.dados=dados;try{if(!String(o.id).startsWith('tmp')){const{error}=await sb.from('ocorrencias').update({dados}).eq('id',o.id);if(error)toast('A impressão não ficou registrada: '+erroMsg(error))}}catch(e){}}
-function imprimirAv(lista){lista.forEach(avMarcaImpresso);let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+function imprimirAv(lista,titulo){lista.forEach(avMarcaImpresso);const tit0=document.title;if(typeof titulo==='string')document.title=titulo;let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
   a.innerHTML=lista.map(folhaAv).join('');document.body.classList.add('imprimindo');
-  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim);render()};addEventListener('afterprint',fim);
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';document.title=tit0;removeEventListener('afterprint',fim);render()};addEventListener('afterprint',fim);
   setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
+const avNomeArq=o=>'Relatório de Avaria'+((o.dados&&o.dados.ref)?' Ref '+o.dados.ref:'')+' - '+String(o.sku||'').replace(/[\\/:*?"<>|]/g,'-');
+function baixarAvWord(o){
+  const dom=new DOMParser().parseFromString('<body>'+folhaAv(o)+'</body>','text/html'),S=(q,c)=>dom.querySelectorAll(q).forEach(e=>e.style.cssText+=';'+c);
+  S('.avfolha','font-family:Calibri,Arial,sans-serif;color:#000');
+  S('.avt','font-size:24pt;font-weight:normal;text-align:center;text-decoration:underline;margin:6pt 0 18pt');
+  dom.querySelectorAll('.avbox').forEach(bx=>{const rf=bx.querySelector('.avref'),ps=[...bx.querySelectorAll('p')].map(p=>`<p style="margin:0 0 7pt;font-size:9.5pt;font-weight:bold">${p.innerHTML}</p>`).join('');
+    bx.outerHTML=`<table width="100%" border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse;border:1px solid #000"><tr><td width="88%" style="border:1px solid #000;padding:6pt 8pt">${ps}</td><td width="12%" style="border:1px solid #000;vertical-align:top;text-align:right;color:#e00000;font-size:9.5pt;font-weight:bold">${rf?rf.textContent:''}</td></tr></table>`});
+  S('.avh','color:#2e74b5;font-size:11pt;font-weight:bold;margin:14pt 0 4pt');S('.avp','font-size:12pt;font-weight:bold;margin:0 0 10pt');
+  S('.avr','background:#ffff00;mso-highlight:yellow');S('.avnota span','background:#ffff00;mso-highlight:yellow');S('.avnota','text-align:center;font-size:12pt;margin-top:8pt;border-bottom:2px solid #000;padding-bottom:3pt');
+  dom.querySelectorAll('.avass').forEach(box=>{const rows=[...box.children].map(dv=>{const lab=dv.firstChild.textContent.trim(),vs=[...dv.querySelectorAll('i')].map(i=>i.textContent);const ass=vs.length>1?(vs[0]||' ')+' / '+(vs[1]||' '):(vs[0]||' ');return `<tr><td width="18%" style="width:18%;font-size:11pt;padding:10pt 6pt 0 0;white-space:nowrap">${lab}</td><td width="82%" style="width:82%;border-bottom:1px solid #000;font-size:10pt;padding:10pt 0 0 4pt">${ass}</td></tr>`}).join('');
+    box.outerHTML=`<table width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;margin-top:24pt">${rows}</table>`});
+  const css='@page Section1{size:210mm 297mm;margin:18mm}div.Section1{page:Section1}body{font-family:Calibri,Arial,sans-serif}';
+  const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Relatório de Avaria</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]--><style>'+css+'</style></head><body><div class="Section1">'+dom.body.innerHTML+'</div></body></html>';
+  baixaTexto('﻿'+html,avNomeArq(o)+'.doc','application/msword');toast('Word baixado')}
 function avDetHTML(o){const d=o.dados||{};
   return`<div class="stack"><button class="btn sm" id="voltar" style="align-self:flex-start">← Voltar</button>
   <div>${catBadge('Avaria')}<h2 style="margin-top:6px">${d.ref?'Ref. '+esc(d.ref)+' · ':''}${esc(o.sku||'')} · ${esc(o.produto||'Sem descrição')}</h2><div class="muted small">Registrado por <b>${esc(nome(o.autor))}</b> em ${fData(o.criado)}</div></div>
-  <button class="btn primary" id="imprimir">🖨 Imprimir / Salvar PDF</button>
+  <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn primary" id="imprimir">🖨 Imprimir</button><button class="btn" id="avPdf">📄 Baixar PDF</button><button class="btn" id="avDoc">📝 Baixar Word</button></div>
   <div class="box stack"><b>Histórico de impressão</b>${avImpr(o).length?`<ul class="small" style="margin:0;padding-left:18px">${avImpr(o).map(i=>`<li>${fData(i.t)} · por <b>${esc(nome(i.por))}</b></li>`).join('')}</ul>`:'<span class="muted small">Ainda não foi impresso. A cada impressão o sistema anota aqui a data e quem imprimiu.</span>'}</div>
   <div class="prevwrap"><div class="prev">${folhaAv(o)}</div></div>
   ${(pode('garantia')||o.autor===uid)?'<button class="btn sm" id="editar" style="align-self:flex-start">✎ Editar relatório</button>':''}
   ${pode('apagar')?(ui.confDel?`<div class="box stack"><b>Apagar este relatório de avaria?</b><div class="actions"><button class="btn danger" id="delSim">Apagar</button><button class="btn" id="delNao">Cancelar</button></div></div>`:'<button class="btn sm danger" id="del" style="align-self:flex-start">Apagar relatório</button>'):''}</div>`}
-function bindAvDet(o){$('voltar').onclick=()=>{ui.det=null;render()};$('imprimir').onclick=()=>imprimirAv([o]);
+function bindAvDet(o){$('voltar').onclick=()=>{ui.det=null;render()};$('imprimir').onclick=()=>imprimirAv([o]);$('avPdf').onclick=()=>{toast('Na janela que abrir, escolha "Salvar como PDF"');imprimirAv([o],avNomeArq(o))};$('avDoc').onclick=()=>baixarAvWord(o);
   const ed=$('editar');if(ed)ed.onclick=()=>{const d=o.dados||{};draft=novo();draft.cat='Avaria';draft.editId=o.id;draft.av={tipo:d.tipo||'Avaria',ref:d.ref||'',sku:o.sku||'',produto:o.produto||'',caso:d.caso||'',custo:o.custo!=null?String(o.custo).replace('.',','):'',fab:o.fab||'',oc:d.oc||'',cons:d.cons||'',conc:d.conc||'',n1:d.n1||'',n2:d.n2||'',env:d.env||'',g1:d.g1||'',g2:d.g2||'',conf:d.conf||''};ui.det=null;go('nova')};
   const d=$('del');if(d)d.onclick=()=>{ui.confDel=true;render()};
   const n=$('delNao');if(n)n.onclick=()=>{ui.confDel=false;render()};
