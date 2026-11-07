@@ -109,57 +109,59 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 /* =========================================================
    LOGIN · CONTROLE DE AVARIA — Enterprise Authentication
    ========================================================= */
-#tlogin{min-height:100vh;display:grid;grid-template-columns:46fr 54fr;background:#F7F8F6}
-.au-l{position:relative;overflow:hidden;background:#19211C;color:#C9D1CB;display:flex;flex-direction:column;padding:40px 48px 36px;min-height:100vh}
-.au-l .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);pointer-events:none}
+#tlogin{height:100vh;min-height:620px;display:grid;grid-template-columns:46fr 54fr;background:#F7F8F6;overflow:hidden}
+.au-l{position:relative;overflow:hidden;background:#19211C;color:#C9D1CB;display:flex;flex-direction:column;padding:36px 40px 32px;min-height:100vh;max-height:100vh}
+.au-l .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);pointer-events:none}
 .au-l>*{position:relative}
-.au-brand{display:flex;align-items:center;gap:12px}
-.au-mark{width:36px;height:36px;border-radius:8px;background:#287B43;display:grid;place-items:center;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset}
-.au-mark svg{width:22px;height:22px}
-.au-brand b{display:block;color:#fff;font-size:14px;font-weight:700;letter-spacing:.08em}
+.au-brand{display:flex;align-items:center;gap:14px}
+.au-mark{width:40px;height:40px;border-radius:9px;background:#287B43;display:grid;place-items:center;box-shadow:0 0 0 1px rgba(255,255,255,.1) inset,0 0 0 4px rgba(40,123,67,.14)}
+.au-mark svg{width:24px;height:24px}
+.au-brand b{display:block;color:#fff;font-size:15px;font-weight:700;letter-spacing:.09em;line-height:1}
 .au-brand small{display:block;font-size:10px;font-weight:600;letter-spacing:.18em;color:#7E8A81;margin-top:2px}
-.au-env{margin-left:auto;display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border:1px solid #2C3830;border-radius:999px;font-size:11px;font-weight:500;color:#9AA69D}
-.au-env i{width:6px;height:6px;border-radius:50%;background:#3FA35E}
-.au-art{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 0;min-height:260px}
-.au-art svg{width:100%;max-width:600px;height:auto;overflow:visible}
-.au-art .lbl{font:600 9.5px/1 Inter,sans-serif;letter-spacing:.14em;fill:#8E9A91}
+.au-env{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border:1px solid rgba(255,255,255,.07);border-radius:999px;background:rgba(255,255,255,.02);font-size:10.5px;font-weight:500;color:#859188}
+.au-env i{width:5px;height:5px;border-radius:50%;background:#3FA35E;box-shadow:0 0 0 2px rgba(63,163,94,.18)}
+.au-art{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 0;min-height:0}
+.au-art svg{width:100%;max-width:680px;max-height:100%;height:auto;overflow:visible}
+.au-art .lbl{font:600 11px/1 Inter,sans-serif;letter-spacing:.14em;fill:#9BA79E}
 .au-art .lbl.on{fill:#E6EDE8}
-.au-art .sub{font:500 9px/1 Inter,sans-serif;letter-spacing:.06em;fill:#5E6A61}
+.au-art .sub{font:500 10.5px/1 Inter,sans-serif;letter-spacing:.02em;fill:#728077}
+.au-art .mono{font:500 9px/1 Inter,sans-serif;letter-spacing:.16em;fill:#4C5850}
 .au-art .flow{stroke-dasharray:4 6;animation:flow 1.6s linear infinite}
 @keyframes flow{to{stroke-dashoffset:-20}}
 @media (prefers-reduced-motion:reduce){.au-art .flow{animation:none}}
-.au-copy h2{margin:0 0 10px;color:#fff;font-size:28px;line-height:1.18;font-weight:600;letter-spacing:-.022em}
-.au-copy p{margin:0;max-width:44ch;color:#9AA59D;font-size:14px;line-height:1.55}
-.au-sig{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;padding-top:20px;border-top:1px solid #29342C}
+.au-copy h2{margin:0 0 12px;max-width:19ch;text-wrap:balance;color:#fff;font-size:33px;line-height:1.12;font-weight:600;letter-spacing:-.026em}
+.au-copy p{margin:0;max-width:40ch;color:#9AA59D;font-size:14.5px;line-height:1.55}
+.au-sig{display:flex;gap:24px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.06)}
 .au-sig span{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:#AEB8B0}
-.au-sig svg.i{width:15px;height:15px;color:#4FAF6B}
+.au-sig span{font-size:12px;color:#A3ADA5}.au-sig svg.i{width:15px;height:15px;color:#4FAF6B;stroke-width:1.75}
 
-.au-r{display:flex;flex-direction:column;min-height:100vh;background:#FFFFFF}
-.au-top{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:24px 40px;font-size:12.5px;color:#7B847C}
+.au-r{display:flex;flex-direction:column;height:100%;background:#FFFFFF;overflow:auto}
+.au-top{display:flex;justify-content:flex-end;align-items:center;gap:7px;padding:28px 40px 0;font-size:12px;color:#8A938B}
+.au-top svg.i{width:14px;height:14px}
 .au-main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 40px}
-.au-form{width:min(400px,100%);display:flex;flex-direction:column}
+.au-form{width:min(420px,100%);display:flex;flex-direction:column}
 .au-form[hidden]{display:none}
-.au-tag{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;height:24px;padding:0 9px;border-radius:5px;background:#EAF3EC;color:#19572E;font-size:11px;font-weight:600;letter-spacing:.08em;margin-bottom:18px}
+.au-tag{display:inline-flex;align-items:center;gap:7px;align-self:flex-start;height:24px;padding:0 10px 0 8px;border-radius:6px;background:#EAF3EC;color:#19572E;font-size:10.5px;font-weight:700;letter-spacing:.12em;margin-bottom:20px}
 .au-tag svg.i{width:13px;height:13px}
 .au-form h1,.au-copy h2,.au-form .au-sub,.au-copy p{font-feature-settings:normal}
-.au-form h1{margin:0;font-size:25px;line-height:1.2;font-weight:600;letter-spacing:-.022em;color:#202820}
-.au-form .au-sub{margin:8px 0 28px;color:#7B847C;font-size:14px;line-height:1.5}
-.au-f{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
-.au-f>span{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:500;color:#3A433C}
+.au-form h1{margin:0;font-size:28px;line-height:1.18;font-weight:600;letter-spacing:-.025em;color:#1B221C}
+.au-form .au-sub{margin:10px 0 30px;color:#6F786F;font-size:14.5px;line-height:1.5;max-width:36ch}
+.au-f{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.au-f>span{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:600;color:#262E27}
 .au-f>span em{font-style:normal;font-weight:400;font-size:12px;color:#9AA29B}
 .au-in{position:relative;display:flex;align-items:center}
 .au-in>svg.i{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:#8C958D;pointer-events:none;transition:color .15s}
-.au-in input{width:100%;height:48px;padding:0 44px 0 42px;border:1px solid #DCE2DC;border-radius:8px;background:#fff;color:#202820;font-size:14.5px;transition:border-color .15s,box-shadow .15s}
+.au-in input{width:100%;height:48px;padding:0 46px 0 42px;border:1px solid #D9DFD9;border-radius:7px;background:#fff;color:#202820;font-size:14.5px;transition:border-color .15s,box-shadow .15s}
 .au-in input::placeholder{color:#A7AEA8}
 .au-in input:hover{border-color:#C6CEC7}
-.au-in input:focus{outline:none;border-color:#287B43;box-shadow:0 0 0 4px rgba(40,123,67,.12)}
+.au-in input:focus{outline:none;border-color:#287B43;box-shadow:0 0 0 3px rgba(40,123,67,.13)}
 .au-in:focus-within>svg.i{color:#287B43}
 .au-in .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;border-radius:6px;background:none;color:#8C958D;display:grid;place-items:center;cursor:pointer;transition:background .15s,color .15s}
 .au-in .eye:hover{background:#F2F5F2;color:#202820}
 .au-in .eye svg.i{width:17px;height:17px}
-.au-row{display:flex;align-items:center;justify-content:space-between;margin:2px 0 22px}
-.au-chk{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:#4A534B;cursor:pointer;user-select:none}
-.au-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:48px;border:1px solid #19572E;border-radius:8px;background:#287B43;color:#fff;font-size:14.5px;font-weight:600;cursor:pointer;transition:background .15s,transform .05s;box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 1px 2px rgba(25,87,46,.3)}
+.au-row{display:flex;align-items:center;justify-content:space-between;height:20px;margin:0 0 24px}
+.au-chk{display:inline-flex;align-items:center;gap:9px;font-size:13px;line-height:16px;color:#3F4840;cursor:pointer;user-select:none}
+.au-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:48px;border:1px solid #19572E;border-radius:7px;background:#287B43;color:#fff;font-size:14.5px;font-weight:600;cursor:pointer;transition:background .15s,transform .05s;box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 1px 2px rgba(25,87,46,.3)}
 .au-btn:hover{background:#318B50}
 .au-btn:active{transform:translateY(1px)}
 .au-btn svg.i{width:17px;height:17px;transition:transform .15s}
@@ -169,21 +171,21 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .au-btn.busy svg.i{opacity:0}
 .au-btn.busy::before{content:"";position:absolute;width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:spin .65s linear infinite}
 .au-btn.done{background:#19572E;pointer-events:none}
-.au-msg{display:flex;gap:9px;align-items:flex-start;margin:0 0 16px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.45;border:1px solid}
+.au-msg{display:flex;gap:9px;align-items:flex-start;margin:-8px 0 18px;padding:10px 12px;border-radius:7px;font-size:13px;line-height:1.45;border:1px solid}
 .au-msg svg.i{width:16px;height:16px;margin-top:1px;flex:none}
 .au-msg.err{background:#FCEFEF;color:#A83434;border-color:#F2D2D2;animation:shake .3s}
 @keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
-.au-alt{margin-top:22px;text-align:center;font-size:13.5px;color:#7B847C}
+.au-alt{margin-top:20px;text-align:center;font-size:13.5px;color:#6F786F}
 .au-lnk{border:0;background:none;padding:0;color:#287B43;font-weight:600;font-size:13.5px;cursor:pointer;border-bottom:1px solid transparent;transition:border-color .15s,color .15s}
 .au-lnk:hover{color:#19572E;border-bottom-color:currentColor}
-.au-help{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px;padding-top:20px;border-top:1px solid #E5EAE5;font-size:12.5px;color:#8A938B}
+.au-help{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:24px;padding-top:20px;border-top:1px solid #ECEFEC;font-size:12.5px;color:#858E86}
 .au-help svg.i{width:15px;height:15px}
-.au-foot{display:flex;justify-content:space-between;gap:12px;padding:20px 40px;font-size:11.5px;color:#9AA29B}
+.au-foot{display:flex;justify-content:space-between;gap:12px;padding:0 40px 28px;font-size:11.5px;color:#A0A7A1}
 .au-foot span{display:inline-flex;align-items:center;gap:6px}
 .au-foot svg.i{width:13px;height:13px}
 .au-mobbrand{display:none}
-@media (max-width:1400px){.au-l{padding:32px 36px 28px}.au-copy h2{font-size:24px}}
-@media (max-height:780px){.au-art{min-height:180px;padding:8px 0}.au-sig{margin-top:18px;padding-top:14px}.au-form .au-sub{margin-bottom:22px}.au-top,.au-foot{padding-top:14px;padding-bottom:14px}}
+@media (max-width:1400px){.au-copy h2{font-size:28px}}
+@media (max-height:780px){.au-l{padding-top:28px;padding-bottom:24px}.au-copy h2{font-size:26px}.au-art{padding:6px 0}.au-sig{margin-top:18px;padding-top:14px}.au-form .au-sub{margin-bottom:22px}.au-top,.au-foot{padding-top:14px;padding-bottom:14px}}
 @media (max-width:1100px){#tlogin{grid-template-columns:40fr 60fr}.au-sig{gap:14px}.au-env{display:none}}
 @media (max-width:860px){
   #tlogin{grid-template-columns:1fr}
@@ -662,48 +664,59 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
     <div class="grid"></div>
     <div class="au-brand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE AVARIA</b></div><span class="au-env"><i></i>Ambiente operacional</span></div>
     <div class="au-art" aria-hidden="true">
-      <svg viewBox="0 0 520 300" fill="none">
-        <!-- trilhas técnicas -->
-        <path d="M20 70H500M20 230H500" stroke="#243029" stroke-width="1"/>
-        <path d="M60 70v-20M180 70v-20M300 70v-20M420 70v-20M60 230v20M180 230v20M300 230v20M420 230v20" stroke="#243029"/>
-        <g fill="#2E3A32"><circle cx="20" cy="70" r="2"/><circle cx="500" cy="70" r="2"/><circle cx="20" cy="230" r="2"/><circle cx="500" cy="230" r="2"/></g>
-        <!-- conexões geométricas -->
-        <path d="M60 150 L180 150 L300 150 L420 150" stroke="#2B3830" stroke-width="2"/>
-        <path d="M60 150 L180 150 L300 150 L420 150" stroke="#3FA35E" stroke-width="2" class="flow" opacity=".75"/>
-        <path d="M180 150 C180 110 300 110 300 150" stroke="#2B3830" stroke-dasharray="2 4"/>
-        <path d="M300 150 C300 195 420 195 420 150" stroke="#2B3830" stroke-dasharray="2 4"/>
-        <!-- nós do fluxo -->
-        <g>
-          <rect x="36" y="126" width="48" height="48" rx="10" fill="#1F2A23" stroke="#3FA35E"/>
-          <path d="M60 138l-10 18h20z" stroke="#E6EDE8" stroke-width="1.6" stroke-linejoin="round"/><path d="M60 146v4M60 153v.5" stroke="#E6EDE8" stroke-width="1.6" stroke-linecap="round"/>
-          <text x="60" y="198" text-anchor="middle" class="lbl on">AVARIA</text><text x="60" y="212" text-anchor="middle" class="sub">REGISTRADA</text>
+      <svg viewBox="0 0 600 270" fill="none">
+        <!-- moldura técnica -->
+        <g stroke="rgba(255,255,255,.07)" stroke-width="1">
+          <path d="M14 40v-14h14M586 40v-14h-14M14 236v14h14M586 236v14h-14"/>
+          <path d="M40 66H560" stroke-dasharray="1 7"/><path d="M40 236H560" stroke-dasharray="1 7"/>
         </g>
-        <g>
-          <rect x="156" y="126" width="48" height="48" rx="10" fill="#1F2A23" stroke="#34433A"/>
-          <path d="M169 142l11-5 11 5v12l-11 5-11-5z" stroke="#B9C4BC" stroke-width="1.5" stroke-linejoin="round"/><path d="M169 142l11 5 11-5M180 147v12" stroke="#B9C4BC" stroke-width="1.5" stroke-linejoin="round"/>
-          <text x="180" y="198" text-anchor="middle" class="lbl">ENTREGA</text>
+        <text x="40" y="54" class="mono">CICLO DA AVARIA</text>
+        <text x="560" y="54" text-anchor="end" class="mono">RASTREAMENTO</text>
+        <!-- trilho -->
+        <path d="M114 130H484" stroke="#2B3830" stroke-width="2" stroke-linecap="round"/>
+        <path d="M114 130H484" stroke="#3FA35E" stroke-width="2" stroke-linecap="round" class="flow" opacity=".8"/>
+        <!-- pontos de conexão -->
+        <g><circle cx="153.0" cy="130" r="4" fill="#19211C" stroke="#3FA35E" stroke-width="1.5"/><circle cx="299.0" cy="130" r="4" fill="#19211C" stroke="#3FA35E" stroke-width="1.5"/><circle cx="445.0" cy="130" r="4" fill="#19211C" stroke="#3FA35E" stroke-width="1.5"/></g>
+        <g fill="#3FA35E"><circle cx="114" cy="130" r="1.6"/><circle cx="484" cy="130" r="1.6"/></g>
+        <!-- ticks sob o trilho -->
+        <g stroke="rgba(255,255,255,.08)"><path d="M80 222v6"/><path d="M226 222v6"/><path d="M372 222v6"/><path d="M518 222v6"/></g>
+        
+        <g transform="translate(80 0)">
+          <rect x="-34" y="96" width="68" height="68" rx="14" fill="#1F3326" stroke="#3FA35E" stroke-width="1.2"/>
+          <rect x="-28" y="102" width="56" height="56" rx="10" fill="none" stroke="rgba(63,163,94,.25)"/>
+          <g transform="translate(-12 118)" stroke="#E9F2EC" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 2.5 20h19z"/><path d="M12 9.5v4.5M12 17v.3"/></g>
+          <text y="192" text-anchor="middle" class="lbl on">AVARIA</text>
+          <text y="210" text-anchor="middle" class="sub">Registro</text>
         </g>
-        <g>
-          <rect x="276" y="126" width="48" height="48" rx="10" fill="#1F2A23" stroke="#34433A"/>
-          <path d="M286 142h16v12h-16zM302 146h5l4 4v4h-9" stroke="#B9C4BC" stroke-width="1.5" stroke-linejoin="round"/><circle cx="291" cy="156" r="2" stroke="#B9C4BC" stroke-width="1.5"/><circle cx="306" cy="156" r="2" stroke="#B9C4BC" stroke-width="1.5"/>
-          <text x="300" y="198" text-anchor="middle" class="lbl">ENVIO</text>
+        
+        <g transform="translate(226 0)">
+          <rect x="-34" y="96" width="68" height="68" rx="14" fill="#1E2721" stroke="#33403A" stroke-width="1.2"/>
+          <rect x="-28" y="102" width="56" height="56" rx="10" fill="none" stroke="rgba(255,255,255,.035)"/>
+          <g transform="translate(-12 118)" stroke="#C3CDC6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></g>
+          <text y="192" text-anchor="middle" class="lbl">ENTREGA</text>
+          <text y="210" text-anchor="middle" class="sub">Recebimento</text>
         </g>
-        <g>
-          <rect x="396" y="126" width="48" height="48" rx="10" fill="#1F2A23" stroke="#34433A"/>
-          <path d="M413 144a9 9 0 1 1-2 8" stroke="#B9C4BC" stroke-width="1.5" stroke-linecap="round"/><path d="M410 139v6h6" stroke="#B9C4BC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          <text x="420" y="198" text-anchor="middle" class="lbl">RETORNO</text>
+        
+        <g transform="translate(372 0)">
+          <rect x="-34" y="96" width="68" height="68" rx="14" fill="#1E2721" stroke="#33403A" stroke-width="1.2"/>
+          <rect x="-28" y="102" width="56" height="56" rx="10" fill="none" stroke="rgba(255,255,255,.035)"/>
+          <g transform="translate(-12 118)" stroke="#C3CDC6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2 6h12v10H2z"/><path d="M14 9h4.5l3.5 3.5V16h-8"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></g>
+          <text y="192" text-anchor="middle" class="lbl">ENVIO</text>
+          <text y="210" text-anchor="middle" class="sub">Expedição</text>
         </g>
-        <!-- pontos de rastreamento -->
-        <g fill="#3FA35E"><circle cx="120" cy="150" r="3"/><circle cx="240" cy="150" r="3" opacity=".7"/><circle cx="360" cy="150" r="3" opacity=".45"/></g>
-        <g stroke="#3FA35E" opacity=".35"><circle cx="120" cy="150" r="7"/></g>
-        <!-- marcador de localização -->
-        <path d="M480 96c0 9-11 19-11 19s-11-10-11-19a11 11 0 0 1 22 0z" stroke="#4FAF6B" stroke-width="1.5"/><circle cx="469" cy="96" r="3.5" stroke="#4FAF6B" stroke-width="1.5"/>
-        <path d="M469 115v35H444" stroke="#2B3830" stroke-dasharray="2 4"/>
+        
+        <g transform="translate(518 0)">
+          <rect x="-34" y="96" width="68" height="68" rx="14" fill="#1E2721" stroke="#33403A" stroke-width="1.2"/>
+          <rect x="-28" y="102" width="56" height="56" rx="10" fill="none" stroke="rgba(255,255,255,.035)"/>
+          <g transform="translate(-12 118)" stroke="#C3CDC6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 3.5v5h5"/></g>
+          <text y="192" text-anchor="middle" class="lbl">RETORNO</text>
+          <text y="210" text-anchor="middle" class="sub">Conclusão</text>
+        </g>
       </svg>
     </div>
     <div class="au-copy">
       <h2>Controle total de cada referência.</h2>
-      <p>Acompanhe o ciclo completo das avarias, desde o registro até o retorno, com organização e precisão operacional.</p>
+      <p>Do registro da avaria ao retorno do produto. Cada etapa organizada, rastreável e sob controle.</p>
       <div class="au-sig"><span id="sg1">Gestão de avarias</span><span id="sg2">Sincronização operacional</span><span id="sg3">Relatórios e exportações</span></div>
     </div>
   </aside>
