@@ -107,41 +107,95 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 @keyframes prog{from{left:-35%}to{left:100%}}
 
 /* =========================================================
-   LOGIN
+   LOGIN · INVENTRA CONTROL — Enterprise Authentication
    ========================================================= */
-#tlogin{min-height:100%;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-.lpane{background:var(--side);color:var(--side-fg);padding:40px 48px;display:flex;flex-direction:column;position:relative;overflow:hidden}
-.lpane .grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--side-line) 1px,transparent 1px),linear-gradient(90deg,var(--side-line) 1px,transparent 1px);background-size:44px 44px;-webkit-mask-image:radial-gradient(ellipse at 30% 60%,#000 0%,transparent 70%);mask-image:radial-gradient(ellipse at 30% 60%,#000 0%,transparent 70%);opacity:.8}
-.lpane>*{position:relative}
-.lpane .kick{margin-top:auto;font-size:12px;color:var(--side-mu);font-weight:500}
-.lpane h2{font-size:30px;line-height:1.15;font-weight:600;letter-spacing:-.022em;color:#fff;margin:10px 0 12px;max-width:17ch}
-.lpane p{margin:0;color:var(--side-mu);max-width:42ch;font-size:14px}
-.lpane dl{display:flex;gap:32px;margin:36px 0 0;flex-wrap:wrap}
-.lpane dt{font-size:12px;color:var(--side-mu)}
-.lpane dd{margin:4px 0 0;color:#fff;font-weight:500;font-size:13.5px}
-.lform{display:flex;align-items:center;justify-content:center;padding:40px 24px;background:var(--surface)}
-.lform form{width:min(340px,100%);display:flex;flex-direction:column;gap:16px}
-.lform h1{margin:0;font-size:22px;font-weight:600;letter-spacing:-.018em}
-.lform .sub{margin:-8px 0 8px;color:var(--muted)}
-.lab{display:flex;flex-direction:column;gap:6px;font-size:12.5px;font-weight:500;color:var(--fg2)}
-.lform .inp{height:38px;font-size:13.5px}
-.lform .btn.primary{height:38px;font-size:13.5px;margin-top:4px}
-.eye{position:absolute;right:5px;width:28px;height:28px;border:0;background:none;color:var(--muted);border-radius:5px;display:grid;place-items:center;cursor:pointer}
-.eye:hover{background:var(--hover);color:var(--fg)}
-.chk{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--fg2);cursor:pointer;user-select:none}
-.lform form[hidden]{display:none}
-.lswap{font-size:13px;color:var(--muted);text-align:center}
-.lnk{border:0;background:none;padding:0;color:var(--g);font-weight:600;cursor:pointer;font-size:13px}
-.lnk:hover{text-decoration:underline}
-.lab .hint{font-weight:400;color:var(--muted);font-size:11.5px;margin-left:4px}
-.note.ok{background:var(--g-50);color:var(--g-deep);border-color:color-mix(in srgb,var(--g) 25%,transparent)}
-.lnote{font-size:12.5px;color:var(--muted);text-align:center;border-top:1px solid var(--line);padding-top:16px;margin-top:4px}
-.lmob{display:none;align-items:center;gap:10px;margin-bottom:8px;font-weight:600}
-.note{display:flex;gap:9px;align-items:flex-start;border-radius:var(--r);padding:9px 11px;font-size:13px;line-height:1.4;border:1px solid}
-.note svg.i{margin-top:1px}
-.note.err{background:var(--red-50);color:var(--red-ink);border-color:color-mix(in srgb,var(--red) 22%,transparent)}
-.note.warn{background:var(--amb-50);color:var(--amb-ink);border-color:color-mix(in srgb,var(--amb) 28%,transparent)}
-@media (max-width:860px){#tlogin{grid-template-columns:1fr}.lpane{display:none}.lmob{display:flex}}
+#tlogin{min-height:100vh;display:grid;grid-template-columns:46fr 54fr;background:#F7F8F6}
+.au-l{position:relative;overflow:hidden;background:#19211C;color:#C9D1CB;display:flex;flex-direction:column;padding:40px 48px 36px;min-height:100vh}
+.au-l .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:32px 32px;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);pointer-events:none}
+.au-l>*{position:relative}
+.au-brand{display:flex;align-items:center;gap:12px}
+.au-mark{width:36px;height:36px;border-radius:8px;background:#287B43;display:grid;place-items:center;box-shadow:0 0 0 1px rgba(255,255,255,.08) inset}
+.au-mark svg{width:22px;height:22px}
+.au-brand b{display:block;color:#fff;font-size:14px;font-weight:700;letter-spacing:.08em}
+.au-brand small{display:block;font-size:10px;font-weight:600;letter-spacing:.18em;color:#7E8A81;margin-top:2px}
+.au-env{margin-left:auto;display:inline-flex;align-items:center;gap:7px;height:26px;padding:0 10px;border:1px solid #2C3830;border-radius:999px;font-size:11px;font-weight:500;color:#9AA69D}
+.au-env i{width:6px;height:6px;border-radius:50%;background:#3FA35E}
+.au-art{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 0;min-height:260px}
+.au-art svg{width:100%;max-width:600px;height:auto;overflow:visible}
+.au-art .lbl{font:600 9.5px/1 Inter,sans-serif;letter-spacing:.14em;fill:#8E9A91}
+.au-art .lbl.on{fill:#E6EDE8}
+.au-art .sub{font:500 9px/1 Inter,sans-serif;letter-spacing:.06em;fill:#5E6A61}
+.au-art .flow{stroke-dasharray:4 6;animation:flow 1.6s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-20}}
+@media (prefers-reduced-motion:reduce){.au-art .flow{animation:none}}
+.au-copy h2{margin:0 0 10px;color:#fff;font-size:28px;line-height:1.18;font-weight:600;letter-spacing:-.022em}
+.au-copy p{margin:0;max-width:44ch;color:#9AA59D;font-size:14px;line-height:1.55}
+.au-sig{display:flex;gap:22px;flex-wrap:wrap;margin-top:28px;padding-top:20px;border-top:1px solid #29342C}
+.au-sig span{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:#AEB8B0}
+.au-sig svg.i{width:15px;height:15px;color:#4FAF6B}
+
+.au-r{display:flex;flex-direction:column;min-height:100vh;background:#FFFFFF}
+.au-top{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding:24px 40px;font-size:12.5px;color:#7B847C}
+.au-main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 40px}
+.au-form{width:min(400px,100%);display:flex;flex-direction:column}
+.au-form[hidden]{display:none}
+.au-tag{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;height:24px;padding:0 9px;border-radius:5px;background:#EAF3EC;color:#19572E;font-size:11px;font-weight:600;letter-spacing:.08em;margin-bottom:18px}
+.au-tag svg.i{width:13px;height:13px}
+.au-form h1,.au-copy h2,.au-form .au-sub,.au-copy p{font-feature-settings:normal}
+.au-form h1{margin:0;font-size:25px;line-height:1.2;font-weight:600;letter-spacing:-.022em;color:#202820}
+.au-form .au-sub{margin:8px 0 28px;color:#7B847C;font-size:14px;line-height:1.5}
+.au-f{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.au-f>span{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;font-weight:500;color:#3A433C}
+.au-f>span em{font-style:normal;font-weight:400;font-size:12px;color:#9AA29B}
+.au-in{position:relative;display:flex;align-items:center}
+.au-in>svg.i{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:17px;height:17px;color:#8C958D;pointer-events:none;transition:color .15s}
+.au-in input{width:100%;height:48px;padding:0 44px 0 42px;border:1px solid #DCE2DC;border-radius:8px;background:#fff;color:#202820;font-size:14.5px;transition:border-color .15s,box-shadow .15s}
+.au-in input::placeholder{color:#A7AEA8}
+.au-in input:hover{border-color:#C6CEC7}
+.au-in input:focus{outline:none;border-color:#287B43;box-shadow:0 0 0 4px rgba(40,123,67,.12)}
+.au-in:focus-within>svg.i{color:#287B43}
+.au-in .eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;border-radius:6px;background:none;color:#8C958D;display:grid;place-items:center;cursor:pointer;transition:background .15s,color .15s}
+.au-in .eye:hover{background:#F2F5F2;color:#202820}
+.au-in .eye svg.i{width:17px;height:17px}
+.au-row{display:flex;align-items:center;justify-content:space-between;margin:2px 0 22px}
+.au-chk{display:inline-flex;align-items:center;gap:9px;font-size:13px;color:#4A534B;cursor:pointer;user-select:none}
+.au-btn{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:48px;border:1px solid #19572E;border-radius:8px;background:#287B43;color:#fff;font-size:14.5px;font-weight:600;cursor:pointer;transition:background .15s,transform .05s;box-shadow:0 1px 0 rgba(255,255,255,.14) inset,0 1px 2px rgba(25,87,46,.3)}
+.au-btn:hover{background:#318B50}
+.au-btn:active{transform:translateY(1px)}
+.au-btn svg.i{width:17px;height:17px;transition:transform .15s}
+.au-btn:hover svg.i{transform:translateX(2px)}
+.au-btn:disabled{opacity:.6;cursor:not-allowed}
+.au-btn.busy{color:transparent;pointer-events:none}
+.au-btn.busy svg.i{opacity:0}
+.au-btn.busy::before{content:"";position:absolute;width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;animation:spin .65s linear infinite}
+.au-btn.done{background:#19572E;pointer-events:none}
+.au-msg{display:flex;gap:9px;align-items:flex-start;margin:0 0 16px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.45;border:1px solid}
+.au-msg svg.i{width:16px;height:16px;margin-top:1px;flex:none}
+.au-msg.err{background:#FCEFEF;color:#A83434;border-color:#F2D2D2;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.au-alt{margin-top:22px;text-align:center;font-size:13.5px;color:#7B847C}
+.au-lnk{border:0;background:none;padding:0;color:#287B43;font-weight:600;font-size:13.5px;cursor:pointer;border-bottom:1px solid transparent;transition:border-color .15s,color .15s}
+.au-lnk:hover{color:#19572E;border-bottom-color:currentColor}
+.au-help{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:22px;padding-top:20px;border-top:1px solid #E5EAE5;font-size:12.5px;color:#8A938B}
+.au-help svg.i{width:15px;height:15px}
+.au-foot{display:flex;justify-content:space-between;gap:12px;padding:20px 40px;font-size:11.5px;color:#9AA29B}
+.au-foot span{display:inline-flex;align-items:center;gap:6px}
+.au-foot svg.i{width:13px;height:13px}
+.au-mobbrand{display:none}
+@media (max-width:1400px){.au-l{padding:32px 36px 28px}.au-copy h2{font-size:24px}}
+@media (max-height:780px){.au-art{min-height:180px;padding:8px 0}.au-sig{margin-top:18px;padding-top:14px}.au-form .au-sub{margin-bottom:22px}.au-top,.au-foot{padding-top:14px;padding-bottom:14px}}
+@media (max-width:1100px){#tlogin{grid-template-columns:40fr 60fr}.au-sig{gap:14px}.au-env{display:none}}
+@media (max-width:860px){
+  #tlogin{grid-template-columns:1fr}
+  .au-l{display:none}
+  .au-r{min-height:100vh}
+  .au-top{display:none}
+  .au-main{padding:32px 20px}
+  .au-mobbrand{display:flex;align-items:center;gap:10px;margin-bottom:28px}
+  .au-mobbrand b{font-size:13px;font-weight:700;letter-spacing:.08em;color:#202820}
+  .au-mobbrand small{display:block;font-size:9.5px;letter-spacing:.18em;font-weight:600;color:#8A938B}
+  .au-foot{padding:16px 20px;justify-content:center}.au-foot span+span{display:none}
+}
 #tcarrega,#tfalha{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;color:var(--muted)}
 .spin{width:20px;height:20px;border:2px solid var(--line2);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite}
 
@@ -604,44 +658,93 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 
 <!-- ======================= LOGIN ======================= -->
 <div id="tlogin" hidden>
-  <aside class="lpane">
-    <div class="grid-bg"></div>
-    <div style="display:flex;align-items:center;gap:10px"><span class="logo" data-logo></span><b style="color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em">INVENTRA CONTROL</b></div>
-    <div class="kick" style="letter-spacing:.14em;font-size:10.5px;font-weight:600">LOGISTICS OPERATIONS · CONTROLE DE AVARIAS</div>
-    <h2>Cada ref. rastreada, da avaria ao retorno.</h2>
-    <p>Acompanhe o que foi entregue, o que está com o Ivano, o que foi enviado e o que já retornou.</p>
-    <dl><div><dt>Origem</dt><dd>Relatórios de Avaria</dd></div><div><dt>Sincronização</dt><dd>Tempo real</dd></div><div><dt>Saída</dt><dd>Folha oficial e Excel</dd></div></dl>
+  <aside class="au-l" aria-hidden="false">
+    <div class="grid"></div>
+    <div class="au-brand"><span class="au-mark" data-logo></span><div><b>INVENTRA CONTROL</b><small>LOGISTICS OPERATIONS</small></div><span class="au-env"><i></i>Ambiente operacional</span></div>
+    <div class="au-art" aria-hidden="true">
+      <svg viewBox="0 0 520 300" fill="none">
+        <!-- trilhas técnicas -->
+        <path d="M20 70H500M20 230H500" stroke="#243029" stroke-width="1"/>
+        <path d="M60 70v-20M180 70v-20M300 70v-20M420 70v-20M60 230v20M180 230v20M300 230v20M420 230v20" stroke="#243029"/>
+        <g fill="#2E3A32"><circle cx="20" cy="70" r="2"/><circle cx="500" cy="70" r="2"/><circle cx="20" cy="230" r="2"/><circle cx="500" cy="230" r="2"/></g>
+        <!-- conexões geométricas -->
+        <path d="M60 150 L180 150 L300 150 L420 150" stroke="#2B3830" stroke-width="2"/>
+        <path d="M60 150 L180 150 L300 150 L420 150" stroke="#3FA35E" stroke-width="2" class="flow" opacity=".75"/>
+        <path d="M180 150 C180 110 300 110 300 150" stroke="#2B3830" stroke-dasharray="2 4"/>
+        <path d="M300 150 C300 195 420 195 420 150" stroke="#2B3830" stroke-dasharray="2 4"/>
+        <!-- nós do fluxo -->
+        <g>
+          <rect x="36" y="126" width="48" height="48" rx="10" fill="#1F2A23" stroke="#3FA35E"/>
+          <path d="M60 138l-10 18h20z" stroke="#E6EDE8" stroke-width="1.6" stroke-linejoin="round"/><path d="M60 146v4M60 153v.5" stroke="#E6EDE8" stroke-width="1.6" stroke-linecap="round"/>
+          <text x="60" y="198" text-anchor="middle" class="lbl on">AVARIA</text><text x="60" y="212" text-anchor="middle" class="sub">REGISTRADA</text>
+        </g>
+        <g>
+          <rect x="156" y="126" width="48" height="48" rx="10" fill="#1F2A23" stroke="#34433A"/>
+          <path d="M169 142l11-5 11 5v12l-11 5-11-5z" stroke="#B9C4BC" stroke-width="1.5" stroke-linejoin="round"/><path d="M169 142l11 5 11-5M180 147v12" stroke="#B9C4BC" stroke-width="1.5" stroke-linejoin="round"/>
+          <text x="180" y="198" text-anchor="middle" class="lbl">ENTREGA</text>
+        </g>
+        <g>
+          <rect x="276" y="126" width="48" height="48" rx="10" fill="#1F2A23" stroke="#34433A"/>
+          <path d="M286 142h16v12h-16zM302 146h5l4 4v4h-9" stroke="#B9C4BC" stroke-width="1.5" stroke-linejoin="round"/><circle cx="291" cy="156" r="2" stroke="#B9C4BC" stroke-width="1.5"/><circle cx="306" cy="156" r="2" stroke="#B9C4BC" stroke-width="1.5"/>
+          <text x="300" y="198" text-anchor="middle" class="lbl">ENVIO</text>
+        </g>
+        <g>
+          <rect x="396" y="126" width="48" height="48" rx="10" fill="#1F2A23" stroke="#34433A"/>
+          <path d="M413 144a9 9 0 1 1-2 8" stroke="#B9C4BC" stroke-width="1.5" stroke-linecap="round"/><path d="M410 139v6h6" stroke="#B9C4BC" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="420" y="198" text-anchor="middle" class="lbl">RETORNO</text>
+        </g>
+        <!-- pontos de rastreamento -->
+        <g fill="#3FA35E"><circle cx="120" cy="150" r="3"/><circle cx="240" cy="150" r="3" opacity=".7"/><circle cx="360" cy="150" r="3" opacity=".45"/></g>
+        <g stroke="#3FA35E" opacity=".35"><circle cx="120" cy="150" r="7"/></g>
+        <!-- marcador de localização -->
+        <path d="M480 96c0 9-11 19-11 19s-11-10-11-19a11 11 0 0 1 22 0z" stroke="#4FAF6B" stroke-width="1.5"/><circle cx="469" cy="96" r="3.5" stroke="#4FAF6B" stroke-width="1.5"/>
+        <path d="M469 115v35H444" stroke="#2B3830" stroke-dasharray="2 4"/>
+      </svg>
+    </div>
+    <div class="au-copy">
+      <h2>Controle total de cada referência.</h2>
+      <p>Acompanhe o ciclo completo das avarias, desde o registro até o retorno, com organização e precisão operacional.</p>
+      <div class="au-sig"><span id="sg1">Gestão de avarias</span><span id="sg2">Sincronização operacional</span><span id="sg3">Relatórios e exportações</span></div>
+    </div>
   </aside>
-  <div class="lform">
-    <form id="flogin" novalidate>
-      <div class="lmob"><span class="logo" data-logo></span>Controle de Avarias</div>
-      <h1>Entrar</h1>
-      <p class="sub">Use seu usuário e senha do INVENTRA.</p><span id="lok" hidden></span>
-      <label class="lab">Usuário
-        <span class="ifield" id="fu"><input class="inp" type="text" id="lusu" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Seu usuário"></span></label>
-      <label class="lab">Senha
-        <span class="ifield" id="fs"><input class="inp" type="password" id="lsenha" autocomplete="current-password" style="padding-right:38px">
-        <button type="button" class="eye" id="olho" aria-label="Mostrar senha"></button></span></label>
-      <label class="chk"><input type="checkbox" id="lembrar"> Lembrar meu usuário neste computador</label>
-      <div class="note err" id="lerr" hidden></div>
-      <button class="btn primary" type="submit" id="lbtn">Entrar</button>
-      <div class="lswap">Não tem conta? <button type="button" class="lnk" id="irCad">Criar cadastro</button></div>
-      <div class="lnote">Esqueceu a senha? Fale com o administrador do INVENTRA.</div>
-    </form>
-    <form id="fcad" novalidate hidden>
-      <div class="lmob"><span class="logo" data-logo></span>INVENTRA CONTROL</div>
-      <h1>Criar cadastro</h1>
-      <p class="sub">Depois de criar, o administrador do INVENTRA libera seu acesso.</p>
-      <label class="lab">Usuário
-        <span class="ifield" id="cfu"><input class="inp" type="text" id="cusu" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Ex.: Lucas Carvalho"></span></label>
-      <label class="lab"><span>Senha <span class="hint">mín. 8 caracteres, letras e números</span></span>
-        <span class="ifield" id="cfs"><input class="inp" type="password" id="csenha" autocomplete="new-password"></span></label>
-      <label class="lab">Repita a senha
-        <span class="ifield" id="cfs2"><input class="inp" type="password" id="csenha2" autocomplete="new-password"></span></label>
-      <div class="note err" id="cerr" hidden></div>
-      <button class="btn primary" type="submit" id="cbtn">Criar cadastro</button>
-      <div class="lswap">Já tem conta? <button type="button" class="lnk" id="irLogin">Entrar</button></div>
-    </form>
+
+  <div class="au-r">
+    <div class="au-top"><span id="topIc"></span>Acesso integrado ao INVENTRA</div>
+    <div class="au-main">
+      <form class="au-form" id="flogin" novalidate>
+        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>INVENTRA CONTROL</b><small>LOGISTICS OPERATIONS</small></div></div>
+        <span class="au-tag" id="tagL">ACESSO À PLATAFORMA</span>
+        <h1>Bem-vindo ao<br>INVENTRA CONTROL</h1>
+        <p class="au-sub">Acesse sua conta para continuar gerenciando suas operações.</p>
+        <div class="au-msg err" id="lerr" hidden></div><span id="lok" hidden></span>
+        <label class="au-f"><span>Usuário</span>
+          <span class="au-in" id="fu"><input type="text" id="lusu" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Seu usuário"></span></label>
+        <label class="au-f"><span>Senha</span>
+          <span class="au-in" id="fs"><input type="password" id="lsenha" autocomplete="current-password" placeholder="Sua senha">
+          <button type="button" class="eye" id="olho" aria-label="Mostrar senha"></button></span></label>
+        <div class="au-row"><label class="au-chk"><input type="checkbox" id="lembrar"> Lembrar meu usuário</label></div>
+        <button class="au-btn" type="submit" id="lbtn"><span>Entrar na plataforma</span><span id="lbIc"></span></button>
+        <div class="au-alt">Não tem conta? <button type="button" class="au-lnk" id="irCad">Criar cadastro</button></div>
+        <div class="au-help"><span id="hpIc"></span>Esqueceu a senha? Fale com o administrador do INVENTRA.</div>
+      </form>
+
+      <form class="au-form" id="fcad" novalidate hidden>
+        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>INVENTRA CONTROL</b><small>LOGISTICS OPERATIONS</small></div></div>
+        <span class="au-tag" id="tagC">NOVO ACESSO</span>
+        <h1>Criar cadastro</h1>
+        <p class="au-sub">Depois de criar, o administrador do INVENTRA libera seu acesso.</p>
+        <div class="au-msg err" id="cerr" hidden></div>
+        <label class="au-f" id="cfuL"><span>Usuário</span>
+          <span class="au-in" id="cfu"><input type="text" id="cusu" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Ex.: Lucas Carvalho"></span></label>
+        <label class="au-f"><span>Senha <em>mín. 8 caracteres, letras e números</em></span>
+          <span class="au-in" id="cfs"><input type="password" id="csenha" autocomplete="new-password" placeholder="Crie uma senha"></span></label>
+        <label class="au-f"><span>Repita a senha</span>
+          <span class="au-in" id="cfs2"><input type="password" id="csenha2" autocomplete="new-password" placeholder="Repita a senha"></span></label>
+        <button class="au-btn" type="submit" id="cbtn" style="margin-top:6px"><span>Criar cadastro</span></button>
+        <div class="au-alt">Já tem conta? <button type="button" class="au-lnk" id="irLogin">Entrar</button></div>
+      </form>
+    </div>
+    <div class="au-foot"><span id="ft1">Conexão segura</span><span>INVENTRA CONTROL · Logistics Operations</span></div>
   </div>
 </div>
 
@@ -726,6 +829,9 @@ const I={
   filtro:ic('<path d="M4 5.5h16M7 12h10M10.5 18.5h3"/>'),
   cloud:ic('<path d="M7 18.5a4.5 4.5 0 0 1-.4-9A6 6 0 0 1 18 8.5a4 4 0 0 1-.5 10z"/><path d="m9.5 13.5 2 2 3.5-3.5"/>'),
   ok:ic('<path d="m5 12.5 4.5 4.5L19 7.5"/>'),
+  shield:ic('<path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>'),
+  info2:ic('<circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.5h.01"/>'),
+  alertT:ic('<path d="M12 4 2.5 20h19z"/><path d="M12 10v4.5M12 17.5h.01"/>'),
   err:ic('<path d="M12 7v6M12 17h.01"/>'),
   info:ic('<path d="M12 11v5.5M12 7.5h.01"/>'),
 };
@@ -776,6 +882,9 @@ const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
 
 /* ícones fixos */
 document.querySelectorAll('[data-logo]').forEach(e=>e.innerHTML=I.logo);
+$('lbIc').outerHTML=I.arrow;$('topIc').outerHTML=I.lock;$('hpIc').outerHTML=I.info2;$('ft1').insertAdjacentHTML('afterbegin',I.shield);
+$('tagL').insertAdjacentHTML('afterbegin',I.shield);$('tagC').insertAdjacentHTML('afterbegin',I.user);
+$('sg1').insertAdjacentHTML('afterbegin',I.alertT);$('sg2').insertAdjacentHTML('afterbegin',I.refresh);$('sg3').insertAdjacentHTML('afterbegin',I.excel);
 $('fu').insertAdjacentHTML('afterbegin',I.user);$('fs').insertAdjacentHTML('afterbegin',I.lock);$('cfu').insertAdjacentHTML('afterbegin',I.user);$('cfs').insertAdjacentHTML('afterbegin',I.lock);$('cfs2').insertAdjacentHTML('afterbegin',I.lock);
 $('olho').innerHTML=I.eye;$('btnSair').innerHTML=I.sair;$('atIc').outerHTML=I.refresh;
 function pintaTema(){const dark=(document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';
@@ -800,7 +909,7 @@ $('olho').onclick=()=>{const s=$('lsenha'),v=s.type==='password';s.type=v?'text'
 $('flogin').addEventListener('submit',async e=>{
   e.preventDefault();const er=$('lerr'),bt=$('lbtn');er.hidden=true;
   const usu=$('lusu').value.trim().replace(/\s+/g,' '),senha=$('lsenha').value;
-  const mostra=m=>{er.innerHTML=I.alert+'<span>'+esc(m)+'</span>';er.hidden=false};
+  const mostra=m=>{er.innerHTML=I.alert+'<span>'+esc(m)+'</span>';er.hidden=true;void er.offsetWidth;er.hidden=false};
   if(!usu||!senha)return mostra('Preencha usuário e senha.');
   if(Date.now()<bloq)return mostra(`Muitas tentativas. Aguarde ${Math.ceil((bloq-Date.now())/1000)} s.`);
   ocupado(bt,true);
@@ -809,7 +918,9 @@ $('flogin').addEventListener('submit',async e=>{
     if(!usu.includes('@')){const r=await sb.rpc('email_do_usuario',{u:usu});if(r.error)throw r.error;if(!r.data)throw{message:'Invalid login'};email=r.data}
     const {data,error}=await sb.auth.signInWithPassword({email,password:senha});if(error)throw error;
     falhas=0;msgLogin='';cadUsu='';ls.set('usuario',$('lembrar').checked?usu:null);$('lsenha').value='';
+    bt.classList.remove('busy');bt.classList.add('done');bt.firstElementChild.textContent='Acesso liberado';
     await entrouComo(data.user.id);
+    bt.classList.remove('done');bt.firstElementChild.textContent='Entrar na plataforma';
   }catch(err){falhas++;if(falhas>=5)bloq=Date.now()+Math.min(300,30*2**(falhas-5))*1000;mostra(erroMsg(err))}
   ocupado(bt,false);
 });
@@ -823,8 +934,8 @@ function modoAuth(m){$('flogin').hidden=m!=='login';$('fcad').hidden=m!=='cad';$
 $('irCad').onclick=()=>{msgLogin='';modoAuth('cad')};
 $('irLogin').onclick=()=>modoAuth('login');
 async function carregaGalpoes(){try{const r=await sb.rpc('lista_galpoes');if(r&&r.data&&r.data.length>1&&!$('cgal')){
-  const l=document.createElement('label');l.className='lab';l.innerHTML='Galpão<select class="inp" id="cgal">'+r.data.map(g=>`<option value="${esc(g.id)}">${esc(g.nome)}</option>`).join('')+'</select>';
-  $('fcad').insertBefore(l,$('fcad').querySelector('.lab'))}}catch(e){}}
+  const l=document.createElement('label');l.className='au-f';l.innerHTML='<span>Galpão</span><select class="inp" style="height:48px;border-radius:8px" id="cgal">'+r.data.map(g=>`<option value="${esc(g.id)}">${esc(g.nome)}</option>`).join('')+'</select>';
+  $('fcad').insertBefore(l,$('cfuL'))}}catch(e){}}
 $('fcad').addEventListener('submit',async e=>{
   e.preventDefault();const er=$('cerr'),bt=$('cbtn');er.hidden=true;
   const mostra=m=>{er.innerHTML=I.alert+'<span>'+esc(m)+'</span>';er.hidden=false};
