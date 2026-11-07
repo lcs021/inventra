@@ -3348,17 +3348,38 @@ function folhaCtrl(L){const PP=14,todas=ctrlTodas(),mx=todas.length?Math.max(...
 function ctrlAvHTML(){const L=ctrlLinhas(),ns=ctrlSelec().length;
   return`<div class="stack"><button class="btn sm" id="ctrlVoltar" style="align-self:flex-start">← Voltar</button>
   <div class="listhead"><h2>Controle de assinaturas</h2><span class="muted small">Avaria · ${L.length} ${L.length===1?'linha':'linhas'}</span></div>
-  <div class="box stack"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><select id="ctrlFiltro" aria-label="Quais linhas mostrar"><option value="0" ${ui.ctrlTodos?'':'selected'}>Só o que ainda não retornou</option><option value="1" ${ui.ctrlTodos?'selected':''}>Todas as avarias</option></select><button type="button" class="btn sm" id="ctrlTodas">Marcar todas</button><button type="button" class="btn sm" id="ctrlNenhuma">Desmarcar todas</button><button type="button" class="btn primary" id="ctrlImp">${ns?`🖨 Imprimir ${ns} ${ns===1?'selecionada':'selecionadas'}`:'🖨 Imprimir folha em branco'}</button></div>
+  <div class="box stack"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><select id="ctrlFiltro" aria-label="Quais linhas mostrar"><option value="0" ${ui.ctrlTodos?'':'selected'}>Só o que ainda não retornou</option><option value="1" ${ui.ctrlTodos?'selected':''}>Todas as avarias</option></select><button type="button" class="btn sm" id="ctrlTodas">Marcar todas</button><button type="button" class="btn sm" id="ctrlNenhuma">Desmarcar todas</button><button type="button" class="btn primary" id="ctrlImp">${ns?`🖨 Imprimir ${ns} ${ns===1?'selecionada':'selecionadas'}`:'🖨 Imprimir folha em branco'}</button><button type="button" class="btn" id="ctrlPdf">📄 Baixar PDF</button><button type="button" class="btn" id="ctrlDoc">📝 Baixar Word</button></div>
   <span class="muted small">Ref., código e descrição vêm dos relatórios de avaria. Marque na coluna ✓ o que vai na folha. Ao imprimir, a Data de Entrega sai com a data de hoje (se ainda estiver vazia) e fica salva; preencha as outras datas; as assinaturas ficam em branco para assinar à mão. Ao imprimir, a folha é completada com linhas em branco numeradas na sequência.</span></div>
   <div class="ctrlwrap"><table class="ctrl">${ctrlTop(true)}<tbody>${L.length?L.map(r=>`<tr>${ctrlCelulas(r,true)}</tr>`).join(''):`<tr><td colspan="12" style="height:60px">Nenhuma avaria pendente de retorno.</td></tr>`}</tbody></table></div></div>`}
-async function imprimirCtrl(){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+async function prepCtrl(){
   const h=hoje(),sel=ctrlSelec(),L=sel.map(r=>({...r,c:{...r.c,ent:r.c.ent||h}}));
   if(pode('garantia'))await Promise.all(sel.filter(r=>!r.c.ent).map(async r=>{const dados={...(r.o.dados||{}),ctrl:{...r.c,ent:h}};const {error}=await sb.from('ocorrencias').update({dados}).eq('id',r.o.id);if(!error)r.o.dados=dados}));
-  a.innerHTML=folhaCtrl(L);document.body.classList.add('imprimindo');
-  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';removeEventListener('afterprint',fim);if(ui.ctrlav)render()};addEventListener('afterprint',fim);
+  return folhaCtrl(L)}
+async function imprimirCtrl(titulo){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
+  a.innerHTML=await prepCtrl();document.body.classList.add('imprimindo');
+  const tit=document.title;if(typeof titulo==='string')document.title=titulo;
+  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';document.title=tit;removeEventListener('afterprint',fim);if(ui.ctrlav)render()};addEventListener('afterprint',fim);
   setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
+const nomeCtrl=()=>'INVENTRA - Controle de Avaria - '+new Date().toISOString().slice(0,10);
+function baixarCtrlPdf(){toast('Na janela que abrir, escolha "Salvar como PDF"');imprimirCtrl(nomeCtrl())}
+async function baixarCtrlWord(){
+  const dom=new DOMParser().parseFromString('<body>'+await prepCtrl()+'</body>','text/html');
+  const W=[5,7,24,9,9,9,9,8,8,8,8],S=(q,c)=>dom.querySelectorAll(q).forEach(e=>e.style.cssText+=';'+c);
+  dom.querySelectorAll('table.ctrl').forEach(tb=>{tb.setAttribute('border','1');tb.setAttribute('cellspacing','0');tb.setAttribute('cellpadding','3');tb.setAttribute('width','100%');tb.style.cssText='border-collapse:collapse;width:100%;table-layout:fixed;border:1px solid #000';
+    const cg=dom.createElement('colgroup');W.forEach(w=>{const c=dom.createElement('col');c.setAttribute('width',w+'%');c.style.width=w+'%';cg.appendChild(c)});tb.insertBefore(cg,tb.firstChild)});
+  S('table.ctrl th,table.ctrl td','border:1px solid #000;text-align:center;vertical-align:middle;font-family:Arial;font-size:9pt;height:11mm;color:#000;padding:0 3px');
+  S('th.t1','background:#000;color:#fff;font-size:15pt;font-weight:bold;height:9mm');
+  S('th.t2','background:#000;color:#fff;font-size:12pt;font-weight:bold;height:8mm');
+  S('tr.hd th','background:#38761d;color:#fff;font-weight:bold');
+  S('td.rf','font-weight:bold;font-size:12pt');S('td.ds','text-align:left');
+  dom.querySelectorAll('table.ctrl tbody tr').forEach((tr,i)=>{if(i%2)tr.querySelectorAll('td').forEach(td=>td.style.background='#f3f3f3')});
+  dom.querySelectorAll('.ctrlfolha').forEach(d=>d.style.cssText='page-break-after:always');
+  const corpo=dom.body.innerHTML;
+  const css='@page Section1{size:297mm 210mm;mso-page-orientation:landscape;margin:7mm}div.Section1{page:Section1}body{font-family:Arial,Helvetica,sans-serif;color:#000}table.ctrl{border-collapse:collapse;width:100%;table-layout:fixed}table.ctrl th,table.ctrl td{border:1px solid #000;text-align:center;font-size:9pt;height:11mm;color:#000;background:#fff;padding:0 3px}table.ctrl th.t1{background:#000;color:#fff;font-size:15pt;font-weight:bold;height:9mm}table.ctrl th.t2{background:#000;color:#fff;font-size:12pt;font-weight:bold;height:8mm}table.ctrl tr.hd th{background:#38761d;color:#fff;font-size:9pt;font-weight:bold}table.ctrl td.rf{font-weight:bold;font-size:12pt}table.ctrl td.ds{text-align:left;padding-left:5px}table.ctrl tbody tr:nth-child(even) td{background:#f3f3f3}.ctrlfolha{page-break-after:always}';
+  const html='<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="utf-8"><title>Controle de Avaria</title><!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]--><style>'+css+'</style></head><body><div class="Section1">'+corpo+'</div></body></html>';
+  baixaTexto('﻿'+html,nomeCtrl()+'.doc','application/msword');toast('Word baixado')}
 function bindCtrlAv(){$('ctrlVoltar').onclick=()=>{ui.ctrlav=false;render()};
-  $('ctrlFiltro').onchange=e=>{ui.ctrlTodos=e.target.value==='1';render()};$('ctrlImp').onclick=imprimirCtrl;$('ctrlTodas').onclick=()=>{ui.ctrlSel=new Set(ctrlLinhas().map(x=>String(x.o.id)));render()};$('ctrlNenhuma').onclick=()=>{ui.ctrlSel=new Set();render()};
+  $('ctrlFiltro').onchange=e=>{ui.ctrlTodos=e.target.value==='1';render()};$('ctrlImp').onclick=()=>imprimirCtrl();$('ctrlPdf').onclick=baixarCtrlPdf;$('ctrlDoc').onclick=baixarCtrlWord;$('ctrlTodas').onclick=()=>{ui.ctrlSel=new Set(ctrlLinhas().map(x=>String(x.o.id)));render()};$('ctrlNenhuma').onclick=()=>{ui.ctrlSel=new Set();render()};
   document.querySelectorAll('[data-sel]').forEach(i=>i.onchange=()=>{const id=i.dataset.sel;i.checked?ui.ctrlSel.add(id):ui.ctrlSel.delete(id);const n=ctrlSelec().length;$('ctrlImp').textContent=n?`🖨 Imprimir ${n} ${n===1?'selecionada':'selecionadas'}`:'🖨 Imprimir folha em branco'});
   document.querySelectorAll('[data-ctrl]').forEach(i=>i.onchange=async()=>{const [id,k]=i.dataset.ctrl.split('|'),o=ocs.find(x=>String(x.id)===id);if(!o)return;
     const dados={...(o.dados||{}),ctrl:{...((o.dados&&o.dados.ctrl)||{}),[k]:i.value||''}};
