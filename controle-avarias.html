@@ -616,8 +616,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
     <form id="flogin" novalidate>
       <div class="lmob"><span class="logo" data-logo></span>Controle de Avarias</div>
       <h1>Entrar</h1>
-      <p class="sub">Use seu usuário e senha do INVENTRA.</p>
-      <div class="note ok" id="lok" hidden></div>
+      <p class="sub">Use seu usuário e senha do INVENTRA.</p><span id="lok" hidden></span>
       <label class="lab">Usuário
         <span class="ifield" id="fu"><input class="inp" type="text" id="lusu" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="Seu usuário"></span></label>
       <label class="lab">Senha
@@ -841,7 +840,7 @@ $('fcad').addEventListener('submit',async e=>{
     if(en.error||!en.data)throw{message:'O banco precisa de uma atualização (cadastro sem e-mail). Peça ao administrador para rodar o SQL novo.'};
     const {data,error}=await sb.auth.signUp({email:en.data,password:s,options:{data:{nome:usu,usuario:usu,...($('cgal')?{galpao:$('cgal').value}:{})}}});
     if(error)throw error;
-    msgLogin=`Cadastro criado. Peça ao administrador para liberar seu acesso e depois entre com o usuário ${usu}.`;cadUsu=usu;
+    msgLogin='';cadUsu=usu;
     if(data&&data.session){try{await sb.auth.signOut()}catch(_){}}
     ['cusu','csenha','csenha2'].forEach(id=>$(id).value='');
     tela('tlogin');$('lusu').value=usu;$('lsenha').value='';modoAuth('login');
