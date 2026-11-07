@@ -2357,6 +2357,81 @@ function bindLista(){bindBaiGraf();{const cb=$('ctrlAv');if(cb)cb.onclick=()=>{u
   bindCards()}
 
 
+
+/* ---------- Gerador de PDF próprio (baixa o arquivo direto, sem janela de impressão) ---------- */
+const PDFW={"h":[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,278,222,556,333,1000,556,556,333,1000,667,333,1000,278,611,278,278,222,222,333,333,350,556,1000,333,1000,500,333,944,278,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500],"b":[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,278,278,556,500,1000,556,556,333,1000,667,333,1000,278,611,278,278,278,278,500,500,350,556,1000,333,1000,556,333,944,278,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556]};
+const pdfEnc=s=>{const M={'–':150,'—':151,'‘':145,'’':146,'“':147,'”':148,'•':149,'…':133,'€':128,' ':32};let o='';for(const ch of String(s==null?'':s)){let c=ch.charCodeAt(0);if(c>255)c=M[ch]||63;else if(M[ch])c=M[ch];if(c<32)c=32;o+=String.fromCharCode(c)}return o};
+const pdfW=(s,sz,b)=>{const t=PDFW[b?'b':'h'];let w=0;for(const ch of pdfEnc(s))w+=t[ch.charCodeAt(0)-32]||278;return w*sz/1000};
+const pdfCor=h=>{h=String(h||'#000').replace('#','');if(h.length===3)h=h.split('').map(x=>x+x).join('');return [0,2,4].map(i=>(parseInt(h.slice(i,i+2),16)/255).toFixed(3)).join(' ')};
+function MiniPDF(land){this.w=land?841.89:595.28;this.h=land?595.28:841.89;this.pages=[];this.nova()}
+MiniPDF.prototype={
+  nova(){this.pg=[];this.pages.push(this.pg)},
+  esc(s){let o='';for(const ch of pdfEnc(s)){const c=ch.charCodeAt(0);o+=(ch==='\\'||ch==='('||ch===')')?'\\'+ch:(c>126?'\\'+c.toString(8).padStart(3,'0'):ch)}return o},
+  rect(x,y,w,h,o={}){const p=this.pg;if(o.fill)p.push(pdfCor(o.fill)+' rg '+x.toFixed(2)+' '+(this.h-y-h).toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re f');if(o.stroke){p.push((o.lw||.8)+' w '+pdfCor(o.stroke)+' RG '+x.toFixed(2)+' '+(this.h-y-h).toFixed(2)+' '+w.toFixed(2)+' '+h.toFixed(2)+' re S')}},
+  line(x1,y1,x2,y2,lw,c){this.pg.push((lw||.8)+' w '+pdfCor(c||'#000')+' RG '+x1.toFixed(2)+' '+(this.h-y1).toFixed(2)+' m '+x2.toFixed(2)+' '+(this.h-y2).toFixed(2)+' l S')},
+  text(x,y,s,sz,o={}){if(s===''||s==null)return;const w=pdfW(s,sz,o.b);if(o.al==='c')x-=w/2;else if(o.al==='r')x-=w;
+    this.pg.push('BT '+pdfCor(o.c)+' rg /'+(o.b?'F2':'F1')+' '+sz+' Tf '+x.toFixed(2)+' '+(this.h-y).toFixed(2)+' Td ('+this.esc(s)+') Tj ET');if(o.u)this.line(x,y+1.6,x+w,y+1.6,Math.max(.6,sz/20),o.c)},
+  quebra(s,w,sz,b){const out=[];String(s==null?'':s).split(/\n/).forEach(par=>{let cur='';par.split(/\s+/).filter(Boolean).forEach(pal=>{const t=cur?cur+' '+pal:pal;if(pdfW(t,sz,b)<=w||!cur)cur=t;else{out.push(cur);cur=pal}});out.push(cur)});return out},
+};
+function pdfMonta(pdf){ // monta o arquivo com xref
+  const n=pdf.pages.length,objs=[];objs.push('<< /Type /Catalog /Pages 2 0 R >>');objs.push('<< /Type /Pages /Kids ['+pdf.pages.map((_,i)=>(5+i*2)+' 0 R').join(' ')+'] /Count '+n+' >>');
+  objs.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');objs.push('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+  pdf.pages.forEach((p,i)=>{const c=p.join('\n');objs.push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+pdf.w.toFixed(2)+' '+pdf.h.toFixed(2)+'] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents '+(6+i*2)+' 0 R >>');objs.push('<< /Length '+c.length+' >>\nstream\n'+c+'\nendstream')});
+  let out='%PDF-1.4\n',off=[];objs.forEach((o,i)=>{off.push(out.length);out+=(i+1)+' 0 obj\n'+o+'\nendobj\n'});
+  const xr=out.length;out+='xref\n0 '+(objs.length+1)+'\n0000000000 65535 f \n'+off.map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('')+'trailer\n<< /Size '+(objs.length+1)+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF';
+  const u=new Uint8Array(out.length);for(let i=0;i<out.length;i++)u[i]=out.charCodeAt(i)&255;return u}
+function baixaPdf(pdf,nome){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([pdfMonta(pdf)],{type:'application/pdf'}));a.download=String(nome).replace(/[\\/:*?"<>|]/g,'-')+'.pdf';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);toast('PDF baixado')}
+const MM=2.8346;
+/* desenha as tabelas de um HTML de folha (a mesma usada na impressão); y inicial e margens em pt */
+function pdfTabelas(pdf,html,o){
+  const dom=new DOMParser().parseFromString('<body>'+html+'</body>','text/html'),M=o.m||30,pad=o.pad||3;
+  dom.querySelectorAll('table').forEach((tb,ti)=>{
+    if(ti>0||o.novaPrimeira){if(!(ti===0&&!pdf.pg.length))pdf.nova()}
+    let y=o.y0||M;const cg=[...tb.querySelectorAll('col')].map(c=>parseFloat((c.getAttribute('style')||'').replace(/[^0-9.]/g,'')||c.getAttribute('width')||0));
+    const rows=[...tb.querySelectorAll('tr')],nc=Math.max(...rows.map(r=>[...r.children].reduce((a,c)=>a+(c.colSpan||1),0)));
+    const tw=pdf.w-2*M;let pw=cg.length===nc&&cg.every(x=>x>0)?cg:Array(nc).fill(100/nc);if(o.tipo==='rel')pw[0]*=.3;const sum=pw.reduce((a,b)=>a+b,0);pw=pw.map(x=>x/sum*tw);
+    const head=[];let bi=0;
+    const estilo=(c,tr)=>{const cl=c.className||'',isTh=c.tagName==='TH',s={sz:o.fs||8.5,b:o.bold||isTh,al:'c',fill:null,col:'#000',minH:o.minH||16};
+      if(o.tipo==='ctrl'){s.sz=10;s.b=isTh||cl==='rf';s.minH=11*MM;if(cl==='rf')s.sz=13;if(cl==='ds'||cl.includes('ds'))s.al='l';
+        if(cl.includes('t1')){s.sz=17;s.fill='#000';s.col='#fff';s.b=1;s.minH=9*MM}else if(cl.includes('t2')){s.sz=13;s.fill='#000';s.col='#fff';s.b=1;s.minH=8*MM}
+        else if(tr.classList.contains('hd')){s.fill='#38761d';s.col='#fff';s.b=1}else if(bi%2===1&&!isTh)s.fill='#f3f3f3'}
+      if(o.tipo==='bai'){s.b=1;s.sz=8.5;s.minH=24;if(isTh){s.sz=9.5;s.minH=22}if(cl.includes('tit')){s.sz=10.5;s.minH=38}if(cl.includes('tot')){s.sz=10.5;s.minH=26}}
+      if(o.tipo==='rel'){if(isTh){s.fill='#e8e8e8';s.sz=9;s.b=1;s.al='l'}else{s.sz=9;s.al='l'}}
+      return s};
+    const medir=(r)=>{let x=M,h=0,cells=[];[...r.children].forEach((c,ci)=>{const span=c.colSpan||1;let cw=0;for(let k=0;k<span;k++)cw+=pw[cells.reduce((a,z)=>a+z.span,0)+k]||0;const idx=cells.reduce((a,z)=>a+z.span,0);
+        const st=estilo(c,r);const txt=[...c.childNodes].map(n=>n.nodeName==='BR'?'\n':n.textContent).join('').replace(/[ \t]+/g,' ').trim();const ln=pdf.quebra(txt,cw-2*pad,st.sz,st.b);
+        h=Math.max(h,ln.length*st.sz*1.18+2*pad,st.minH);cells.push({span,cw,st,ln,x,idx});x+=cw});return{cells,h}};
+    const desenha=(m,yy)=>{m.cells.forEach(c=>{if(c.st.fill)pdf.rect(c.x,yy,c.cw,m.h,{fill:c.st.fill});pdf.rect(c.x,yy,c.cw,m.h,{stroke:'#000',lw:.8});
+        const lh=c.st.sz*1.18,tot=c.ln.length*lh;let ty=yy+(m.h-tot)/2+c.st.sz*.92;c.ln.forEach(l=>{const tx=c.st.al==='l'?c.x+pad:c.x+c.cw/2;pdf.text(tx,ty,l,c.st.sz,{b:c.st.b,c:c.st.col,al:c.st.al==='l'?'l':'c'});ty+=lh})})};
+    rows.forEach(r=>{const isHead=!!r.querySelector('th');const m=medir(r);if(y+m.h>pdf.h-M&&pdf.pg.length){pdf.nova();y=M;head.forEach(hm=>{desenha(hm,y);y+=hm.h})}
+      desenha(m,y);y+=m.h;if(isHead&&!o.semRepetir)head.push(m);else if(!isHead)bi++});
+  })}
+function pdfBaiano(lista){const l=[...lista].sort((a,b)=>String(a.data_ref||dia(a.criado)).slice(0,10).localeCompare(String(b.data_ref||dia(b.criado)).slice(0,10)));
+  const pdf=new MiniPDF(false);pdfTabelas(pdf,folhaBai(l),{tipo:'bai',m:34,y0:40});baixaPdf(pdf,'INVENTRA - Consertos Baiano - '+new Date().toISOString().slice(0,10))}
+async function pdfControle(){const html=await prepCtrl();const pdf=new MiniPDF(true);pdfTabelas(pdf,html,{tipo:'ctrl',m:20});baixaPdf(pdf,nomeCtrl())}
+function pdfRelatorioLista(html,nome){const dom=new DOMParser().parseFromString('<body>'+html+'</body>','text/html'),pdf=new MiniPDF(true),M=28;let y=M+22;
+  pdf.text(M,y,dom.querySelector('.pdft').textContent,22,{b:1});const dir=[...dom.querySelector('.pdfh').children[1].childNodes].map(n=>n.nodeName==='BR'?'\n':n.textContent).join('').split('\n');
+  dir.forEach((t,i)=>pdf.text(pdf.w-M,M+10+i*11,t,9,{al:'r'}));y+=14;pdf.text(M,y,dom.querySelector('.pdfh .pdfs').textContent,9.5,{});y+=8;pdf.line(M,y,pdf.w-M,y,1.6);y+=14;
+  let x=M;dom.querySelectorAll('.pdfk div').forEach(d=>{const v=d.querySelector('b').textContent,t=d.querySelector('span').textContent,w=Math.max(100,pdfW(v,15,1)+24,pdfW(t,8.5)+24);pdf.rect(x,y,w,38,{stroke:'#000',lw:1.1});pdf.text(x+10,y+18,v,15,{b:1});pdf.text(x+10,y+31,t,8.5,{});x+=w+10});
+  y+=52;pdfTabelas(pdf,dom.querySelector('table').outerHTML,{tipo:'rel',m:M,y0:y,pad:4});baixaPdf(pdf,nome)}
+function pdfAvaria(o){const d=o.dados||{},pdf=new MiniPDF(false),M=56,W=pdf.w-2*M;let y=60;
+  const cu=o.custo!=null&&o.custo!==''?Number(o.custo).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'';
+  const tit=avTipo(o)[2].replace(/<[^>]*>/g,'');let ts=24;while(pdfW(tit,ts)>W&&ts>12)ts-=.5;pdf.text(pdf.w/2,y+ts*.8,tit,ts,{al:'c',u:1});y+=ts+26;
+  const linhas=['Descrição: '+(o.sku||'')+(o.produto?' - '+o.produto:''),'Caso: '+(d.caso||''),'Custo: '+cu,'Fab: '+(o.fab||'')],bh=linhas.length*18+10;
+  pdf.rect(M,y,W,bh,{stroke:'#000',lw:.9});linhas.forEach((t,i)=>pdf.text(M+8,y+18+i*18-4,t,9.5,{b:1}));pdf.text(M+W-8,y+16,'REF: '+(d.ref||''),9.5,{b:1,c:'#e00000',al:'r'});y+=bh+8;
+  const sz=12,lh=sz*1.45;
+  const par=(texto)=>{ // palavras com marca-texto nos trechos entre *...*
+    const toks=[];String(texto||'').split('\n').forEach((ln,li)=>{if(li>0)toks.push({br:1});let hi=false;ln.split('*').forEach((seg,si)=>{if(si>0)hi=!hi;seg.split(/\s+/).filter(Boolean).forEach(p=>toks.push({p,hi}))})});
+    let x=M,first=true;const sp=pdfW(' ',sz,1);let linha=[];const flush=()=>{linha.forEach((t,i)=>{if(t.hi){const nx=linha[i+1];pdf.rect(t.x-1,y-sz*.82,t.w+(nx&&nx.hi?sp+1:2),sz*1.12,{fill:'#ffeb3b'})}pdf.text(t.x,y,t.p,sz,{b:1})});linha=[];y+=lh;x=M};
+    toks.forEach(t=>{if(t.br){flush();return}t.w=pdfW(t.p,sz,1);if(x+t.w>M+W&&linha.length)flush();t.x=x;linha.push(t);x+=t.w+sp});flush()};
+  const sec=(t,v)=>{if(y>pdf.h-120){pdf.nova();y=60}y+=12;pdf.text(M,y,t,11,{b:1,c:'#2e74b5'});y+=16;if(v)par(v);else y+=lh;};
+  sec('Descrição do Ocorrido:',d.oc);sec('Constatação:',d.cons);sec('Conclusão:',d.conc);
+  y+=2;[d.n1,d.n2].filter(Boolean).forEach(n=>String(n).replace(/\*/g,'').split('\n').forEach(l=>{pdf.rect(pdf.w/2-pdfW(l,sz)/2-3,y-sz*.82,pdfW(l,sz)+6,sz*1.2,{fill:'#ffff00'});pdf.text(pdf.w/2,y,l,sz,{al:'c'});y+=lh}));
+  y+=4;pdf.line(M,y,M+W,y,1.8);y+=Math.max(34,Math.min(60,pdf.h-60-y-110>0?34:20));
+  if(y>pdf.h-150){pdf.nova();y=70}
+  const ass=(lab,v1,v2)=>{const lw=pdfW(lab,11)+8;pdf.text(M,y,lab,11,{});if(v2!=null){const meio=(W-lw-14)/2,x1=M+lw,x2=x1+meio+14;pdf.text(x1+4,y-2,v1||'',10,{});pdf.line(x1,y+2,x1+meio,y+2,.8);pdf.text(x1+meio+7,y,'/',11,{al:'c'});pdf.text(x2+4,y-2,v2||'',10,{});pdf.line(x2,y+2,M+W,y+2,.8)}else{pdf.text(M+lw+4,y-2,v1||'',10,{});pdf.line(M+lw,y+2,M+W,y+2,.8)}y+=36};
+  ass('Envolvido:',d.env);ass('Gerentes:',d.g1,d.g2||'');ass('Conferente:',d.conf);
+  baixaPdf(pdf,avNomeArq(o))}
 /* ---------- Exportar PDF (relatório da lista filtrada, via "Salvar como PDF") ---------- */
 function exportarPDF(lista){
   if(!lista||!lista.length){toast('Nada para exportar');return}
@@ -2374,11 +2449,7 @@ function exportarPDF(lista){
   const html=`<div class="pdfrel"><div class="pdfh"><div><div class="pdft">${esc(nomeCat)}</div><div class="pdfs">Período: ${esc(periodo)}${filtros.length?' · '+esc(filtros.join(' · ')):''}</div></div><div class="pdfs" style="text-align:right">INVENTRA<br>Gerado em ${agora.toLocaleDateString('pt-BR')} às ${agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}${eu&&eu.nome?'<br>por '+esc(eu.nome):''}</div></div>
    <div class="pdfk">${C.tot(L).map(([a,v])=>`<div><b>${esc(String(v))}</b><span>${esc(a)}</span></div>`).join('')}</div>
    <table class="pdft2"><thead><tr><th>#</th>${C.cols.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${L.map((o,i)=>`<tr><td>${i+1}</td>${C.row(o).map(v=>`<td>${esc(String(v))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-  let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
-  a.innerHTML=html;document.body.classList.add('imprimindo');
-  const tit=document.title;document.title='INVENTRA - '+nomeCat+' - '+agora.toISOString().slice(0,10);
-  const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';document.title=tit;removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
-  toast('Na janela que abrir, escolha "Salvar como PDF"');setTimeout(()=>print(),400)}
+  pdfRelatorioLista(html,'INVENTRA - '+nomeCat+' - '+agora.toISOString().slice(0,10))}
 /* ---------- Exportar Excel ---------- */
 function carregarXlsx(){return window.XLSX?Promise.resolve():new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
 /* ---------- Relatório em Excel (gerado no navegador, com gráficos nativos) ---------- */
@@ -2803,7 +2874,7 @@ function imprimirBai(lista,titulo){const tit0=document.title;if(typeof titulo===
   a.innerHTML=folhaBai(l);document.body.classList.add('imprimindo');
   const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';document.title=tit0;removeEventListener('afterprint',fim)};addEventListener('afterprint',fim);
   setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
-const baiPdf=l=>{toast('Na janela que abrir, escolha "Salvar como PDF"');imprimirBai(l,'INVENTRA - Consertos Baiano - '+new Date().toISOString().slice(0,10))};
+const baiPdf=l=>pdfBaiano(l);
 function baiDetHTML(o){return`<div class="stack"><button class="btn sm" id="voltar" style="align-self:flex-start">← Voltar</button>
   <div>${catBadge('Consertos Baiano')}<h2 style="margin-top:6px">${esc(o.sku||'')} · ${esc(o.produto||'Sem descrição')}</h2><div class="muted small">Registrado por <b>${esc(nome(o.autor))}</b> em ${fData(o.criado)}</div></div>
   <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn primary" id="imprimir">🖨 Imprimir</button><button class="btn" id="baiPdf">📄 Baixar PDF</button></div>
@@ -3025,7 +3096,7 @@ function avDetHTML(o){const d=o.dados||{};
   <div class="prevwrap"><div class="prev">${folhaAv(o)}</div></div>
   ${(pode('garantia')||o.autor===uid)?'<button class="btn sm" id="editar" style="align-self:flex-start">✎ Editar relatório</button>':''}
   ${pode('apagar')?(ui.confDel?`<div class="box stack"><b>Apagar este relatório de avaria?</b><div class="actions"><button class="btn danger" id="delSim">Apagar</button><button class="btn" id="delNao">Cancelar</button></div></div>`:'<button class="btn sm danger" id="del" style="align-self:flex-start">Apagar relatório</button>'):''}</div>`}
-function bindAvDet(o){$('voltar').onclick=()=>{ui.det=null;render()};$('imprimir').onclick=()=>imprimirAv([o]);$('avPdf').onclick=()=>{toast('Na janela que abrir, escolha "Salvar como PDF"');imprimirAv([o],avNomeArq(o))};$('avDoc').onclick=()=>baixarAvWord(o);
+function bindAvDet(o){$('voltar').onclick=()=>{ui.det=null;render()};$('imprimir').onclick=()=>imprimirAv([o]);$('avPdf').onclick=()=>pdfAvaria(o);$('avDoc').onclick=()=>baixarAvWord(o);
   const ed=$('editar');if(ed)ed.onclick=()=>{const d=o.dados||{};draft=novo();draft.cat='Avaria';draft.editId=o.id;draft.av={tipo:d.tipo||'Avaria',ref:d.ref||'',sku:o.sku||'',produto:o.produto||'',caso:d.caso||'',custo:o.custo!=null?String(o.custo).replace('.',','):'',fab:o.fab||'',oc:d.oc||'',cons:d.cons||'',conc:d.conc||'',n1:d.n1||'',n2:d.n2||'',env:d.env||'',g1:d.g1||'',g2:d.g2||'',conf:d.conf||''};ui.det=null;go('nova')};
   const d=$('del');if(d)d.onclick=()=>{ui.confDel=true;render()};
   const n=$('delNao');if(n)n.onclick=()=>{ui.confDel=false;render()};
@@ -3376,7 +3447,7 @@ async function imprimirCtrl(titulo){let a=$('printArea');if(!a){a=document.creat
   const fim=()=>{document.body.classList.remove('imprimindo');a.innerHTML='';document.title=tit;removeEventListener('afterprint',fim);if(ui.ctrlav)render()};addEventListener('afterprint',fim);
   setTimeout(()=>{try{print()}catch(e){toast('Não foi possível abrir a impressão neste navegador.')}},80)}
 const nomeCtrl=()=>'INVENTRA - Controle de Avaria - '+new Date().toISOString().slice(0,10);
-function baixarCtrlPdf(){toast('Na janela que abrir, escolha "Salvar como PDF"');imprimirCtrl(nomeCtrl())}
+function baixarCtrlPdf(){pdfControle()}
 async function baixarCtrlWord(){
   const dom=new DOMParser().parseFromString('<body>'+await prepCtrl()+'</body>','text/html');
   const W=[5,7,24,9,9,9,9,8,8,8,8],S=(q,c)=>dom.querySelectorAll(q).forEach(e=>e.style.cssText+=';'+c);
