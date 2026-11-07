@@ -346,18 +346,18 @@ async function entrouComo(uid){
 /* ================= DADOS ================= */
 async function carregar(silencioso){
   const todos=[];let de=0;const P=1000;
-  for(;;){const {data,error}=await sb.from('ocorrencias').select('id,sku,produto,dados,criado,autor').eq('categoria','Avaria').order('criado',{ascending:true}).range(de,de+P-1);
+  for(;;){const {data,error}=await sb.from('ocorrencias').select('id,categoria,sku,produto,dados,criado,autor').eq('categoria','Avaria').order('criado',{ascending:true}).range(de,de+P-1);
     if(error){silencioso?toast(erroMsg(error)):falha(erroMsg(error));return false}
     todos.push(...data);if(data.length<P)break;de+=P}
-  regs=todos.filter(o=>!isNaN(refDe(o)));return true;
+  regs=todos.filter(o=>o.categoria==='Avaria'&&!isNaN(refDe(o)));return true;
 }
 function ouvir(){
   if(canal)sb.removeChannel(canal);
   canal=sb.channel('ctrl-avarias').on('postgres_changes',{event:'*',schema:'public',table:'ocorrencias'},pl=>{
     const n=pl.new||{},v=pl.old||{};
     if(pl.eventType==='DELETE'){if(regs.some(o=>o.id===v.id)){regs=regs.filter(o=>o.id!==v.id);render()}return}
-    if(n.categoria!=='Avaria'||isNaN(refDe(n)))return;
-    const i=regs.findIndex(o=>o.id===n.id),reg={id:n.id,sku:n.sku,produto:n.produto,dados:n.dados,criado:n.criado,autor:n.autor};
+    if(n.categoria!=='Avaria'||isNaN(refDe(n))){if(regs.some(o=>o.id===n.id)){regs=regs.filter(o=>o.id!==n.id);render()}return} // só Relatório de Avaria (nada de Consertos Baiano ou outros módulos)
+    const i=regs.findIndex(o=>o.id===n.id),reg={id:n.id,categoria:n.categoria,sku:n.sku,produto:n.produto,dados:n.dados,criado:n.criado,autor:n.autor};
     if(i>=0)regs[i]=reg;else{regs.push(reg);novos.add(n.id);toast(`Nova avaria: Ref. ${refDe(n)} · ${n.sku||''}`)}
     render();
   }).subscribe(st=>{const on=st==='SUBSCRIBED';$('vivo').classList.toggle('on',on);$('vivo').querySelector('span').textContent=on?'Ao vivo':'Sem tempo real'});
