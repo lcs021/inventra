@@ -120,7 +120,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .au-l>*{position:relative}
 .au-brand{display:flex;align-items:center;gap:14px}
 .au-mark{width:40px;height:40px;border-radius:9px;background:#087A50;display:grid;place-items:center;box-shadow:0 0 0 1px rgba(255,255,255,.1) inset,0 0 0 4px rgba(40,123,67,.14)}
-.au-mark svg{width:30px;height:30px}
+.au-mark svg{width:33px;height:33px}
 .au-brand b{display:block;color:#fff;font-size:15px;font-weight:700;letter-spacing:.09em;line-height:1}
 .au-brand small{display:block;font-size:10px;font-weight:600;letter-spacing:.18em;color:#7E8A81;margin-top:2px}
 .au-env{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border:1px solid rgba(255,255,255,.07);border-radius:999px;background:rgba(255,255,255,.02);font-size:10.5px;font-weight:500;color:#859188}
@@ -245,7 +245,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
    ========================================================= */
 #tapp{display:grid;grid-template-columns:var(--sidew) minmax(0,1fr);min-height:100%}
 .logo{width:30px;height:30px;border-radius:7px;background:#087A50;display:grid;place-items:center;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.06) inset}
-.logo svg{width:23px;height:23px}
+.logo svg{width:25px;height:25px}
 
 /* ---------- sidebar ---------- */
 .side{background:var(--side);color:var(--side-fg);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;border-right:1px solid var(--side-line);z-index:30}
@@ -996,7 +996,7 @@ const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
 
 /* ícones fixos */
 const LOGO_IN='<defs> <mask id="appc" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><g stroke="#000" stroke-width="2.4" stroke-linecap="round"><line x1="40.00" y1="44.00" x2="14.02" y2="29.00"/><line x1="40.00" y1="44.00" x2="65.98" y2="29.00"/><line x1="40.00" y1="44.00" x2="40.00" y2="74.00"/></g><path d="M57 44 H76 L86 54 V85 Q86 88 83 88 H57 Q54 88 54 85 V47 Q54 44 57 44 Z" fill="#000" stroke="#000" stroke-width="7" stroke-linejoin="round"/></mask> <mask id="appd" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><g stroke="#000" stroke-width="3.4" stroke-linecap="round"><line x1="61" y1="63" x2="78" y2="63"/><line x1="61" y1="72" x2="78" y2="72"/><line x1="61" y1="81" x2="71" y2="81"/></g><path d="M76 42 L88 54" stroke="#000" stroke-width="2.8"/></mask> </defs> <g mask="url(#appc)" stroke-linejoin="round"><polygon points="40.00,14.00 65.98,29.00 40.00,44.00 14.02,29.00" fill="#FFFFFF"/><polygon points="14.02,29.00 40.00,44.00 40.00,74.00 14.02,59.00" fill="#DDF4E8"/><polygon points="40.00,44.00 65.98,29.00 65.98,59.00 40.00,74.00" fill="#B2E5CB"/></g> <g mask="url(#appd)"><path d="M57 44 H76 L86 54 V85 Q86 88 83 88 H57 Q54 88 54 85 V47 Q54 44 57 44 Z" fill="#16A36A"/></g> <path d="M76 44 L86 54 H78 Q76 54 76 52 Z" fill="#B2E5CB"/>';
-document.querySelectorAll('[data-logo]').forEach((e,i)=>e.innerHTML='<svg viewBox="21 23 58 58" aria-hidden="true">'+LOGO_IN.replace(/app([cd])/g,'lg'+i+'$1')+'</svg>');
+document.querySelectorAll('[data-logo]').forEach((e,i)=>e.innerHTML='<svg viewBox="12 13 76 76" aria-hidden="true">'+LOGO_IN.replace(/app([cd])/g,'lg'+i+'$1')+'</svg>');
 $('lbIc').outerHTML=I.arrow;$('topIc').outerHTML=I.lock;$('hpIc').outerHTML=I.info2;$('ft1').insertAdjacentHTML('afterbegin',I.shield);
 $('tagL').insertAdjacentHTML('afterbegin',I.shield);$('tagC').insertAdjacentHTML('afterbegin',I.user);
 $('sg1').insertAdjacentHTML('afterbegin',I.alertT);$('sg2').insertAdjacentHTML('afterbegin',I.refresh);$('sg3').insertAdjacentHTML('afterbegin',I.excel);
