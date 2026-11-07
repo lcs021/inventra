@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Controle de Avarias</title>
+<title>INVENTRA Control · Controle de Avarias</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23267A3C'/%3E%3Cpath d='M9 12.5 16 9l7 3.5v7L16 23l-7-3.5z' fill='none' stroke='%23fff' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='m15 13.5 2 2.2-1.6 1.8 1.6 2' fill='none' stroke='%23fff' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;650&display=swap">
@@ -13,18 +13,18 @@
    escala 4px · controle 34px · raio 6px · ícones 16px · borda 1px
    ========================================================= */
 :root{
-  --g:#236B38;--g-deep:#1A5229;--g-hi:#2B7D43;--g-50:#DDE8DE;--g-25:#F1F6F1;
-  --bg:#F6F7F5;--surface:#FFFFFF;--subtle:#FAFBFA;--hover:#F7F9F7;
-  --fg:#252B26;--fg2:#4B534C;--muted:#858D86;--faint:#AEB4AF;
-  --line:#E8EBE7;--line2:#DCE0DB;--line3:#C8CEC7;
-  --red:#D64545;--red-50:#FCEFEF;--red-ink:#B03636;
-  --amb:#D69A26;--amb-50:#FDF5E6;--amb-ink:#97650C;
-  --blu:#3977B9;--blu-50:#EDF3FA;--blu-ink:#2B5F96;
+  --g:#287B43;--g-deep:#19572E;--g-hi:#2F8A4C;--g-50:#EAF3EC;--g-25:#F4F9F5;
+  --bg:#F5F7F4;--surface:#FFFFFF;--subtle:#FAFBFA;--hover:#F6F9F6;
+  --fg:#202820;--fg2:#475048;--muted:#778078;--faint:#A9B0AA;
+  --line:#E5EAE5;--line2:#D8DED8;--line3:#C4CBC4;
+  --red:#CF4545;--red-50:#FCEFEF;--red-ink:#B03636;
+  --amb:#C58C28;--amb-50:#FDF5E6;--amb-ink:#97650C;
+  --blu:#3978B5;--blu-50:#EDF3FA;--blu-ink:#2B5F96;
   --vio:#7D63B8;--vio-50:#F3F0FA;--vio-ink:#5E4796;
   --neu-50:#F0F2EF;--neu-ink:#5C655D;
-  --side:#171B18;--side-2:#1F2420;--side-3:#262C27;--side-line:#262B27;--side-fg:#D3D8D4;--side-mu:#7E877F;
+  --side:#1B211D;--side-2:#222924;--side-3:#252D27;--side-line:#29312B;--side-fg:#D3D8D4;--side-mu:#7E877F;
   --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --r:6px;--r-lg:7px;--h:32px;--h-sm:28px;--sidew:236px;
+  --r:6px;--r-lg:6px;--h:36px;--h-sm:30px;--sidew:228px;
   --sh-1:0 1px 2px rgba(17,24,17,.04);
   --sh-pop:0 12px 32px -8px rgba(17,24,17,.18),0 2px 6px rgba(17,24,17,.06);
   --ease:cubic-bezier(.2,.7,.2,1);color-scheme:light;
@@ -59,7 +59,7 @@ svg.i{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-widt
 
 /* tooltip */
 [data-tip]{position:relative}
-[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);background:#1A1F1A;color:#F1F4F1;font-size:12px;font-weight:450;line-height:1.3;padding:5px 8px;border-radius:5px;white-space:nowrap;pointer-events:none;z-index:80;box-shadow:0 4px 12px rgba(0,0,0,.15);animation:fade .12s var(--ease)}
+[data-tip]:hover::after,[data-tip]:focus-visible::after{content:attr(data-tip);transition:none;position:absolute;top:calc(100% + 7px);left:50%;transform:translateX(-50%);background:#1A1F1A;color:#F1F4F1;font-size:12px;font-weight:450;line-height:1.3;padding:5px 8px;border-radius:5px;white-space:nowrap;pointer-events:none;z-index:80;box-shadow:0 4px 12px rgba(0,0,0,.15);animation:fade .12s var(--ease)}
 [data-tip-pos="right"]:hover::after{top:50%;left:calc(100% + 10px);transform:translateY(-50%)}
 [data-tip-pos="up"]:hover::after{top:auto;bottom:calc(100% + 7px);left:auto;right:0;transform:none}
 @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -150,8 +150,8 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .side{background:var(--side);color:var(--side-fg);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;border-right:1px solid var(--side-line);z-index:30}
 .s-head{display:flex;align-items:center;gap:10px;height:60px;padding:0 16px;border-bottom:1px solid var(--side-line);flex:none}
 .s-head .nm{min-width:0}
-.s-head b{display:block;font-size:13.5px;font-weight:600;color:#fff;letter-spacing:-.01em;white-space:nowrap}
-.s-head small{display:block;font-size:11.5px;color:var(--side-mu);white-space:nowrap}
+.s-head b{display:block;font-size:13px;font-weight:700;color:#fff;letter-spacing:.06em;white-space:nowrap}
+.s-head small{display:block;font-size:10px;font-weight:600;letter-spacing:.14em;color:var(--side-mu);white-space:nowrap;margin-top:1px}
 .s-body{flex:1;padding:14px 10px}
 .s-grp+.s-grp{margin-top:16px;padding-top:14px;border-top:1px solid var(--side-line)}
 .s-lbl{font-size:11px;font-weight:500;color:var(--side-mu);padding:0 10px 6px;white-space:nowrap}
@@ -176,12 +176,12 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 
 /* ---------- cabeçalho ---------- */
 .main{min-width:0;display:flex;flex-direction:column}
-.hdr{background:var(--surface);border-bottom:1px solid var(--line);min-height:64px;padding:12px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hdr{background:var(--surface);border-bottom:1px solid var(--line);padding:12px 24px 12px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
 .hdr .ttl{min-width:0;flex:1}
-.crumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:4px}
-.crumb svg.i{width:12px;height:12px;color:var(--faint)}
+.crumb{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--muted);margin-bottom:3px}
+.crumb .sep{color:var(--faint)}
 .crumb b{color:var(--fg2);font-weight:500}
-.hdr h1{margin:0;font-size:17px;font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.hdr h1{margin:0;font-size:18px;font-weight:600;letter-spacing:-.016em;line-height:1.3}
 .hdr p{margin:1px 0 0;color:var(--muted);font-size:12.5px}
 .hdr .hr{display:flex;align-items:center;gap:10px}
 .sync{display:inline-flex;align-items:center;gap:7px;height:var(--h);padding:0 4px;font-size:12px;color:var(--fg2);white-space:nowrap}
@@ -191,7 +191,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 @keyframes pulse{0%{opacity:.6;transform:scale(.6)}100%{opacity:0;transform:scale(1.6)}}
 .sync.off .dot{background:var(--amb)}
 .sync .t{color:var(--muted)}
-.content{padding:20px 28px 40px;width:100%;max-width:1760px}
+.content{padding:16px 24px 32px;width:100%;max-width:none}
 .mnav{display:none}
 
 /* ---------- faixa de indicadores ---------- */
@@ -437,6 +437,95 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
   .sheet table.grid{min-width:1080px}
 }
 
+
+/* =========================================================
+   INVENTRA CONTROL · Custom Enterprise
+   ========================================================= */
+.hdr .hr{gap:12px}
+.hdr .sync{height:auto;padding:0}
+.upd{font-size:12px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums;padding-left:12px;border-left:1px solid var(--line)}
+.hdr .btn{height:34px}
+.kstrip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:6px;margin-bottom:12px}
+.ks{display:flex;align-items:center;gap:12px;padding:10px 16px;border:0;border-left:1px solid var(--line);background:none;text-align:left;cursor:pointer;transition:background .15s var(--ease);min-width:0}
+.ks:first-child{border-left:0;border-radius:6px 0 0 6px}.ks:last-child{border-radius:0 6px 6px 0}
+.ks:hover{background:var(--hover)}
+.ks .ind{width:3px;height:30px;border-radius:2px;background:var(--c);flex:none;margin:2px 0}
+.ks .tx{min-width:0;display:flex;flex-direction:column}
+.ks .k{font-size:11.5px;font-weight:500;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ks .v{display:flex;align-items:baseline;gap:6px}
+.ks .v b{font-size:20px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.3;color:var(--fg)}
+.ks .v small{font-size:11.5px;color:var(--faint);font-variant-numeric:tabular-nums}
+.ks[aria-pressed="true"]{background:var(--g-25);box-shadow:inset 0 -2px 0 var(--g)}
+.ks[aria-pressed="true"] .k{color:var(--fg)}
+
+.ops{background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.ops-tabs{display:flex;gap:2px;padding:0 8px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.ops-tabs::-webkit-scrollbar{display:none}
+.ot{position:relative;display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 12px;border:0;background:none;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:color .15s var(--ease)}
+.ot:hover{color:var(--fg)}
+.ot .mk{width:7px;height:7px;border-radius:2px;background:var(--c)}
+.ot .q{min-width:22px;height:20px;padding:0 6px;border-radius:4px;display:inline-grid;place-items:center;font-size:11.5px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--muted);background:var(--neu-50);transition:background .15s,color .15s}
+.ot[aria-selected="true"]{color:var(--fg);font-weight:600}
+.ot[aria-selected="true"] .q{background:var(--side-3);color:#fff}
+.ot::after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:2px;background:var(--g);transform:scaleX(0);transition:transform .15s var(--ease)}
+.ot[aria-selected="true"]::after{transform:scaleX(1)}
+.ops-tool{display:flex;align-items:center;gap:8px;padding:12px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ops-tool .search{flex:1 1 320px;max-width:560px}
+.ops-tool .inp{height:38px;font-size:13.5px}
+.ops-tool select.inp{width:auto;min-width:170px}
+.ops-tool .grow{flex:1}
+.ops-tool .btn{height:38px;padding:0 14px}
+.ops-tool .btn svg.i{width:17px;height:17px}
+.ops-tool .vsep{height:22px}
+.ctx{display:flex;align-items:center;gap:8px;height:48px;padding:0 12px 0 16px;border-bottom:1px solid var(--line);background:var(--g-25);animation:slide .15s var(--ease)}
+.ctx .n{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:var(--fg);margin-right:8px}
+.ctx .n b{min-width:24px;height:22px;padding:0 7px;border-radius:5px;background:var(--g);color:#fff;display:inline-grid;place-items:center;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.ctx .grow{flex:1}
+.ctx .btn{height:32px}
+.ctx .k{font-size:12px;color:var(--muted)}
+
+/* tabela INVENTRA CONTROL */
+.ops .tscroll{max-height:calc(100vh - 330px);min-height:280px}
+.ops table.grid{min-width:1080px;table-layout:fixed}
+.ops table.grid th{height:38px;background:#252D27;color:#E6ECE7;font-size:12px;font-weight:600;letter-spacing:.01em;border-bottom:0;border-right:1px solid #2F3830;padding:0 12px}
+.ops table.grid th:last-child{border-right:0}
+.ops table.grid th input[type=checkbox]{border-color:#5B665D;background:transparent}
+.ops table.grid th input[type=checkbox]:checked,.ops table.grid th input[type=checkbox]:indeterminate{background:var(--g-hi);border-color:var(--g-hi)}
+.ops table.grid td{height:52px;padding:0 12px;border-bottom:1px solid var(--line)}
+.ops table.grid tbody tr:hover td{background:#F7FAF7}
+.ops table.grid tbody tr.sel td{background:var(--g-25)}
+.ops table.grid tbody tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--g)}
+.ops .c-ck{width:40px;padding:0 0 0 14px!important;text-align:left}
+.ops .c-ref{width:68px;text-align:left!important;padding:0 12px!important}
+.ops td.c-ref{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.ops .c-cod{width:100px}
+.ops td.c-cod{font-size:13px;color:var(--fg2);font-variant-numeric:tabular-nums}
+.ops .c-dt{width:134px;padding:0 8px!important}
+.ops .c-st{width:128px}
+.ops .dt{width:118px;height:30px;padding:0 4px 0 9px;border-radius:5px;font-size:12.5px}
+.ops .pname span{font-size:13.5px;font-weight:500;color:var(--fg)}
+.ops .pmeta{display:flex;align-items:center;gap:6px;margin-top:2px;font-size:11.5px;color:var(--muted)}
+.ops .pmeta .src{height:16px;font-size:9.5px;padding:0 4px}
+.ops .pmeta .dotsep{width:3px;height:3px;border-radius:50%;background:var(--faint)}
+.ops .st{height:22px;font-size:11.5px;border-radius:4px}
+.ops .tfoot{height:38px}
+:root[data-theme="dark"] .ops table.grid th{background:#0F1310;border-right-color:#1B201C}
+:root[data-theme="dark"] .ops table.grid tbody tr:hover td{background:var(--hover)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .ops table.grid th{background:#0F1310;border-right-color:#1B201C}:root:not([data-theme="light"]) .ops table.grid tbody tr:hover td{background:var(--hover)}}
+@media (max-width:1500px){.ops-tool .btn.sec .lb{display:none}.ops-tool .btn.sec{width:38px;padding:0}}
+@media (max-width:1180px){.kstrip .ks small{display:none}.hdr,.content{padding-left:16px;padding-right:16px}}
+@media (max-width:760px){
+  .kstrip{grid-template-columns:repeat(5,minmax(140px,1fr));overflow-x:auto;scrollbar-width:none}
+  .kstrip::-webkit-scrollbar{display:none}
+  .upd,.hdr .crumb{display:none}
+  .ops-tool .search{flex-basis:100%;max-width:none}
+  .ops-tool select.inp{flex:1 1 calc(50% - 4px);min-width:0}
+  .ops-tool .vsep,.ops-tool .grow{display:none}
+  .ops-tool .btn.primary{margin-left:auto}
+  .ctx{height:auto;padding:8px 10px;flex-wrap:wrap}.ctx .k,.ctx .lb{display:none}
+  .ops .tscroll{max-height:none}
+}
+
 /* =========================================================
    RESPONSIVO
    ========================================================= */
@@ -511,8 +600,8 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 <div id="tlogin" hidden>
   <aside class="lpane">
     <div class="grid-bg"></div>
-    <div style="display:flex;align-items:center;gap:10px"><span class="logo" data-logo></span><b style="color:#fff;font-weight:600;font-size:14px">Controle de Avarias</b></div>
-    <div class="kick">Gestão operacional · integrado ao INVENTRA</div>
+    <div style="display:flex;align-items:center;gap:10px"><span class="logo" data-logo></span><b style="color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em">INVENTRA CONTROL</b></div>
+    <div class="kick" style="letter-spacing:.14em;font-size:10.5px;font-weight:600">LOGISTICS OPERATIONS · CONTROLE DE AVARIAS</div>
     <h2>Cada ref. rastreada, da avaria ao retorno.</h2>
     <p>Acompanhe o que foi entregue, o que está com o Ivano, o que foi enviado e o que já retornou.</p>
     <dl><div><dt>Origem</dt><dd>Relatórios de Avaria</dd></div><div><dt>Sincronização</dt><dd>Tempo real</dd></div><div><dt>Saída</dt><dd>Folha oficial e Excel</dd></div></dl>
@@ -541,7 +630,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 <!-- ======================= SISTEMA ======================= -->
 <div id="tapp" hidden>
   <aside class="side">
-    <div class="s-head"><span class="logo" data-logo></span><div class="nm"><b>Controle de Avarias</b><small>Integrado ao INVENTRA</small></div></div>
+    <div class="s-head"><span class="logo" data-logo></span><div class="nm"><b>INVENTRA CONTROL</b><small>LOGISTICS OPERATIONS</small></div></div>
     <div class="s-body">
       <div class="s-grp"><div class="s-lbl">Operação</div><div id="navs"></div></div>
       <div class="s-grp"><div class="s-lbl">Preferências</div>
@@ -553,12 +642,12 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
   <div class="main">
     <header class="hdr">
       <div class="ttl">
-        <span id="crIc" hidden></span><span id="crumbPg" hidden></span>
+        <div class="crumb"><span>INVENTRA Control</span><span class="sep">/</span><span>Controle de Avarias</span><span class="sep">/</span><b id="crumbPg"></b></div><span id="crIc" hidden></span>
         <h1 id="titulo"></h1>
         <p id="subtitulo"></p>
       </div>
       <div class="hr">
-        <span class="sync" id="sync" data-tip="Conectando ao INVENTRA"><span class="dot"></span><span class="l">Conectando</span><span class="t" id="syncT"></span></span>
+        <span class="sync" id="sync" data-tip="Conectando ao INVENTRA"><span class="dot"></span><span class="l">Conectando</span></span><span class="upd" id="syncT"></span>
         <button class="btn" id="atualizar" data-tip="Recarregar do INVENTRA"><span id="atIc"></span><span class="lb">Atualizar</span></button>
       </div>
     </header>
@@ -586,7 +675,7 @@ const dbr=s=>s?String(s).slice(0,10).split('-').reverse().join('/'):'';
 const DIAS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 const dExt=s=>{const d=new Date(s+'T12:00');const h=hoje(),o=iso(Date.now()-864e5);return{t:s===h?'Hoje':s===o?'Ontem':dbr(s),s:(s===h||s===o?dbr(s)+' · ':'')+DIAS[d.getDay()]}};
 const ETAPAS=[['ent','Entregue'],['ivano','Data Ivano'],['envio','Data de envio'],['ret','Data de retorno']];
-const SIT=[['Não entregue','s0','#A2AAA3'],['Entregue','s1','#D69A26'],['Com o Ivano','s2','#7D63B8'],['Enviado','s3','#3977B9'],['Retornou','s4','#318B48']];
+const SIT=[['Não entregue','s0','#A2AAA3'],['Entregue','s1','#C58C28'],['Com o Ivano','s2','#7D63B8'],['Enviado','s3','#3978B5'],['Retornou','s4','#2F8A4C']];
 
 /* ===== ícones · traço único 1.75, família Lucide ===== */
 const ic=p=>`<svg viewBox="0 0 24 24" class="i" aria-hidden="true">${p}</svg>`;
@@ -621,7 +710,7 @@ const I={
 };
 const PAGS=[
   ['painel','Painel',I.painel,'Visão geral','Resumo da operação de avarias.'],
-  ['controle','Controle',I.controle,'Controle de Avarias','Gestão operacional de produtos avariados · integrado ao INVENTRA'],
+  ['controle','Controle',I.controle,'Controle de Avarias','Gestão operacional de produtos avariados.'],
   ['entregas','Entregas',I.truck,'Entregas','Histórico do que foi entregue, dia a dia.'],
 ];
 const erroMsg=e=>{const m=(e&&(e.message||e.error_description))||String(e||'');
@@ -652,7 +741,7 @@ function confirma({titulo,texto,ok,alt,cancel='Cancelar',aviso}){return new Prom
 function ocupado(b,on){if(!b)return;b.classList.toggle('busy',on);b.disabled=on}
 function tela(n){['tlogin','tcarrega','tfalha','tapp'].forEach(id=>$(id).hidden=id!==n)}
 function falha(m){$('tfalhaMsg').innerHTML=I.alert+'<span>'+esc(m)+'</span>';tela('tfalha')}
-function marcaSync(){$('syncT').textContent='· '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function marcaSync(){$('syncT').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
 
 const ctrlDe=o=>(o.dados&&o.dados.ctrl)||{};
 const refDe=o=>parseInt(o.dados&&o.dados.ref,10);
@@ -813,48 +902,48 @@ function filtraBase(){const q=ui.busca.trim().toLowerCase();
   return regs.filter(o=>(!ui.tipo||tipoDe(o)===ui.tipo)&&noPeriodo(o)&&(!q||[refDe(o),o.sku,o.produto].join(' ').toLowerCase().includes(q)))}
 function visiveis(){return filtraBase().filter(o=>ui.filtro===''||sit(o)===+ui.filtro).sort((a,b)=>refDe(a)-refDe(b))}
 function pgControle(){
-  const base=filtraBase(),cont=contagem(base);
+  $('subnav').hidden=true;$('subnav').innerHTML='';
+  const base=filtraBase(),cont=contagem(base),todo=contagem(regs),tt=regs.length,pc=n=>tt?Math.round(n/tt*100)+'%':'';
   const L=visiveis(),selL=L.filter(o=>selec.has(o.id)),nSel=selL.length;
   const tabs=[['','Todas',base.length,''],...SIT.map((s,i)=>[String(i),s[0],cont[i],s[2]])];
+  const KS=[['','Total de avarias',tt,'#252D27',''],['0','Pendentes de entrega',todo[0],SIT[0][2],pc(todo[0])],['1','Entregues',todo[1],SIT[1][2],pc(todo[1])],['3','Enviadas',todo[3],SIT[3][2],pc(todo[3])],['4','Retornadas',todo[4],SIT[4][2],pc(todo[4])]];
   const temFiltro=!!(ui.busca||ui.tipo||ui.periodo);
-  const sn=$('subnav');sn.hidden=false;
-  sn.innerHTML=tabs.map(t=>`<button class="sn" role="tab" data-sf="${t[0]}" aria-selected="${ui.filtro===t[0]}" style="--c:${t[3]||'transparent'}">${t[3]?'<span class="mk"></span>':''}${t[1]}<span class="q">${t[2]}</span></button>`).join('');
-  sn.setAttribute('role','tablist');sn.setAttribute('aria-label','Situação');
   $('pagina').innerHTML=`${avisoPerm()}
-  <div class="filters">
-    <div class="ifield search">${I.busca}<input class="inp" type="search" id="busca" placeholder="Pesquisar por referência, código ou descrição" aria-label="Pesquisar" value="${esc(ui.busca)}" autocomplete="off">${ui.busca?'':'<span class="kbd">/</span>'}</div>
-    <span class="flab">Origem</span>
-    <select class="inp" id="fTp" aria-label="Origem">${[['','Todas'],['Avaria','Avaria normal'],['Mercado Livre','Mercado Livre (MLV)'],['Shopee','Shopee']].map(t=>`<option value="${t[0]}" ${ui.tipo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
-    <span class="flab">Período</span>
-    <select class="inp" id="fPer" aria-label="Período do relatório" title="Filtra pela data do relatório de avaria">${PERIODOS.map(t=>`<option value="${t[0]}" ${ui.periodo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
-    ${temFiltro?`<button class="btn quiet" id="limpaF">${I.x}<span class="lb">Limpar filtros</span></button>`:''}
-  </div>
-  <section class="sheet" aria-label="Relatório de Avaria CD">
-    <div class="sheet-head">
-      <div class="st-t"><h2>Relatório de Avaria · CD</h2><span class="cnt">${L.length===regs.length?plural(L.length,'referência','referências'):`${L.length} de ${regs.length} referências`}</span></div>
-      ${nSel?`<span class="selinfo"><b>${nSel}</b> ${nSel===1?'selecionada':'selecionadas'}<button id="limparSel" aria-label="Limpar seleção" data-tip="Limpar seleção (Esc)">${I.x}</button></span>`:''}
+  <div class="kstrip" role="group" aria-label="Indicadores">${KS.map(k=>`<button class="ks" data-kf="${k[0]}" aria-pressed="${ui.filtro===k[0]}" style="--c:${k[3]}" data-tip="Filtrar: ${k[1].toLowerCase()}"><span class="ind"></span><span class="tx"><span class="k">${k[1]}</span><span class="v"><b>${k[2]}</b>${k[4]?`<small>${k[4]}</small>`:''}</span></span></button>`).join('')}</div>
+  <section class="ops" aria-label="Relatório de Avaria CD">
+    <div class="ops-tabs" role="tablist" aria-label="Situação">${tabs.map(t=>`<button class="ot" role="tab" data-sf="${t[0]}" aria-selected="${ui.filtro===t[0]}" style="--c:${t[3]||'transparent'}">${t[3]?'<span class="mk"></span>':''}${t[1]}<span class="q">${t[2]}</span></button>`).join('')}</div>
+    <div class="ops-tool">
+      <div class="ifield search">${I.busca}<input class="inp" type="search" id="busca" placeholder="Pesquisar por referência, código ou descrição" aria-label="Pesquisar" value="${esc(ui.busca)}" autocomplete="off">${ui.busca?'':'<span class="kbd">/</span>'}</div>
+      <select class="inp" id="fTp" aria-label="Origem">${[['','Todas as origens'],['Avaria','Avaria normal'],['Mercado Livre','Mercado Livre (MLV)'],['Shopee','Shopee']].map(t=>`<option value="${t[0]}" ${ui.tipo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
+      <select class="inp" id="fPer" aria-label="Período do relatório" title="Filtra pela data do relatório de avaria">${PERIODOS.map(t=>`<option value="${t[0]}" ${ui.periodo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
+      ${temFiltro?`<button class="btn quiet" id="limpaF" data-tip="Limpar pesquisa e filtros">${I.x}<span class="lb">Limpar</span></button>`:''}
       <span class="grow"></span>
-      <div class="acts">
-        <button class="btn" id="imprimir" data-tip="${nSel?'Folha oficial das selecionadas':'Folha oficial da lista filtrada'}">${I.print}<span class="lb">Imprimir folha</span></button>
-        <button class="btn" id="excel" data-tip="${nSel?'Planilha das selecionadas':'Planilha da lista filtrada'}">${I.excel}<span class="lb">Excel</span></button>
-        <button class="btn primary" id="entregar" ${nSel&&podeEditar?'':'disabled'} data-tip="${!podeEditar?'Sem permissão para registrar entregas':nSel?'Registra a entrega com a data de hoje':'Selecione referências na tabela'}">${I.truck}<span>Entregar</span>${nSel?`<span class="kb">${nSel}</span>`:''}</button>
-      </div>
+      <button class="btn sec" id="imprimir" data-tip="Folha oficial ${nSel?'das selecionadas':'da lista filtrada'}">${I.print}<span class="lb">Imprimir folha</span></button>
+      <button class="btn sec" id="excel" data-tip="Planilha ${nSel?'das selecionadas':'da lista filtrada'}">${I.excel}<span class="lb">Exportar Excel</span></button>
+      <span class="vsep"></span>
+      <button class="btn primary" id="entregar" ${nSel&&podeEditar?'':'disabled'} data-tip="${!podeEditar?'Sem permissão para registrar entregas':nSel?'Registra a entrega com a data de hoje':'Selecione referências na tabela'}">${I.truck}<span>Entregar</span>${nSel?`<span class="kb">${nSel}</span>`:''}</button>
     </div>
+    ${nSel?`<div class="ctx"><span class="n"><b>${nSel}</b>${nSel===1?'referência selecionada':'referências selecionadas'}</span>
+      ${podeEditar?`<button class="btn primary sm" id="sEnt">${I.truck}Entregar</button>`:''}
+      <button class="btn sm" id="sImp">${I.print}<span class="lb">Imprimir</span></button>
+      <button class="btn sm" id="sXls">${I.excel}<span class="lb">Exportar</span></button>
+      <span class="grow"></span><span class="k">Esc limpa a seleção</span><button class="btn quiet sm" id="limparSel">${I.x}Limpar seleção</button></div>`:''}
     <div class="tscroll"><table class="grid">
       <thead><tr><th class="c-ck"><input type="checkbox" id="selTodos" aria-label="Selecionar todas"></th>
         <th class="c-ref">Ref.</th><th class="c-cod">Código</th><th class="c-desc">Descrição</th>${ETAPAS.map(e=>`<th class="c-dt">${e[1]}</th>`).join('')}<th class="c-st">Situação</th></tr></thead>
-      <tbody>${L.length?L.map(o=>{const s=sit(o),c=ctrlDe(o),r=refDe(o);return`<tr class="${selec.has(o.id)?'sel':''} ${novos.has(o.id)?'flash':''}" data-row="${esc(o.id)}">
+      <tbody>${L.length?L.map(o=>{const s=sit(o),c=ctrlDe(o),r=refDe(o),tg=srcTag(tipoDe(o));return`<tr class="${selec.has(o.id)?'sel':''} ${novos.has(o.id)?'flash':''}" data-row="${esc(o.id)}">
         <td class="c-ck"><input type="checkbox" data-sel="${esc(o.id)}" ${selec.has(o.id)?'checked':''} aria-label="Selecionar ref. ${r}"></td>
         <td class="c-ref">${r}</td><td class="c-cod">${esc(o.sku)}</td>
-        <td class="c-desc"><div class="pname"><span title="${esc(o.produto||'')}">${esc(o.produto||'Sem descrição')}</span>${srcTag(tipoDe(o))}</div><div class="pmeta">Relatório de ${dbr(o.criado)}</div></td>
+        <td class="c-desc"><div class="pname"><span title="${esc(o.produto||'')}">${esc(o.produto||'Sem descrição')}</span></div><div class="pmeta">Relatório ${dbr(o.criado)}${tg?`<span class="dotsep"></span>${tg}`:''}</div></td>
         ${ETAPAS.map(e=>`<td class="c-dt"><input type="date" class="dt" required data-id="${esc(o.id)}" data-k="${e[0]}" value="${esc(String(c[e[0]]||'').slice(0,10))}" aria-label="${e[1]} da ref. ${r}" ${podeEditar?'':'disabled'}></td>`).join('')}
         <td class="c-st">${stTag(s)}</td></tr>`}).join('')
         :`<tr><td colspan="9" style="height:auto;border:0">${regs.length?vazio(I.busca,'Nenhuma referência encontrada','Nada corresponde aos filtros atuais. Ajuste a pesquisa, a origem, o período ou a situação.',temFiltro||ui.filtro?'<button class="btn sm" id="limpaTudo">Limpar filtros</button>':''):vazio(I.inbox,'Nenhum relatório de avaria','Assim que um relatório de avaria for salvo no INVENTRA, a referência aparece aqui automaticamente.')}</td></tr>`}</tbody></table></div>
-    <div class="tfoot"><span>${ui.filtro!==''?`Situação: ${SIT[+ui.filtro][0]}`:'Todas as situações'}</span><span class="grow"></span>${I.cloud}<span>Datas sincronizadas com o Controle de assinaturas do INVENTRA</span></div>
+    <div class="tfoot"><span><b style="color:var(--fg);font-weight:600">Relatório de Avaria · CD</b> · ${L.length===regs.length?plural(L.length,'referência','referências'):`${L.length} de ${regs.length} referências`}</span><span class="grow"></span>${I.cloud}<span>Datas sincronizadas com o Controle de assinaturas do INVENTRA</span></div>
   </section>`;
   const st=$('selTodos');st.checked=L.length>0&&nSel===L.length;st.indeterminate=nSel>0&&nSel<L.length;
   st.onchange=()=>{const marcar=nSel<L.length;L.forEach(o=>marcar?selec.add(o.id):selec.delete(o.id));render()};
   document.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{ui.filtro=b.dataset.sf;selec.clear();render()});
+  document.querySelectorAll('[data-kf]').forEach(b=>b.onclick=()=>{ui.filtro=ui.filtro===b.dataset.kf?'':b.dataset.kf;selec.clear();render()});
   const bu=$('busca');bu.oninput=()=>{ui.busca=bu.value;const p=bu.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)};
   $('fTp').onchange=e=>{ui.tipo=e.target.value;render()};
   $('fPer').onchange=e=>{ui.periodo=e.target.value;render()};
@@ -863,7 +952,7 @@ function pgControle(){
   $('entregar').onclick=e=>entregar(selL,e.currentTarget);
   $('imprimir').onclick=()=>imprimir(nSel?selL:L);
   $('excel').onclick=()=>excel(nSel?selL:L);
-  const ls_=$('limparSel');if(ls_)ls_.onclick=()=>{selec.clear();render()};
+  if(nSel){const se=$('sEnt');if(se)se.onclick=e=>entregar(selL,e.currentTarget);$('sImp').onclick=()=>imprimir(selL);$('sXls').onclick=()=>excel(selL);$('limparSel').onclick=()=>{selec.clear();render()}}
   document.querySelectorAll('[data-sel]').forEach(i=>i.onchange=()=>{i.checked?selec.add(i.dataset.sel):selec.delete(i.dataset.sel);render()});
   document.querySelectorAll('tr[data-row]').forEach(tr=>tr.onclick=e=>{if(e.target.closest('input,button,a,label'))return;const id=tr.dataset.row;selec.has(id)?selec.delete(id):selec.add(id);render()});
   document.querySelectorAll('input.dt').forEach(i=>i.onchange=async()=>{const o=regs.find(x=>x.id===i.dataset.id);if(!o)return;const k=i.dataset.k,v=i.value;i.classList.add('saving');proc(true);
