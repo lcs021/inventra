@@ -111,7 +111,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
    ========================================================= */
 #tlogin{height:100vh;min-height:620px;display:grid;grid-template-columns:46fr 54fr;background:#F7F8F6;overflow:hidden}
 .au-l{position:relative;overflow:hidden;background:#19211C;color:#C9D1CB;display:flex;flex-direction:column;padding:36px 40px 32px;min-height:100vh;max-height:100vh}
-.au-l .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);pointer-events:none}
+.au-l .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.009) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.009) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0%,#000 18%,#000 70%,transparent 100%);pointer-events:none}
 .au-l>*{position:relative}
 .au-brand{display:flex;align-items:center;gap:14px}
 .au-mark{width:40px;height:40px;border-radius:9px;background:#287B43;display:grid;place-items:center;box-shadow:0 0 0 1px rgba(255,255,255,.1) inset,0 0 0 4px rgba(40,123,67,.14)}
@@ -121,14 +121,32 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .au-env{margin-left:auto;display:inline-flex;align-items:center;gap:6px;height:22px;padding:0 9px;border:1px solid rgba(255,255,255,.07);border-radius:999px;background:rgba(255,255,255,.02);font-size:10.5px;font-weight:500;color:#859188}
 .au-env i{width:5px;height:5px;border-radius:50%;background:#3FA35E;box-shadow:0 0 0 2px rgba(63,163,94,.18)}
 .au-art{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 0;min-height:0}
-.au-art svg{width:100%;max-width:680px;max-height:100%;height:auto;overflow:visible}
-.au-art .lbl{font:600 11px/1 Inter,sans-serif;letter-spacing:.14em;fill:#9BA79E}
-.au-art .lbl.on{fill:#E6EDE8}
-.au-art .sub{font:500 10.5px/1 Inter,sans-serif;letter-spacing:.02em;fill:#728077}
-.au-art .mono{font:500 9px/1 Inter,sans-serif;letter-spacing:.16em;fill:#4C5850}
-.au-art .flow{stroke-dasharray:4 6;animation:flow 1.6s linear infinite}
-@keyframes flow{to{stroke-dashoffset:-20}}
-@media (prefers-reduced-motion:reduce){.au-art .flow{animation:none}}
+/* ---- componente de rastreamento ---- */
+.trk{--box:clamp(62px,4.6vw,80px);--gap:8px;width:100%;max-width:760px;margin:0 auto}
+.trk-h{display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;margin-bottom:30px;border-bottom:1px solid rgba(255,255,255,.05);font-size:9.5px;font-weight:600;letter-spacing:.2em;color:#56635A}
+.trk-h span:last-child{display:inline-flex;align-items:center;gap:8px}
+.trk-h i{width:5px;height:5px;border-radius:50%;background:#3FA35E;box-shadow:0 0 0 3px rgba(63,163,94,.14)}
+.trk-s{list-style:none;margin:0 -4%;padding:0;display:grid;grid-template-columns:repeat(4,1fr)}
+.trk-st{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center}
+.trk-box{position:relative;z-index:1;width:var(--box);height:var(--box);border-radius:16px;background:#1F2923;border:1px solid rgba(255,255,255,.075);display:grid;place-items:center;color:#D9E2DC;transition:border-color .18s,color .18s,background .18s}
+.trk-box::before{content:"";position:absolute;inset:6px;border-radius:11px;border:1px solid rgba(255,255,255,.035);pointer-events:none;transition:border-color .18s}
+.trk-box svg{width:26px;height:26px}
+.trk-n{position:absolute;top:-9px;left:50%;transform:translateX(-50%);padding:0 6px;background:#19211C;font-size:9px;font-weight:600;letter-spacing:.12em;color:#5E6B62;line-height:16px}
+.trk-st:hover .trk-box{border-color:rgba(79,175,107,.55);color:#fff;background:#203026}
+.trk-st:hover .trk-box::before{border-color:rgba(79,175,107,.2)}
+.trk-st b{margin-top:18px;font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#E3EAE5}
+.trk-st small{margin-top:5px;font-size:12px;font-weight:400;color:#748279}
+/* conexão: do lado direito de uma caixa até o lado esquerdo da próxima */
+.trk-ln{position:absolute;top:calc(var(--box)/2);left:calc(50% + var(--box)/2 + var(--gap));width:calc(100% - var(--box) - var(--gap)*2);height:2px;margin-top:-1px;border-radius:2px;background:rgba(79,175,107,.2);overflow:visible}
+.trk-ln::before,.trk-ln::after{content:"";position:absolute;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;background:#2F8A4C}
+.trk-ln::before{left:-2.5px}.trk-ln::after{right:-2.5px}
+.trk-node{position:absolute;top:50%;left:50%;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;background:#19211C;border:1.5px solid #3FA35E}
+.trk-pulse{position:absolute;top:0;left:0;height:2px;width:22px;border-radius:2px;background:#4FAF6B;opacity:0;animation:pulse-run 3.6s cubic-bezier(.45,0,.55,1) infinite}
+.trk-st:nth-child(2) .trk-pulse{animation-delay:1.2s}.trk-st:nth-child(3) .trk-pulse{animation-delay:2.4s}
+@keyframes pulse-run{0%{left:0;opacity:0}8%{opacity:.9}30%{left:calc(100% - 22px);opacity:.9}36%,100%{left:calc(100% - 22px);opacity:0}}
+@media (prefers-reduced-motion:reduce){.trk-pulse{display:none}}
+@media (max-height:780px){.trk-h{margin-bottom:22px}.trk-st b{margin-top:14px}}
+
 .au-copy h2{margin:0 0 12px;max-width:19ch;text-wrap:balance;color:#fff;font-size:33px;line-height:1.12;font-weight:600;letter-spacing:-.026em}
 .au-copy p{margin:0;max-width:40ch;color:#9AA59D;font-size:14.5px;line-height:1.55}
 .au-sig{display:flex;gap:24px;flex-wrap:wrap;margin-top:26px;padding-top:18px;border-top:1px solid rgba(255,255,255,.06)}
@@ -664,55 +682,31 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
     <div class="grid"></div>
     <div class="au-brand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE AVARIA</b></div><span class="au-env"><i></i>Ambiente operacional</span></div>
     <div class="au-art" aria-hidden="true">
-      <svg viewBox="0 0 600 270" fill="none">
-        <!-- moldura técnica -->
-        <g stroke="rgba(255,255,255,.07)" stroke-width="1">
-          <path d="M14 40v-14h14M586 40v-14h-14M14 236v14h14M586 236v14h-14"/>
-          <path d="M40 66H560" stroke-dasharray="1 7"/><path d="M40 236H560" stroke-dasharray="1 7"/>
-        </g>
-        <text x="40" y="54" class="mono">CICLO DA AVARIA</text>
-        <text x="560" y="54" text-anchor="end" class="mono">RASTREAMENTO</text>
-        <!-- trilho -->
-        <path d="M114 130H484" stroke="#2B3830" stroke-width="2" stroke-linecap="round"/>
-        <path d="M114 130H484" stroke="#3FA35E" stroke-width="2" stroke-linecap="round" class="flow" opacity=".8"/>
-        <!-- pontos de conexão -->
-        <g><circle cx="153.0" cy="130" r="4" fill="#19211C" stroke="#3FA35E" stroke-width="1.5"/><circle cx="299.0" cy="130" r="4" fill="#19211C" stroke="#3FA35E" stroke-width="1.5"/><circle cx="445.0" cy="130" r="4" fill="#19211C" stroke="#3FA35E" stroke-width="1.5"/></g>
-        <g fill="#3FA35E"><circle cx="114" cy="130" r="1.6"/><circle cx="484" cy="130" r="1.6"/></g>
-        <!-- ticks sob o trilho -->
-        <g stroke="rgba(255,255,255,.08)"><path d="M80 222v6"/><path d="M226 222v6"/><path d="M372 222v6"/><path d="M518 222v6"/></g>
-        
-        <g transform="translate(80 0)">
-          <rect x="-34" y="96" width="68" height="68" rx="14" fill="#1F3326" stroke="#3FA35E" stroke-width="1.2"/>
-          <rect x="-28" y="102" width="56" height="56" rx="10" fill="none" stroke="rgba(63,163,94,.25)"/>
-          <g transform="translate(-12 118)" stroke="#E9F2EC" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M12 3 2.5 20h19z"/><path d="M12 9.5v4.5M12 17v.3"/></g>
-          <text y="192" text-anchor="middle" class="lbl on">AVARIA</text>
-          <text y="210" text-anchor="middle" class="sub">Registro</text>
-        </g>
-        
-        <g transform="translate(226 0)">
-          <rect x="-34" y="96" width="68" height="68" rx="14" fill="#1E2721" stroke="#33403A" stroke-width="1.2"/>
-          <rect x="-28" y="102" width="56" height="56" rx="10" fill="none" stroke="rgba(255,255,255,.035)"/>
-          <g transform="translate(-12 118)" stroke="#C3CDC6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3 7.5 12 3l9 4.5v9L12 21l-9-4.5z"/><path d="M3 7.5 12 12l9-4.5M12 12v9"/></g>
-          <text y="192" text-anchor="middle" class="lbl">ENTREGA</text>
-          <text y="210" text-anchor="middle" class="sub">Recebimento</text>
-        </g>
-        
-        <g transform="translate(372 0)">
-          <rect x="-34" y="96" width="68" height="68" rx="14" fill="#1E2721" stroke="#33403A" stroke-width="1.2"/>
-          <rect x="-28" y="102" width="56" height="56" rx="10" fill="none" stroke="rgba(255,255,255,.035)"/>
-          <g transform="translate(-12 118)" stroke="#C3CDC6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M2 6h12v10H2z"/><path d="M14 9h4.5l3.5 3.5V16h-8"/><circle cx="6" cy="17.5" r="1.8"/><circle cx="17.5" cy="17.5" r="1.8"/></g>
-          <text y="192" text-anchor="middle" class="lbl">ENVIO</text>
-          <text y="210" text-anchor="middle" class="sub">Expedição</text>
-        </g>
-        
-        <g transform="translate(518 0)">
-          <rect x="-34" y="96" width="68" height="68" rx="14" fill="#1E2721" stroke="#33403A" stroke-width="1.2"/>
-          <rect x="-28" y="102" width="56" height="56" rx="10" fill="none" stroke="rgba(255,255,255,.035)"/>
-          <g transform="translate(-12 118)" stroke="#C3CDC6" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" fill="none"><path d="M3.5 12a8.5 8.5 0 1 0 2.5-6L3.5 8.5"/><path d="M3.5 3.5v5h5"/></g>
-          <text y="192" text-anchor="middle" class="lbl">RETORNO</text>
-          <text y="210" text-anchor="middle" class="sub">Conclusão</text>
-        </g>
-      </svg>
+      <div class="trk">
+        <div class="trk-h"><span>CICLO DA AVARIA</span><span><i></i>RASTREAMENTO OPERACIONAL</span></div>
+        <ol class="trk-s">
+          <li class="trk-st">
+            <div class="trk-box"><span class="trk-n">01</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
+            <span class="trk-ln"><i class="trk-pulse"></i><i class="trk-node"></i></span>
+            <b>Avaria</b><small>Registro</small>
+          </li>
+          <li class="trk-st">
+            <div class="trk-box"><span class="trk-n">02</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/><path d="m7.5 4.27 9 5.15"/></svg></div>
+            <span class="trk-ln"><i class="trk-pulse"></i><i class="trk-node"></i></span>
+            <b>Entrega</b><small>Recebimento</small>
+          </li>
+          <li class="trk-st">
+            <div class="trk-box"><span class="trk-n">03</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></div>
+            <span class="trk-ln"><i class="trk-pulse"></i><i class="trk-node"></i></span>
+            <b>Envio</b><small>Expedição</small>
+          </li>
+          <li class="trk-st">
+            <div class="trk-box"><span class="trk-n">04</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>
+            
+            <b>Retorno</b><small>Conclusão</small>
+          </li>
+        </ol>
+      </div>
     </div>
     <div class="au-copy">
       <h2>Controle total de cada referência.</h2>
