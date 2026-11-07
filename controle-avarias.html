@@ -448,7 +448,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
     <div style="display:flex;align-items:center;gap:10px"><span class="logo" data-logo></span><b style="color:#fff;font-weight:600;font-size:14px">Controle de Avarias</b></div>
     <div class="kick">Gestão operacional · integrado ao INVENTRA</div>
     <h2>Cada ref. rastreada, da avaria ao retorno.</h2>
-    <p>Acompanhe o que foi entregue ao Ramon, o que está com o Ivano, o que foi enviado e o que já retornou.</p>
+    <p>Acompanhe o que foi entregue, o que está com o Ivano, o que foi enviado e o que já retornou.</p>
     <dl><div><dt>Origem</dt><dd>Relatórios de Avaria</dd></div><div><dt>Sincronização</dt><dd>Tempo real</dd></div><div><dt>Saída</dt><dd>Folha oficial e Excel</dd></div></dl>
   </aside>
   <div class="lform">
@@ -518,8 +518,8 @@ const hoje=()=>iso(new Date());
 const dbr=s=>s?String(s).slice(0,10).split('-').reverse().join('/'):'';
 const DIAS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 const dExt=s=>{const d=new Date(s+'T12:00');const h=hoje(),o=iso(Date.now()-864e5);return{t:s===h?'Hoje':s===o?'Ontem':dbr(s),s:(s===h||s===o?dbr(s)+' · ':'')+DIAS[d.getDay()]}};
-const ETAPAS=[['ent','Entregue ao Ramon'],['ivano','Data Ivano'],['envio','Data de envio'],['ret','Data de retorno']];
-const SIT=[['Não entregue','s0','#A2AAA3'],['Com o Ramon','s1','#D69A26'],['Com o Ivano','s2','#7D63B8'],['Enviado','s3','#3977B9'],['Retornou','s4','#318B48']];
+const ETAPAS=[['ent','Entregue'],['ivano','Data Ivano'],['envio','Data de envio'],['ret','Data de retorno']];
+const SIT=[['Não entregue','s0','#A2AAA3'],['Entregue','s1','#D69A26'],['Com o Ivano','s2','#7D63B8'],['Enviado','s3','#3977B9'],['Retornou','s4','#318B48']];
 
 /* ===== ícones · traço único 1.75, família Lucide ===== */
 const ic=p=>`<svg viewBox="0 0 24 24" class="i" aria-hidden="true">${p}</svg>`;
@@ -555,7 +555,7 @@ const I={
 const PAGS=[
   ['painel','Painel',I.painel,'Visão geral','Resumo da operação de avarias.'],
   ['controle','Controle',I.controle,'Controle de Avarias','Gestão operacional de produtos avariados.'],
-  ['entregas','Entregas ao Ramon',I.truck,'Entregas ao Ramon','Histórico do que foi entregue, dia a dia.'],
+  ['entregas','Entregas',I.truck,'Entregas','Histórico do que foi entregue, dia a dia.'],
 ];
 const erroMsg=e=>{const m=(e&&(e.message||e.error_description))||String(e||'');
   if(/Invalid login/i.test(m))return'Usuário ou senha incorretos.';
@@ -709,7 +709,7 @@ const avisoPerm=()=>podeEditar?'':`<div class="note warn" style="margin-bottom:1
 function contagem(lista){const c=[0,0,0,0,0];lista.forEach(o=>c[sit(o)]++);return c}
 function kpisHTML(ativo){
   const c=contagem(regs),t=regs.length,p=n=>t?Math.round(n/t*100)+'%':'';
-  const K=[['','Total de avarias',t,'#202820',''],['0','Pendentes de entrega',c[0],SIT[0][2],p(c[0])],['1','Com o Ramon',c[1],SIT[1][2],p(c[1])],['3','Enviadas',c[3],SIT[3][2],p(c[3])],['4','Retornadas',c[4],SIT[4][2],p(c[4])]];
+  const K=[['','Total de avarias',t,'#202820',''],['0','Pendentes de entrega',c[0],SIT[0][2],p(c[0])],['1','Entregues',c[1],SIT[1][2],p(c[1])],['3','Enviadas',c[3],SIT[3][2],p(c[3])],['4','Retornadas',c[4],SIT[4][2],p(c[4])]];
   return`<div class="kpis">${K.map(k=>`<button class="kpi" style="--c:${k[3]}" data-kf="${k[0]}" ${ativo!==undefined?`aria-pressed="${ativo===k[0]}"`:''}><span class="k">${k[1]}</span><span class="v"><b>${k[2]}</b>${k[4]?`<small>${k[4]}</small>`:''}</span></button>`).join('')}</div>`}
 
 /* ======================= PAINEL ======================= */
@@ -718,15 +718,15 @@ function pgPainel(){
   const porDia=dias.map(d=>regs.filter(o=>String(ctrlDe(o).ent||'').slice(0,10)===d).length),mx=Math.max(1,...porDia),tot=porDia.reduce((a,b)=>a+b,0);
   const naoEnt=regs.filter(o=>sit(o)===0).sort((a,b)=>refDe(a)-refDe(b));
   const movs=regs.flatMap(o=>(ctrlDe(o).log||[]).map(l=>({...l,o}))).sort((a,b)=>b.t<a.t?-1:1).slice(0,8);
-  const nomeK={ent:'Entregue ao Ramon',ivano:'Com o Ivano',envio:'Enviado',ret:'Retornou'};
+  const nomeK={ent:'Entregue',ivano:'Com o Ivano',envio:'Enviado',ret:'Retornou'};
   $('pagina').innerHTML=`${avisoPerm()}${kpisHTML()}
   <div class="pgrid">
-    <section class="card"><header><h3>Entregas ao Ramon</h3><span class="meta">últimos 14 dias · ${plural(tot,'ref.','refs.')}</span><span class="grow"></span><button class="btn quiet sm" data-ir="entregas">Histórico ${I.arrow}</button></header>
+    <section class="card"><header><h3>Entregas</h3><span class="meta">últimos 14 dias · ${plural(tot,'ref.','refs.')}</span><span class="grow"></span><button class="btn quiet sm" data-ir="entregas">Histórico ${I.arrow}</button></header>
       <div class="cb"><div class="chartw"><div class="chart">${dias.map((d,i)=>`<div class="c ${d===hoje()?'td':''}" data-tip="${DIAS[new Date(d+'T12:00').getDay()]}, ${dbr(d)} · ${plural(porDia[i],'ref.','refs.')}">${porDia[i]?`<div class="b" style="height:${Math.max(3,porDia[i]/mx*100)}%"><em>${porDia[i]}</em></div>`:'<div class="zero"></div>'}<small>${d.slice(8)}/${d.slice(5,7)}</small></div>`).join('')}</div></div></div></section>
     <section class="card"><header><h3>Aguardando entrega</h3><span class="meta">${plural(naoEnt.length,'ref.','refs.')}</span></header>
       ${naoEnt.length?`<ul class="list">${naoEnt.slice(0,6).map(o=>`<li><span class="r">${refDe(o)}</span><div class="t"><div class="a">${esc(o.produto||'Sem descrição')}</div><div class="b">${esc(o.sku)} · relatório de ${dbr(o.criado)}</div></div>${srcTag(tipoDe(o))||'<span></span>'}</li>`).join('')}</ul>
-      <footer><button class="btn sm" data-kf="0">Ver todas</button><span style="flex:1"></span>${podeEditar?`<button class="btn primary sm" id="entTudo">${I.truck}Entregar ${naoEnt.length} ao Ramon</button>`:''}</footer>`
-      :vazio(I.check,'Nada pendente','Todas as refs. já foram entregues ao Ramon.')}</section>
+      <footer><button class="btn sm" data-kf="0">Ver todas</button><span style="flex:1"></span>${podeEditar?`<button class="btn primary sm" id="entTudo">${I.truck}Entregar ${naoEnt.length}</button>`:''}</footer>`
+      :vazio(I.check,'Nada pendente','Todas as refs. já foram entregues.')}</section>
   </div>
   <section class="card"><header><h3>Atividade recente</h3><span class="meta">registros de datas feitos neste sistema</span></header>
     ${movs.length?`<ul class="list">${movs.map(m=>`<li><span class="r">${refDe(m.o)}</span><div class="t"><div class="a">${m.v?`${esc(nomeK[m.k]||m.k)} <span style="color:var(--muted);font-weight:400">em ${dbr(m.v)}</span>`:`<span style="color:var(--muted);font-weight:400">Data removida:</span> ${esc((ETAPAS.find(e=>e[0]===m.k)||[0,m.k])[1])}`}</div><div class="b">${esc(m.o.produto||m.o.sku||'')} · ${esc(m.por||'Alguém')} · ${new Date(m.t).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</div></div>${m.v?stTag(['ent','ivano','envio','ret'].indexOf(m.k)+1):'<span></span>'}</li>`).join('')}</ul>`
@@ -761,10 +761,10 @@ function pgControle(){
       <button class="btn quiet" id="imprimir" data-tip="Folha oficial da lista filtrada">${I.print}<span class="lb">Imprimir folha</span></button>
       <button class="btn quiet" id="excel" data-tip="Planilha da lista filtrada">${I.excel}<span class="lb">Exportar Excel</span></button>
       <span class="vsep"></span>
-      <button class="btn primary" id="entregar" ${nSel&&podeEditar?'':'disabled'} data-tip="${!podeEditar?'Sem permissão para registrar entregas':nSel?'Registra a entrega com a data de hoje':'Selecione refs. na tabela'}">${I.truck}<span>Entregar ao Ramon</span>${nSel?`<span class="kb">${nSel}</span>`:''}</button>
+      <button class="btn primary" id="entregar" ${nSel&&podeEditar?'':'disabled'} data-tip="${!podeEditar?'Sem permissão para registrar entregas':nSel?'Registra a entrega com a data de hoje':'Selecione refs. na tabela'}">${I.truck}<span>Entregar</span>${nSel?`<span class="kb">${nSel}</span>`:''}</button>
     </div>
     ${nSel?`<div class="selbar"><span class="c"><b>${nSel}</b>${nSel===1?'ref. selecionada':'refs. selecionadas'}</span>
-      ${podeEditar?`<button class="btn primary sm" id="sEnt">${I.truck}Entregar ao Ramon</button>`:''}
+      ${podeEditar?`<button class="btn primary sm" id="sEnt">${I.truck}Entregar</button>`:''}
       <button class="btn sm" id="sImp">${I.print}<span class="lb">Imprimir selecionadas</span></button>
       <button class="btn sm" id="sXls">${I.excel}<span class="lb">Exportar selecionadas</span></button>
       <span class="grow"></span><span class="hint">Esc para limpar</span><button class="btn quiet sm" id="limparSel">${I.x}Limpar</button></div>`:''}
@@ -820,7 +820,7 @@ function pgEntregas(){
     <table><thead><tr><th class="r">Ref.</th><th class="k">Código</th><th>Descrição</th><th style="width:150px">Situação atual</th></tr></thead><tbody>
     ${L.map(o=>`<tr><td class="r">${refDe(o)}</td><td class="k">${esc(o.sku)}</td><td><span class="pname"><span>${esc(o.produto||'Sem descrição')}</span>${srcTag(tipoDe(o))}</span></td><td>${stTag(sit(o))}</td></tr>`).join('')}
     </tbody></table></section>`}).join('')}</div>`
-  :`<section class="card">${regs.some(o=>ctrlDe(o).ent)?vazio(I.filtro,'Nenhuma entrega no período','Ajuste as datas ou limpe o filtro.'):vazio(I.truck,'Nenhuma entrega registrada','Selecione refs. no Controle e use “Entregar ao Ramon”. Elas aparecem aqui, agrupadas por dia.',`<button class="btn sm" data-ir="controle">Ir para o Controle ${I.arrow}</button>`)}</section>`}`;
+  :`<section class="card">${regs.some(o=>ctrlDe(o).ent)?vazio(I.filtro,'Nenhuma entrega no período','Ajuste as datas ou limpe o filtro.'):vazio(I.truck,'Nenhuma entrega registrada','Selecione refs. no Controle e use “Entregar”. Elas aparecem aqui, agrupadas por dia.',`<button class="btn sm" data-ir="controle">Ir para o Controle ${I.arrow}</button>`)}</section>`}`;
   $('eDe').onchange=e=>{ui.de=e.target.value;render()};$('eAte').onchange=e=>{ui.ate=e.target.value;render()};
   const lp=$('eLimpa');if(lp)lp.onclick=()=>{ui.de=ui.ate='';render()};
   document.querySelectorAll('[data-ir]').forEach(b=>b.onclick=()=>ir(b.dataset.ir));
@@ -837,7 +837,7 @@ async function entregar(L,btn){
       ok:'Trocar todas para hoje',alt:sem?`Só as ${sem} sem data`:''});
     if(!r)return;if(r==='alt')alvo=L.filter(o=>!ctrlDe(o).ent);
   }else{
-    const r=await confirma({titulo:'Registrar entrega ao Ramon',texto:`<p>${plural(L.length,'ref. será marcada','refs. serão marcadas')} como entregue ao Ramon com a data de hoje, <b>${dbr(hoje())}</b>.</p><p style="color:var(--muted)">Refs.: ${L.slice(0,12).map(refDe).join(', ')}${L.length>12?'…':''}</p>`,ok:'Confirmar entrega'});
+    const r=await confirma({titulo:'Registrar entrega',texto:`<p>${plural(L.length,'ref. será marcada','refs. serão marcadas')} como entregue com a data de hoje, <b>${dbr(hoje())}</b>.</p><p style="color:var(--muted)">Refs.: ${L.slice(0,12).map(refDe).join(', ')}${L.length>12?'…':''}</p>`,ok:'Confirmar entrega'});
     if(!r)return;
   }
   if(!alvo.length)return toast('Nenhuma ref. para marcar.','info');
@@ -846,7 +846,7 @@ async function entregar(L,btn){
   const ok=res.filter(r=>r.status==='fulfilled').length,ruim=res.length-ok;
   proc(false);ocupado(btn,false);selec.clear();render();
   ruim?toast(`${ok} registradas, ${ruim} com erro: ${erroMsg(res.find(r=>r.status==='rejected').reason)}`,'err','Entrega parcial')
-      :toast(`${plural(ok,'ref. registrada','refs. registradas')} em ${dbr(h)}.`,'ok','Entregue ao Ramon');
+      :toast(`${plural(ok,'ref. registrada','refs. registradas')} em ${dbr(h)}.`,'ok','Entregue');
 }
 function imprimir(L){
   const PP=14,rows=[...L];let prox=Math.max(0,...regs.map(refDe))+1;
@@ -861,7 +861,7 @@ function imprimir(L){
 function excel(L){
   if(!L.length)return toast('Não há refs. na lista para exportar.','info');
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  const linhas=[['Ref.','Tipo','Código','Descrição','Data do relatório','Entregue ao Ramon','Data Ivano','Data de envio','Data de Retorno','Situação'].map(q).join(';'),
+  const linhas=[['Ref.','Tipo','Código','Descrição','Data do relatório','Entregue','Data Ivano','Data de envio','Data de Retorno','Situação'].map(q).join(';'),
     ...L.map(o=>{const c=ctrlDe(o);return[refDe(o),tipoDe(o),o.sku,o.produto,dbr(o.criado),dbr(c.ent),dbr(c.ivano),dbr(c.envio),dbr(c.ret),SIT[sit(o)][0]].map(q).join(';')})];
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8'}));
   a.download=`Controle de Avarias ${hoje()}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
