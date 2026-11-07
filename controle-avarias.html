@@ -13,18 +13,18 @@
    escala 4px · controle 34px · raio 6px · ícones 16px · borda 1px
    ========================================================= */
 :root{
-  --g:#267A3C;--g-deep:#18542B;--g-hi:#318B48;--g-50:#EEF5F0;--g-25:#F5FAF6;
-  --bg:#F4F6F3;--surface:#FFFFFF;--subtle:#F9FAF8;--hover:#F6F8F5;
-  --fg:#202820;--fg2:#475048;--muted:#737D74;--faint:#A7AEA8;
-  --line:#E6EAE5;--line2:#D9DED8;--line3:#C9CFC8;
+  --g:#236B38;--g-deep:#1A5229;--g-hi:#2B7D43;--g-50:#DDE8DE;--g-25:#F1F6F1;
+  --bg:#F6F7F5;--surface:#FFFFFF;--subtle:#FAFBFA;--hover:#F7F9F7;
+  --fg:#252B26;--fg2:#4B534C;--muted:#858D86;--faint:#AEB4AF;
+  --line:#E8EBE7;--line2:#DCE0DB;--line3:#C8CEC7;
   --red:#D64545;--red-50:#FCEFEF;--red-ink:#B03636;
   --amb:#D69A26;--amb-50:#FDF5E6;--amb-ink:#97650C;
   --blu:#3977B9;--blu-50:#EDF3FA;--blu-ink:#2B5F96;
   --vio:#7D63B8;--vio-50:#F3F0FA;--vio-ink:#5E4796;
   --neu-50:#F0F2EF;--neu-ink:#5C655D;
-  --side:#111511;--side-2:#191E19;--side-3:#232923;--side-line:#232823;--side-fg:#D5DAD5;--side-mu:#7F887F;
+  --side:#171B18;--side-2:#1F2420;--side-3:#262C27;--side-line:#262B27;--side-fg:#D3D8D4;--side-mu:#7E877F;
   --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  --r:6px;--r-lg:8px;--h:34px;--h-sm:28px;--sidew:248px;
+  --r:6px;--r-lg:7px;--h:32px;--h-sm:28px;--sidew:236px;
   --sh-1:0 1px 2px rgba(17,24,17,.04);
   --sh-pop:0 12px 32px -8px rgba(17,24,17,.18),0 2px 6px rgba(17,24,17,.06);
   --ease:cubic-bezier(.2,.7,.2,1);color-scheme:light;
@@ -65,7 +65,7 @@ svg.i{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-widt
 @keyframes fade{from{opacity:0}to{opacity:1}}
 
 /* ---------- controles ---------- */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--h);padding:0 12px;border-radius:var(--r);border:1px solid var(--line2);background:var(--surface);color:var(--fg);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .12s var(--ease),border-color .12s,color .12s;box-shadow:var(--sh-1)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:var(--h);padding:0 12px;border-radius:var(--r);border:1px solid var(--line2);background:var(--surface);color:var(--fg);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s var(--ease),border-color .15s,color .15s;box-shadow:var(--sh-1)}
 .btn:hover{background:var(--hover);border-color:var(--line3)}
 .btn:active{transform:translateY(.5px)}
 .btn svg.i{color:var(--muted)}
@@ -176,15 +176,15 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 
 /* ---------- cabeçalho ---------- */
 .main{min-width:0;display:flex;flex-direction:column}
-.hdr{background:var(--surface);border-bottom:1px solid var(--line);padding:14px 28px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.hdr{background:var(--surface);border-bottom:1px solid var(--line);min-height:64px;padding:12px 28px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .hdr .ttl{min-width:0;flex:1}
 .crumb{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:4px}
 .crumb svg.i{width:12px;height:12px;color:var(--faint)}
 .crumb b{color:var(--fg2);font-weight:500}
-.hdr h1{margin:0;font-size:19px;font-weight:600;letter-spacing:-.018em;line-height:1.25}
-.hdr p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.hdr h1{margin:0;font-size:17px;font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.hdr p{margin:1px 0 0;color:var(--muted);font-size:12.5px}
 .hdr .hr{display:flex;align-items:center;gap:10px}
-.sync{display:inline-flex;align-items:center;gap:8px;height:var(--h-sm);padding:0 10px;border:1px solid var(--line);border-radius:999px;font-size:12px;color:var(--fg2);background:var(--subtle);white-space:nowrap}
+.sync{display:inline-flex;align-items:center;gap:7px;height:var(--h);padding:0 4px;font-size:12px;color:var(--fg2);white-space:nowrap}
 .sync .dot{width:7px;height:7px;border-radius:50%;background:var(--faint);position:relative}
 .sync.on .dot{background:#2FA352}
 .sync.on .dot::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:1.5px solid #2FA352;opacity:0;animation:pulse 2.4s ease-out infinite}
@@ -371,6 +371,72 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 .toast.out{opacity:0;transform:translateX(8px);transition:all .18s var(--ease)}
 @keyframes tin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 
+
+/* =========================================================
+   CENTRAL OPERACIONAL · Industrial Enterprise
+   ========================================================= */
+.subnav{display:flex;align-items:stretch;gap:0;padding:0 20px;background:var(--surface);border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none;position:sticky;top:0;z-index:20}
+.subnav::-webkit-scrollbar{display:none}
+.sn{position:relative;display:inline-flex;align-items:center;gap:8px;height:42px;padding:0 12px;border:0;background:none;color:var(--muted);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:color .15s var(--ease)}
+.sn:hover{color:var(--fg)}
+.sn .q{font-size:11.5px;font-weight:500;font-variant-numeric:tabular-nums;color:var(--faint);transition:color .15s}
+.sn .mk{width:6px;height:6px;border-radius:1.5px;background:var(--c,transparent)}
+.sn[aria-selected="true"]{color:var(--fg)}
+.sn[aria-selected="true"] .q{color:var(--g)}
+.sn::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--g);transform:scaleX(0);transform-origin:center;transition:transform .15s var(--ease)}
+.sn[aria-selected="true"]::after{transform:scaleX(1)}
+.sn+.sn::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:1px;background:var(--line)}
+
+.filters{display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.filters .search{flex:1 1 360px;max-width:640px}
+.filters .search .inp{height:36px;font-size:13.5px}
+.filters select.inp{width:auto;min-width:168px;height:36px}
+.filters .flab{font-size:12px;color:var(--muted);margin-left:4px}
+
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+.sheet-head{display:flex;align-items:center;gap:12px;min-height:52px;padding:8px 12px 8px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sheet-head .st-t{display:flex;align-items:baseline;gap:10px;min-width:0}
+.sheet-head h2{margin:0;font-size:13px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--fg);white-space:nowrap}
+.sheet-head .cnt{font-size:12.5px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.sheet-head .grow{flex:1}
+.sheet-head .acts{display:flex;align-items:center;gap:8px}
+.sheet-head .btn{height:32px}
+.selinfo{display:inline-flex;align-items:center;gap:8px;height:26px;padding:0 4px 0 10px;border-radius:5px;background:var(--g-50);color:var(--g-deep);font-size:12.5px;font-weight:500;animation:fade .15s var(--ease)}
+.selinfo b{font-weight:600;font-variant-numeric:tabular-nums}
+.selinfo button{border:0;background:none;color:var(--g-deep);width:20px;height:20px;border-radius:4px;display:grid;place-items:center;cursor:pointer;opacity:.75}
+.selinfo button:hover{opacity:1;background:color-mix(in srgb,var(--g) 12%,transparent)}
+.selinfo button svg.i{width:13px;height:13px}
+
+/* tabela operacional */
+.sheet .tscroll{max-height:calc(100vh - 252px)}
+.sheet table.grid{min-width:980px}
+.sheet table.grid th{height:34px;background:#F1F5F1;color:#4F5A51;font-size:11.5px;font-weight:600;letter-spacing:.02em;border-bottom:1px solid #DCE5DC}
+:root[data-theme="dark"] .sheet table.grid th{background:#18211A;color:#9AA79C;border-bottom-color:#243026}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .sheet table.grid th{background:#18211A;color:#9AA79C;border-bottom-color:#243026}}
+.sheet table.grid td{height:46px}
+.sheet .c-ref{width:64px;text-align:left!important;padding-left:12px!important;padding-right:8px!important}
+.sheet td.c-ref{font-size:13.5px}
+.sheet .c-cod{width:92px}
+.sheet .c-dt{width:128px}
+.sheet .dt{width:116px;padding:0 4px 0 8px}
+.sheet .c-st{width:128px;padding-right:12px!important}
+.sheet table.grid tbody tr.sel td{background:#F1F6F1}
+:root[data-theme="dark"] .sheet table.grid tbody tr.sel td{background:var(--g-25)}
+.sheet .tfoot{height:36px}
+@media (max-width:1180px){.subnav{padding:0 12px}}
+@media (max-width:760px){
+  .subnav{padding:0 4px;top:0}
+  .filters .search{flex-basis:100%;max-width:none}
+  .filters select.inp{flex:1;min-width:0}
+  .filters .flab{display:none}
+  .sheet-head{padding:8px 10px}
+  .sheet-head .acts{width:100%}
+  .sheet-head .acts .primary{margin-left:auto}
+  .sheet-head .btn .lb{display:none}
+  .sheet .tscroll{max-height:none}
+  .sheet table.grid{min-width:1080px}
+}
+
 /* =========================================================
    RESPONSIVO
    ========================================================= */
@@ -487,7 +553,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
   <div class="main">
     <header class="hdr">
       <div class="ttl">
-        <div class="crumb"><span>Controle de Avarias</span><span id="crIc"></span><b id="crumbPg"></b></div>
+        <span id="crIc" hidden></span><span id="crumbPg" hidden></span>
         <h1 id="titulo"></h1>
         <p id="subtitulo"></p>
       </div>
@@ -496,6 +562,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
         <button class="btn" id="atualizar" data-tip="Recarregar do INVENTRA"><span id="atIc"></span><span class="lb">Atualizar</span></button>
       </div>
     </header>
+    <nav class="subnav" id="subnav" hidden></nav>
     <main class="content" id="pagina"></main>
   </div>
   <nav class="mnav" id="mnav"></nav>
@@ -554,7 +621,7 @@ const I={
 };
 const PAGS=[
   ['painel','Painel',I.painel,'Visão geral','Resumo da operação de avarias.'],
-  ['controle','Controle',I.controle,'Controle de Avarias','Gestão operacional de produtos avariados.'],
+  ['controle','Controle',I.controle,'Controle de Avarias','Gestão operacional de produtos avariados · integrado ao INVENTRA'],
   ['entregas','Entregas',I.truck,'Entregas','Histórico do que foi entregue, dia a dia.'],
 ];
 const erroMsg=e=>{const m=(e&&(e.message||e.error_description))||String(e||'');
@@ -600,7 +667,7 @@ const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
 /* ícones fixos */
 document.querySelectorAll('[data-logo]').forEach(e=>e.innerHTML=I.logo);
 $('fu').insertAdjacentHTML('afterbegin',I.user);$('fs').insertAdjacentHTML('afterbegin',I.lock);
-$('olho').innerHTML=I.eye;$('btnSair').innerHTML=I.sair;$('atIc').outerHTML=I.refresh;$('crIc').outerHTML=I.chev;
+$('olho').innerHTML=I.eye;$('btnSair').innerHTML=I.sair;$('atIc').outerHTML=I.refresh;
 function pintaTema(){const dark=(document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';
   $('temaIc').innerHTML=dark?I.sun:I.moon;$('temaTx').textContent=dark?'Tema claro':'Tema escuro';
   if(innerWidth<=1180){$('tema').dataset.tip=dark?'Tema claro':'Tema escuro';$('tema').dataset.tipPos='right'}else{delete $('tema').dataset.tip}}
@@ -699,6 +766,7 @@ function render(){
   document.querySelectorAll('[data-pag]').forEach(b=>b.onclick=()=>ir(b.dataset.pag));
   const P=PAGS.find(p=>p[0]===pag)||PAGS[1];
   $('crumbPg').textContent=P[1];$('titulo').textContent=P[3];$('subtitulo').textContent=P[4];pintaTema();
+  if(pag!=='controle'){$('subnav').hidden=true;$('subnav').innerHTML=''}
   ({painel:pgPainel,controle:pgControle,entregas:pgEntregas}[pag]||pgControle)();
   novos.clear();tabAnim=false;
 }
@@ -749,25 +817,29 @@ function pgControle(){
   const L=visiveis(),selL=L.filter(o=>selec.has(o.id)),nSel=selL.length;
   const tabs=[['','Todas',base.length,''],...SIT.map((s,i)=>[String(i),s[0],cont[i],s[2]])];
   const temFiltro=!!(ui.busca||ui.tipo||ui.periodo);
-  $('pagina').innerHTML=`${avisoPerm()}${kpisHTML(ui.filtro)}
-  <section class="work">
-    <div class="tabs" role="tablist" aria-label="Situação">${tabs.map(t=>`<button class="tab ${tabAnim?'in':''}" role="tab" data-sf="${t[0]}" aria-selected="${ui.filtro===t[0]}" style="--c:${t[3]}">${t[3]?'<span class="dot"></span>':''}${t[1]}<span class="n">${t[2]}</span></button>`).join('')}</div>
-    <div class="bar">
-      <div class="ifield search">${I.busca}<input class="inp" type="search" id="busca" placeholder="Buscar por ref., código ou descrição" aria-label="Buscar" value="${esc(ui.busca)}" autocomplete="off">${ui.busca?'':'<span class="kbd">/</span>'}</div>
-      <select class="inp" id="fTp" aria-label="Origem">${[['','Todas as origens'],['Avaria','Avaria normal'],['Mercado Livre','Mercado Livre (MLV)'],['Shopee','Shopee']].map(t=>`<option value="${t[0]}" ${ui.tipo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
-      <select class="inp" id="fPer" aria-label="Período do relatório" title="Filtra pela data do relatório de avaria">${PERIODOS.map(t=>`<option value="${t[0]}" ${ui.periodo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
-      ${temFiltro?`<button class="btn quiet sm" id="limpaF">${I.x}<span class="lb">Limpar</span></button>`:''}
+  const sn=$('subnav');sn.hidden=false;
+  sn.innerHTML=tabs.map(t=>`<button class="sn" role="tab" data-sf="${t[0]}" aria-selected="${ui.filtro===t[0]}" style="--c:${t[3]||'transparent'}">${t[3]?'<span class="mk"></span>':''}${t[1]}<span class="q">${t[2]}</span></button>`).join('');
+  sn.setAttribute('role','tablist');sn.setAttribute('aria-label','Situação');
+  $('pagina').innerHTML=`${avisoPerm()}
+  <div class="filters">
+    <div class="ifield search">${I.busca}<input class="inp" type="search" id="busca" placeholder="Pesquisar por referência, código ou descrição" aria-label="Pesquisar" value="${esc(ui.busca)}" autocomplete="off">${ui.busca?'':'<span class="kbd">/</span>'}</div>
+    <span class="flab">Origem</span>
+    <select class="inp" id="fTp" aria-label="Origem">${[['','Todas'],['Avaria','Avaria normal'],['Mercado Livre','Mercado Livre (MLV)'],['Shopee','Shopee']].map(t=>`<option value="${t[0]}" ${ui.tipo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
+    <span class="flab">Período</span>
+    <select class="inp" id="fPer" aria-label="Período do relatório" title="Filtra pela data do relatório de avaria">${PERIODOS.map(t=>`<option value="${t[0]}" ${ui.periodo===t[0]?'selected':''}>${t[1]}</option>`).join('')}</select>
+    ${temFiltro?`<button class="btn quiet" id="limpaF">${I.x}<span class="lb">Limpar filtros</span></button>`:''}
+  </div>
+  <section class="sheet" aria-label="Relatório de Avaria CD">
+    <div class="sheet-head">
+      <div class="st-t"><h2>Relatório de Avaria · CD</h2><span class="cnt">${L.length===regs.length?plural(L.length,'referência','referências'):`${L.length} de ${regs.length} referências`}</span></div>
+      ${nSel?`<span class="selinfo"><b>${nSel}</b> ${nSel===1?'selecionada':'selecionadas'}<button id="limparSel" aria-label="Limpar seleção" data-tip="Limpar seleção (Esc)">${I.x}</button></span>`:''}
       <span class="grow"></span>
-      <button class="btn quiet" id="imprimir" data-tip="Folha oficial da lista filtrada">${I.print}<span class="lb">Imprimir folha</span></button>
-      <button class="btn quiet" id="excel" data-tip="Planilha da lista filtrada">${I.excel}<span class="lb">Exportar Excel</span></button>
-      <span class="vsep"></span>
-      <button class="btn primary" id="entregar" ${nSel&&podeEditar?'':'disabled'} data-tip="${!podeEditar?'Sem permissão para registrar entregas':nSel?'Registra a entrega com a data de hoje':'Selecione refs. na tabela'}">${I.truck}<span>Entregar</span>${nSel?`<span class="kb">${nSel}</span>`:''}</button>
+      <div class="acts">
+        <button class="btn" id="imprimir" data-tip="${nSel?'Folha oficial das selecionadas':'Folha oficial da lista filtrada'}">${I.print}<span class="lb">Imprimir folha</span></button>
+        <button class="btn" id="excel" data-tip="${nSel?'Planilha das selecionadas':'Planilha da lista filtrada'}">${I.excel}<span class="lb">Excel</span></button>
+        <button class="btn primary" id="entregar" ${nSel&&podeEditar?'':'disabled'} data-tip="${!podeEditar?'Sem permissão para registrar entregas':nSel?'Registra a entrega com a data de hoje':'Selecione referências na tabela'}">${I.truck}<span>Entregar</span>${nSel?`<span class="kb">${nSel}</span>`:''}</button>
+      </div>
     </div>
-    ${nSel?`<div class="selbar"><span class="c"><b>${nSel}</b>${nSel===1?'ref. selecionada':'refs. selecionadas'}</span>
-      ${podeEditar?`<button class="btn primary sm" id="sEnt">${I.truck}Entregar</button>`:''}
-      <button class="btn sm" id="sImp">${I.print}<span class="lb">Imprimir selecionadas</span></button>
-      <button class="btn sm" id="sXls">${I.excel}<span class="lb">Exportar selecionadas</span></button>
-      <span class="grow"></span><span class="hint">Esc para limpar</span><button class="btn quiet sm" id="limparSel">${I.x}Limpar</button></div>`:''}
     <div class="tscroll"><table class="grid">
       <thead><tr><th class="c-ck"><input type="checkbox" id="selTodos" aria-label="Selecionar todas"></th>
         <th class="c-ref">Ref.</th><th class="c-cod">Código</th><th class="c-desc">Descrição</th>${ETAPAS.map(e=>`<th class="c-dt">${e[1]}</th>`).join('')}<th class="c-st">Situação</th></tr></thead>
@@ -777,22 +849,21 @@ function pgControle(){
         <td class="c-desc"><div class="pname"><span title="${esc(o.produto||'')}">${esc(o.produto||'Sem descrição')}</span>${srcTag(tipoDe(o))}</div><div class="pmeta">Relatório de ${dbr(o.criado)}</div></td>
         ${ETAPAS.map(e=>`<td class="c-dt"><input type="date" class="dt" required data-id="${esc(o.id)}" data-k="${e[0]}" value="${esc(String(c[e[0]]||'').slice(0,10))}" aria-label="${e[1]} da ref. ${r}" ${podeEditar?'':'disabled'}></td>`).join('')}
         <td class="c-st">${stTag(s)}</td></tr>`}).join('')
-        :`<tr><td colspan="9" style="height:auto;border:0">${regs.length?vazio(I.busca,'Nenhuma ref. encontrada','Nada corresponde aos filtros atuais. Ajuste a busca, a origem, o período ou a situação.',temFiltro||ui.filtro?'<button class="btn sm" id="limpaTudo">Limpar filtros</button>':''):vazio(I.inbox,'Nenhum relatório de avaria','Assim que um relatório de avaria for salvo no INVENTRA, a ref. aparece aqui automaticamente.')}</td></tr>`}</tbody></table></div>
-    <div class="tfoot"><span>${L.length===regs.length?plural(L.length,'ref.','refs.'):`${L.length} de ${regs.length} refs.`}</span><span class="grow"></span>${I.cloud}<span>Datas sincronizadas com o Controle de assinaturas do INVENTRA</span></div>
+        :`<tr><td colspan="9" style="height:auto;border:0">${regs.length?vazio(I.busca,'Nenhuma referência encontrada','Nada corresponde aos filtros atuais. Ajuste a pesquisa, a origem, o período ou a situação.',temFiltro||ui.filtro?'<button class="btn sm" id="limpaTudo">Limpar filtros</button>':''):vazio(I.inbox,'Nenhum relatório de avaria','Assim que um relatório de avaria for salvo no INVENTRA, a referência aparece aqui automaticamente.')}</td></tr>`}</tbody></table></div>
+    <div class="tfoot"><span>${ui.filtro!==''?`Situação: ${SIT[+ui.filtro][0]}`:'Todas as situações'}</span><span class="grow"></span>${I.cloud}<span>Datas sincronizadas com o Controle de assinaturas do INVENTRA</span></div>
   </section>`;
   const st=$('selTodos');st.checked=L.length>0&&nSel===L.length;st.indeterminate=nSel>0&&nSel<L.length;
   st.onchange=()=>{const marcar=nSel<L.length;L.forEach(o=>marcar?selec.add(o.id):selec.delete(o.id));render()};
-  document.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{ui.filtro=b.dataset.sf;tabAnim=true;selec.clear();render()});
-  document.querySelectorAll('[data-kf]').forEach(b=>b.onclick=()=>{ui.filtro=ui.filtro===b.dataset.kf?'':b.dataset.kf;tabAnim=true;selec.clear();render()});
+  document.querySelectorAll('[data-sf]').forEach(b=>b.onclick=()=>{ui.filtro=b.dataset.sf;selec.clear();render()});
   const bu=$('busca');bu.oninput=()=>{ui.busca=bu.value;const p=bu.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)};
   $('fTp').onchange=e=>{ui.tipo=e.target.value;render()};
   $('fPer').onchange=e=>{ui.periodo=e.target.value;render()};
   const lf=$('limpaF');if(lf)lf.onclick=()=>{ui.busca=ui.tipo=ui.periodo='';render()};
   const lt=$('limpaTudo');if(lt)lt.onclick=()=>{ui.busca=ui.tipo=ui.periodo=ui.filtro='';render()};
   $('entregar').onclick=e=>entregar(selL,e.currentTarget);
-  $('imprimir').onclick=()=>imprimir(L);
-  $('excel').onclick=()=>excel(L);
-  if(nSel){const se=$('sEnt');if(se)se.onclick=e=>entregar(selL,e.currentTarget);$('sImp').onclick=()=>imprimir(selL);$('sXls').onclick=()=>excel(selL);$('limparSel').onclick=()=>{selec.clear();render()}}
+  $('imprimir').onclick=()=>imprimir(nSel?selL:L);
+  $('excel').onclick=()=>excel(nSel?selL:L);
+  const ls_=$('limparSel');if(ls_)ls_.onclick=()=>{selec.clear();render()};
   document.querySelectorAll('[data-sel]').forEach(i=>i.onchange=()=>{i.checked?selec.add(i.dataset.sel):selec.delete(i.dataset.sel);render()});
   document.querySelectorAll('tr[data-row]').forEach(tr=>tr.onclick=e=>{if(e.target.closest('input,button,a,label'))return;const id=tr.dataset.row;selec.has(id)?selec.delete(id):selec.add(id);render()});
   document.querySelectorAll('input.dt').forEach(i=>i.onchange=async()=>{const o=regs.find(x=>x.id===i.dataset.id);if(!o)return;const k=i.dataset.k,v=i.value;i.classList.add('saving');proc(true);
