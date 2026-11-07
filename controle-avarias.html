@@ -145,6 +145,22 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .trk-st:nth-child(2) .trk-pulse{animation-delay:1.2s}.trk-st:nth-child(3) .trk-pulse{animation-delay:2.4s}
 @keyframes pulse-run{0%{left:0;opacity:0}8%{opacity:.9}30%{left:calc(100% - 22px);opacity:.9}36%,100%{left:calc(100% - 22px);opacity:0}}
 @media (prefers-reduced-motion:reduce){.trk-pulse{display:none}}
+/* desfechos do parecer: alternativas, não sequência */
+.trk-st small{max-width:13ch;line-height:1.35}
+.trk-end::after{content:"";position:absolute;left:50%;top:calc(100% + 8px);height:20px;border-left:1px dashed rgba(79,175,107,.35)}
+.po{position:relative;margin-top:28px;border:1px solid rgba(255,255,255,.06);border-radius:12px;background:rgba(255,255,255,.015);padding:12px 14px 14px}
+.po::before{content:"";position:absolute;top:-4.5px;right:calc(9.5% - 4px);width:7px;height:7px;border-radius:50%;background:#19211C;border:1.5px solid #3FA35E}
+.po-h{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.po-h span{font-size:9.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#7D8B81}
+.po-h em{font-style:normal;font-size:11px;color:#56635A}
+.po-h em::before{content:"·";margin-right:10px;color:#3A463E}
+.po-l{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.po-l li{display:flex;align-items:center;gap:9px;min-width:0;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,.05);background:#1D2621;font-size:12px;font-weight:500;color:#C9D3CC;line-height:1.25}
+.po-ic{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;flex:none;background:rgba(79,175,107,.1);color:#6CC488}
+.po-ic svg{width:15px;height:15px}
+@media (max-height:820px){.po{margin-top:22px;padding:10px 12px 12px}.po-l li{padding:6px 8px}}
+@media (max-width:1180px){.po-h em{display:none}.po-l li{font-size:11px}}
+
 @media (max-height:780px){.trk-h{margin-bottom:22px}.trk-st b{margin-top:14px}}
 
 .au-copy h2{margin:0 0 12px;max-width:19ch;text-wrap:balance;color:#fff;font-size:33px;line-height:1.12;font-weight:600;letter-spacing:-.026em}
@@ -683,29 +699,33 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
     <div class="au-brand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE AVARIA</b></div><span class="au-env"><i></i>Ambiente operacional</span></div>
     <div class="au-art" aria-hidden="true">
       <div class="trk">
-        <div class="trk-h"><span>CICLO DA AVARIA</span><span><i></i>RASTREAMENTO OPERACIONAL</span></div>
+        <div class="trk-h"><span>CICLO DA AVARIA</span><span><i></i>CONTROLE DOCUMENTAL</span></div>
         <ol class="trk-s">
           <li class="trk-st">
             <div class="trk-box"><span class="trk-n">01</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
             <span class="trk-ln"><i class="trk-pulse"></i><i class="trk-node"></i></span>
-            <b>Avaria</b><small>Registro</small>
+            <b>Avaria</b><small>Registro da ocorrência</small>
           </li>
           <li class="trk-st">
-            <div class="trk-box"><span class="trk-n">02</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/><path d="m7.5 4.27 9 5.15"/></svg></div>
+            <div class="trk-box"><span class="trk-n">02</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg></div>
             <span class="trk-ln"><i class="trk-pulse"></i><i class="trk-node"></i></span>
-            <b>Entrega</b><small>Recebimento</small>
+            <b>Relatório</b><small>Documentação do dano</small>
           </li>
           <li class="trk-st">
-            <div class="trk-box"><span class="trk-n">03</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></div>
+            <div class="trk-box"><span class="trk-n">03</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m18 5-2.414-2.414A2 2 0 0 0 14.172 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2"/><path d="M21.378 12.626a1 1 0 0 0-3.004-3.004l-4.01 4.012a2 2 0 0 0-.506.854l-.837 2.87a.5.5 0 0 0 .62.62l2.87-.837a2 2 0 0 0 .854-.506z"/><path d="M8 18h1"/></svg></div>
             <span class="trk-ln"><i class="trk-pulse"></i><i class="trk-node"></i></span>
-            <b>Envio</b><small>Expedição</small>
+            <b>Análise</b><small>Avaliação e assinatura</small>
           </li>
-          <li class="trk-st">
-            <div class="trk-box"><span class="trk-n">04</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div>
+          <li class="trk-st trk-end">
+            <div class="trk-box"><span class="trk-n">04</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg></div>
             
-            <b>Retorno</b><small>Conclusão</small>
+            <b>Parecer</b><small>Decisão final</small>
           </li>
         </ol>
+        <div class="po">
+          <div class="po-h"><span>Possíveis pareceres</span><em>um desfecho por ocorrência</em></div>
+          <ul class="po-l"><li><span class="po-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>Garantia autorizada</li><li><span class="po-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></span>Ocorrência inválida</li><li><span class="po-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="7" r="4"/><path d="M10.3 15H7a4 4 0 0 0-4 4v2"/><circle cx="17" cy="17" r="3"/><path d="m21 21-1.9-1.9"/></svg></span>Responsabilidade identificada</li></ul>
+        </div>
       </div>
     </div>
     <div class="au-copy">
