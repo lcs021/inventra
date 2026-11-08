@@ -1,6 +1,6 @@
 {
-  "name": "Controle de Avaria",
-  "short_name": "Avarias",
+  "name": "Controle de Relatórios",
+  "short_name": "Relatórios",
   "start_url": "controle-avarias.html",
   "scope": "./",
   "display": "standalone",

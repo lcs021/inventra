@@ -5,18 +5,18 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Controle de Avaria</title>
+<title>Controle de Relatórios</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' %3E %3Crect width='100' height='100' rx='22' fill='#1E5799'/%3E %3Cg transform='translate(50 50) scale(.66) translate(-50 -48)'%3E%3Cdefs%3E %3Cmask id='appc' maskUnits='userSpaceOnUse' x='0' y='0' width='100' height='100'%3E%3Crect width='100' height='100' fill='#fff'/%3E%3Cg stroke='#000' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='40.00' y1='44.00' x2='14.02' y2='29.00'/%3E%3Cline x1='40.00' y1='44.00' x2='65.98' y2='29.00'/%3E%3Cline x1='40.00' y1='44.00' x2='40.00' y2='74.00'/%3E%3C/g%3E%3Cpath d='M57 44 H76 L86 54 V85 Q86 88 83 88 H57 Q54 88 54 85 V47 Q54 44 57 44 Z' fill='#000' stroke='#000' stroke-width='7' stroke-linejoin='round'/%3E%3C/mask%3E %3Cmask id='appd' maskUnits='userSpaceOnUse' x='0' y='0' width='100' height='100'%3E%3Crect width='100' height='100' fill='#fff'/%3E%3Cg stroke='#000' stroke-width='3.4' stroke-linecap='round'%3E%3Cline x1='61' y1='63' x2='78' y2='63'/%3E%3Cline x1='61' y1='72' x2='78' y2='72'/%3E%3Cline x1='61' y1='81' x2='71' y2='81'/%3E%3C/g%3E%3Cpath d='M76 42 L88 54' stroke='#000' stroke-width='2.8'/%3E%3C/mask%3E %3C/defs%3E %3Cg mask='url(#appc)' stroke-linejoin='round'%3E%3Cpolygon points='40.00,14.00 65.98,29.00 40.00,44.00 14.02,29.00' fill='#FFFFFF'/%3E%3Cpolygon points='14.02,29.00 40.00,44.00 40.00,74.00 14.02,59.00' fill='#DCE8F7'/%3E%3Cpolygon points='40.00,44.00 65.98,29.00 65.98,59.00 40.00,74.00' fill='#B3CDEC'/%3E%3C/g%3E %3Cg mask='url(#appd)'%3E%3Cpath d='M57 44 H76 L86 54 V85 Q86 88 83 88 H57 Q54 88 54 85 V47 Q54 44 57 44 Z' fill='#4A8BD6'/%3E%3C/g%3E %3Cpath d='M76 44 L86 54 H78 Q76 54 76 52 Z' fill='#B3CDEC'/%3E%3C/g%3E %3C/svg%3E ">
 <link rel="icon" type="image/png" sizes="32x32" href="avaria-icones/favicon-32.png">
 <link rel="apple-touch-icon" href="avaria-icones/apple-touch-icon-180.png">
 <link rel="manifest" href="controle-avarias.webmanifest">
 <meta name="theme-color" content="#1E5799">
-<meta name="apple-mobile-web-app-title" content="Controle de Avaria">
+<meta name="apple-mobile-web-app-title" content="Controle de Relatórios">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;650&display=swap">
 <style>
 /* =========================================================
-   DESIGN SYSTEM · Controle de Avarias
+   DESIGN SYSTEM · Controle de Relatórios
    escala 4px · controle 34px · raio 6px · ícones 16px · borda 1px
    ========================================================= */
 :root{
@@ -114,7 +114,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 @keyframes prog{from{left:-35%}to{left:100%}}
 
 /* =========================================================
-   LOGIN · CONTROLE DE AVARIA — Enterprise Authentication
+   LOGIN · CONTROLE DE RELATÓRIOS — Enterprise Authentication
    ========================================================= */
 #tlogin{height:100vh;min-height:620px;display:grid;grid-template-columns:46fr 54fr;background:#F7F8F6;overflow:hidden}
 .au-l{position:relative;overflow:hidden;background:#161A20;color:#C9D1CB;display:flex;flex-direction:column;padding:36px 40px 32px;min-height:100vh;max-height:100vh}
@@ -254,9 +254,9 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 
 /* ---------- sidebar ---------- */
 .side{background:var(--side);color:var(--side-fg);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;border-right:1px solid var(--side-line);z-index:30}
-.s-head{display:flex;align-items:center;gap:10px;height:60px;padding:0 16px;border-bottom:1px solid var(--side-line);flex:none}
+.s-head{display:flex;align-items:center;gap:9px;height:60px;padding:0 12px;border-bottom:1px solid var(--side-line);flex:none}
 .s-head .nm{min-width:0}
-.s-head b{display:block;font-size:12px;font-weight:700;color:#fff;letter-spacing:.05em;white-space:nowrap}
+.s-head b{display:block;font-size:11px;font-weight:700;color:#fff;letter-spacing:.02em;white-space:nowrap}
 .s-head small{display:block;font-size:10px;font-weight:600;letter-spacing:.14em;color:var(--side-mu);white-space:nowrap;margin-top:1px}
 .s-body{flex:1;padding:14px 10px}
 .s-grp+.s-grp{margin-top:16px;padding-top:14px;border-top:1px solid var(--side-line)}
@@ -651,7 +651,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 
 
 /* =========================================================
-   CONTROLE DE AVARIA · Custom Enterprise
+   CONTROLE DE RELATÓRIOS · Custom Enterprise
    ========================================================= */
 .hdr .hr{gap:12px}
 .hdr .sync{height:auto;padding:0}
@@ -696,7 +696,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 .ctx .btn{height:32px}
 .ctx .k{font-size:12px;color:var(--muted)}
 
-/* tabela CONTROLE DE AVARIA */
+/* tabela CONTROLE DE RELATÓRIOS */
 .ops .tscroll{max-height:calc(100vh - 330px);min-height:280px}
 .ops table.grid{min-width:1080px;table-layout:fixed}
 .ops table.grid th{height:38px;background:#252D27;color:#E6ECE7;font-size:12px;font-weight:600;letter-spacing:.01em;border-bottom:0;border-right:1px solid #2F3830;padding:0 12px}
@@ -893,7 +893,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 <div id="tlogin" hidden>
   <aside class="au-l" aria-hidden="false">
     <div class="grid"></div>
-    <div class="au-brand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE AVARIA</b></div><span class="au-env"><i></i>Ambiente operacional</span></div>
+    <div class="au-brand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE RELATÓRIOS</b></div><span class="au-env"><i></i>Ambiente operacional</span></div>
     <div class="au-art" aria-hidden="true">
       <div class="trk">
         <div class="trk-h"><span>CICLO DA AVARIA</span><span><i></i>CONTROLE DOCUMENTAL</span></div>
@@ -936,9 +936,9 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
     <div class="au-top"><span id="topIc"></span>Acesso integrado ao INVENTRA</div>
     <div class="au-main">
       <form class="au-form" id="flogin" novalidate>
-        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE AVARIA</b></div></div>
+        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE RELATÓRIOS</b></div></div>
         <span class="au-tag" id="tagL">ACESSO À PLATAFORMA</span>
-        <h1>Bem-vindo ao<br>Controle de Avaria</h1>
+        <h1>Bem-vindo ao<br>Controle de Relatórios</h1>
         <p class="au-sub">Acesse sua conta para continuar gerenciando suas operações.</p>
         <div class="au-msg err" id="lerr" hidden></div><span id="lok" hidden></span>
         <label class="au-f"><span>Usuário</span>
@@ -953,7 +953,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
       </form>
 
       <form class="au-form" id="fcad" novalidate hidden>
-        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE AVARIA</b></div></div>
+        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE RELATÓRIOS</b></div></div>
         <span class="au-tag" id="tagC">NOVO ACESSO</span>
         <h1>Criar cadastro</h1>
         <p class="au-sub">Depois de criar, o administrador do INVENTRA libera seu acesso.</p>
@@ -978,7 +978,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 <!-- ======================= SISTEMA ======================= -->
 <div id="tapp" hidden>
   <aside class="side">
-    <div class="s-head"><span class="logo" data-logo></span><div class="nm"><b>CONTROLE DE AVARIA</b></div></div>
+    <div class="s-head"><span class="logo" data-logo></span><div class="nm"><b>CONTROLE DE RELATÓRIOS</b></div></div>
     <div class="s-body">
       <div class="s-grp"><div class="s-lbl">Operação</div><div id="navs"></div></div>
       <div class="s-grp"><div class="s-lbl">Preferências</div>
@@ -1063,7 +1063,7 @@ const I={
 };
 const PAGS=[
   ['painel','Painel',I.painel,'Visão geral','Resumo da operação de avarias.'],
-  ['controle','Controle',I.controle,'Controle de Avarias','Gerenciamento e acompanhamento de ocorrências.'],
+  ['controle','Controle',I.controle,'Controle de Relatórios','Gerenciamento e acompanhamento de ocorrências.'],
   ['entregas','Entregas',I.truck,'Entregas','Histórico do que foi entregue, dia a dia.'],
   ['planilha','Planilha',I.excel,'Planilha de Avarias','Todas as avarias em planilha, atualizada automaticamente.'],
 ];
@@ -1256,7 +1256,7 @@ function render(){
   $('mnav').innerHTML=PAGS.map(([k,t,i])=>`<button data-pag="${k}" ${pag===k?'aria-current="page"':''}>${i}<span>${k==='entregas'?'Entregas':t}</span></button>`).join('');
   document.querySelectorAll('[data-pag]').forEach(b=>b.onclick=()=>ir(b.dataset.pag));
   const P=PAGS.find(p=>p[0]===pag)||PAGS[1];
-  $('crumbPg').textContent=pag==='controle'?'Controle de Avarias':P[1];if(pag!=='controle'){$('sumline').hidden=true}$('titulo').textContent=P[3];$('subtitulo').textContent=P[4];pintaTema();
+  $('crumbPg').textContent=pag==='controle'?'Controle de Relatórios':P[1];if(pag!=='controle'){$('sumline').hidden=true}$('titulo').textContent=P[3];$('subtitulo').textContent=P[4];pintaTema();
   if(pag!=='controle'){$('subnav').hidden=true;$('subnav').innerHTML=''}
   ({painel:pgPainel,controle:pgControle,entregas:pgEntregas,planilha:pgPlanilha}[pag]||pgControle)();
   novos.clear();tabAnim=false;
@@ -1466,7 +1466,7 @@ function excel(L){
   const historico=[];L.forEach(o=>(ctrlDe(o).log||[]).forEach(l=>{if(!l||!l.t)return;const ent=l.k==='ent';
     historico.push({t:l.t,serie:serie(l.t),ref:refDe(o),por:l.por||'',acao:ent?(l.v?'Entrega registrada':'Entrega removida'):'Etapa antiga ('+l.k+')',detalhe:l.v?(ent?'Data de entrega: ':'Data: ')+dbr(l.v):'Data apagada'})}));
   const a=document.createElement('a');a.href=URL.createObjectURL(AvariaPlanilha.gerar(linhas,{usuario:eu&&eu.nome||'',cd:'Centro de Distribuição',historico}));
-  a.download=`Controle de Avaria - Planilha ${hoje().split('-').reverse().join('-')}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
+  a.download=`Controle de Relatórios - Planilha ${hoje().split('-').reverse().join('-')}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
   toast(`${plural(L.length,'avaria','avarias')} no arquivo, com painel, central, relatório e histórico.`,'ok','Excel gerado');
 }
 function pgPlanilha(){
