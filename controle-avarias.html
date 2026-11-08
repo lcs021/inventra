@@ -20,7 +20,7 @@
    escala 4px · controle 34px · raio 6px · ícones 16px · borda 1px
    ========================================================= */
 :root{
-  --g:#236D3B;--g-deep:#194B2D;--g-hi:#2A7D45;--g-50:#E8F1EA;--g-25:#F3F8F4;
+  --g:#2366B0;--g-deep:#1A4F8A;--g-hi:#2B72C0;--g-50:#E7EFF9;--g-25:#F3F7FC;
   --bg:#F5F7F5;--surface:#FFFFFF;--subtle:#FAFBFA;--hover:#F6F9F6;
   --fg:#252B26;--fg2:#4A524B;--muted:#788179;--faint:#A9B0AA;
   --line:#E7EBE7;--line2:#D8DED8;--line3:#C4CBC4;
@@ -37,7 +37,7 @@
   --ease:cubic-bezier(.2,.7,.2,1);color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --g:#3A9450;--g-deep:#2C7A41;--g-hi:#4FA865;--g-50:#17271B;--g-25:#131E15;
+  --g:#4A86CF;--g-deep:#336FB8;--g-hi:#6699DA;--g-50:#17212E;--g-25:#131A24;
   --bg:#121212;--surface:#1A1A1A;--subtle:#1F1F1F;--hover:#262626;
   --fg:#EDEDED;--fg2:#C2C2C2;--muted:#8A8A8A;--faint:#6B6B6B;
   --line:#2B2B2B;--line2:#363636;--line3:#454545;
@@ -46,7 +46,7 @@
   --sh-1:none;--sh-pop:0 12px 32px -8px rgba(0,0,0,.6);color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --g:#3A9450;--g-deep:#2C7A41;--g-hi:#4FA865;--g-50:#17271B;--g-25:#131E15;
+  --g:#4A86CF;--g-deep:#336FB8;--g-hi:#6699DA;--g-50:#17212E;--g-25:#131A24;
   --bg:#121212;--surface:#1A1A1A;--subtle:#1F1F1F;--hover:#262626;
   --fg:#EDEDED;--fg2:#C2C2C2;--muted:#8A8A8A;--faint:#6B6B6B;
   --line:#2B2B2B;--line2:#363636;--line3:#454545;
@@ -77,7 +77,7 @@ svg.i{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-widt
 .btn:active{transform:translateY(.5px)}
 .btn svg.i{color:var(--muted)}
 .btn:hover svg.i{color:var(--fg2)}
-.btn.primary{background:var(--g);border-color:var(--g-deep);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 1px 2px rgba(24,84,43,.25)}
+.btn.primary{background:var(--g);border-color:var(--g-deep);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.12) inset,0 1px 2px rgba(24,74,130,.25)}
 .btn.primary svg.i{color:rgba(255,255,255,.9)}
 .btn.primary:hover{background:var(--g-hi)}
 .btn.quiet{border-color:transparent;background:transparent;box-shadow:none;color:var(--fg2)}
@@ -248,7 +248,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
    ESTRUTURA
    ========================================================= */
 #tapp{display:grid;grid-template-columns:var(--sidew) minmax(0,1fr);min-height:100%}
-.logo{width:30px;height:30px;border-radius:7px;background:#087A50;display:grid;place-items:center;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.06) inset}
+.logo{width:30px;height:30px;border-radius:7px;background:#1E5799;display:grid;place-items:center;flex:none;box-shadow:0 0 0 1px rgba(255,255,255,.06) inset}
 .logo svg{width:25px;height:25px}
 
 /* ---------- sidebar ---------- */
@@ -265,14 +265,14 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .nav:hover{background:var(--side-2);color:#fff}
 .nav:hover svg.i{color:var(--side-fg)}
 .nav[aria-current="page"]{background:rgba(255,255,255,.045);color:#fff;font-weight:500}
-.nav[aria-current="page"] svg.i{color:#5FC07A}
+.nav[aria-current="page"] svg.i{color:#6FA3E0}
 .nav[aria-current="page"]::before{content:"";position:absolute;left:-10px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:var(--g-hi)}
 .nav .lbl{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .nav .ct{font-size:11px;font-weight:500;color:var(--side-mu);min-width:18px;text-align:right;font-variant-numeric:tabular-nums}
 .nav .ct.hot{color:#E8C27A}
 .s-foot{flex:none;border-top:1px solid var(--side-line);padding:10px}
 .who{display:flex;align-items:center;gap:10px;padding:6px}
-.ava{width:30px;height:30px;border-radius:50%;background:#26402D;color:#C7EBD0;display:grid;place-items:center;font-size:11.5px;font-weight:600;flex:none;letter-spacing:.02em}
+.ava{width:30px;height:30px;border-radius:50%;background:#22344A;color:#CFE0F5;display:grid;place-items:center;font-size:11.5px;font-weight:600;flex:none;letter-spacing:.02em}
 .who .tx{min-width:0;flex:1}
 .who b{display:block;font-size:12.5px;font-weight:500;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .who small{display:block;font-size:11.5px;color:var(--side-mu);white-space:nowrap}
@@ -291,8 +291,8 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .hdr .hr{display:flex;align-items:center;gap:10px}
 .sync{display:inline-flex;align-items:center;gap:7px;height:var(--h);padding:0 4px;font-size:12px;color:var(--fg2);white-space:nowrap}
 .sync .dot{width:7px;height:7px;border-radius:50%;background:var(--faint);position:relative}
-.sync.on .dot{background:#2FA352}
-.sync.on .dot::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:1.5px solid #2FA352;opacity:0;animation:pulse 2.4s ease-out infinite}
+.sync.on .dot{background:#3A7FCB}
+.sync.on .dot::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:1.5px solid #3A7FCB;opacity:0;animation:pulse 2.4s ease-out infinite}
 @keyframes pulse{0%{opacity:.6;transform:scale(.6)}100%{opacity:0;transform:scale(1.6)}}
 .sync.off .dot{background:var(--amb)}
 .sync .t{color:var(--muted)}
@@ -413,8 +413,8 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 .st.s2{--b:var(--vio-50);--c:var(--vio-ink);--d:var(--vio)}
 .st.s3{--b:var(--blu-50);--c:var(--blu-ink);--d:var(--blu)}
 .st.s4{--b:var(--g-50);--c:var(--g-deep);--d:var(--g-hi)}
-:root[data-theme="dark"] .st.s4{--c:#8BD49E}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .st.s4{--c:#8BD49E}}
+:root[data-theme="dark"] .st.s4{--c:#9CC2EE}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .st.s4{--c:#9CC2EE}}
 
 .tfoot{display:flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-top:1px solid var(--line);background:var(--subtle);font-size:12px;color:var(--muted)}
 .tfoot .grow{flex:1}
@@ -447,9 +447,9 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 
 
 /* ---------- gráfico de entregas (Painel) ---------- */
-.card.ch{--bar:#1E8C52;--bar-hi:#17723F;--grid:rgba(37,43,38,.07);--tx:#8A928B;--tx2:#252B26;--guide:rgba(37,43,38,.22);--today:rgba(30,140,82,.06)}
-:root[data-theme="dark"] .card.ch{--bar:#2DBE7E;--bar-hi:#4FD69A;--grid:rgba(255,255,255,.06);--tx:#6E7A71;--tx2:#E6ECE7;--guide:rgba(255,255,255,.22);--today:rgba(45,190,126,.07);background:#1A1A1A;border-color:#2B2B2B}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .card.ch{--bar:#2DBE7E;--bar-hi:#4FD69A;--grid:rgba(255,255,255,.06);--tx:#6E7A71;--tx2:#E6ECE7;--guide:rgba(255,255,255,.22);--today:rgba(45,190,126,.07);background:#1A1A1A;border-color:#2B2B2B}}
+.card.ch{--bar:#2366B0;--bar-hi:#1A4F8A;--grid:rgba(37,43,38,.07);--tx:#8A928B;--tx2:#252B26;--guide:rgba(37,43,38,.22);--today:rgba(35,102,176,.06)}
+:root[data-theme="dark"] .card.ch{--bar:#4A8BD6;--bar-hi:#7FB0E8;--grid:rgba(255,255,255,.06);--tx:#6E7A71;--tx2:#E6ECE7;--guide:rgba(255,255,255,.22);--today:rgba(74,139,214,.07);background:#1A1A1A;border-color:#2B2B2B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .card.ch{--bar:#4A8BD6;--bar-hi:#7FB0E8;--grid:rgba(255,255,255,.06);--tx:#6E7A71;--tx2:#E6ECE7;--guide:rgba(255,255,255,.22);--today:rgba(74,139,214,.07);background:#1A1A1A;border-color:#2B2B2B}}
 :root[data-theme="dark"] .card.ch>header{border-bottom-color:#2B2B2B}
 .ch .cb{padding:30px 18px 12px 8px;flex:1;display:flex}
 .bc{position:relative;width:100%;display:grid;grid-template-columns:28px 1fr;grid-template-rows:1fr 30px;min-height:220px;height:100%;font-feature-settings:"tnum" 1}
@@ -481,7 +481,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 .bc-tip.on{opacity:1;transform:none}
 .bc-tip .d{color:#8E9A91;font-size:11px;margin-bottom:5px;white-space:nowrap}
 .bc-tip .v{display:flex;align-items:center;gap:7px;font-weight:500;white-space:nowrap}
-.bc-tip .v i{width:8px;height:8px;border-radius:2px;background:#2DBE7E}
+.bc-tip .v i{width:8px;height:8px;border-radius:2px;background:#4A8BD6}
 .bc-tip .v b{font-size:15px;font-weight:600;color:#fff}
 .bc-empty{position:absolute;inset:0;display:grid;place-items:center;font-size:12.5px;color:var(--tx);pointer-events:none}
 @media (prefers-reduced-motion:reduce){.bc-bar{animation:none;transform:none}.bc-val{animation:none;opacity:.85}}
@@ -763,7 +763,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 .occ .dt:valid{background:#F4F7F4}
 .occ tr:hover .dt{border-color:#DCE2DC;background:#fff}
 .occ tr:hover .dt:invalid{color:var(--muted)}
-.occ .dt:focus{border-color:var(--g)!important;background:#fff!important;box-shadow:0 0 0 3px rgba(35,109,59,.12);color:var(--fg)}
+.occ .dt:focus{border-color:var(--g)!important;background:#fff!important;box-shadow:0 0 0 3px rgba(35,102,176,.12);color:var(--fg)}
 .occ .dt::-webkit-calendar-picker-indicator{width:12px;height:12px;opacity:.3;margin-left:4px}
 .occ tr:hover .dt::-webkit-calendar-picker-indicator{opacity:.6}
 .occ .dt:disabled{background:transparent!important;border-color:transparent!important}
@@ -824,7 +824,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
   .mnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;color:var(--side-mu);font-size:11px;font-weight:500;padding:6px 2px;border-radius:7px;cursor:pointer}
   .mnav button svg.i{width:18px;height:18px}
   .mnav button[aria-current="page"]{color:#fff;background:var(--side-3)}
-  .mnav button[aria-current="page"] svg.i{color:#5FC07A}
+  .mnav button[aria-current="page"] svg.i{color:#6FA3E0}
   .toasts{left:12px;right:12px;bottom:78px}.toast{width:auto}
   .card>header .meta{display:none}
 }
@@ -987,7 +987,7 @@ const dbr=s=>s?String(s).slice(0,10).replace(/[^0-9-]/g,'').split('-').reverse()
 const DIAS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 const dExt=s=>{const d=new Date(s+'T12:00');const h=hoje(),o=iso(Date.now()-864e5);return{t:s===h?'Hoje':s===o?'Ontem':dbr(s),s:(s===h||s===o?dbr(s)+' · ':'')+DIAS[d.getDay()]}};
 const ETAPAS=[['ent','Entregue']];
-const SIT=[['Não entregue','s0','#A2AAA3'],['Entregue','s1','#C18B31'],['Com o Ivano','s2','#7D63B8'],['Enviado','s3','#4279AD'],['Retornou','s4','#2F8A4C']];
+const SIT=[['Não entregue','s0','#A2AAA3'],['Entregue','s1','#C18B31'],['Com o Ivano','s2','#7D63B8'],['Enviado','s3','#4279AD'],['Retornou','s4','#2A70BD']];
 
 /* ===== ícones · traço único 1.75, família Lucide ===== */
 const ic=p=>`<svg viewBox="0 0 24 24" class="i" aria-hidden="true">${p}</svg>`;
