@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Controle de Avaria</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' %3E %3Crect width='100' height='100' rx='22' fill='#087A50'/%3E %3Cg transform='translate(50 50) scale(.66) translate(-50 -48)'%3E%3Cdefs%3E %3Cmask id='appc' maskUnits='userSpaceOnUse' x='0' y='0' width='100' height='100'%3E%3Crect width='100' height='100' fill='#fff'/%3E%3Cg stroke='#000' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='40.00' y1='44.00' x2='14.02' y2='29.00'/%3E%3Cline x1='40.00' y1='44.00' x2='65.98' y2='29.00'/%3E%3Cline x1='40.00' y1='44.00' x2='40.00' y2='74.00'/%3E%3C/g%3E%3Cpath d='M57 44 H76 L86 54 V85 Q86 88 83 88 H57 Q54 88 54 85 V47 Q54 44 57 44 Z' fill='#000' stroke='#000' stroke-width='7' stroke-linejoin='round'/%3E%3C/mask%3E %3Cmask id='appd' maskUnits='userSpaceOnUse' x='0' y='0' width='100' height='100'%3E%3Crect width='100' height='100' fill='#fff'/%3E%3Cg stroke='#000' stroke-width='3.4' stroke-linecap='round'%3E%3Cline x1='61' y1='63' x2='78' y2='63'/%3E%3Cline x1='61' y1='72' x2='78' y2='72'/%3E%3Cline x1='61' y1='81' x2='71' y2='81'/%3E%3C/g%3E%3Cpath d='M76 42 L88 54' stroke='#000' stroke-width='2.8'/%3E%3C/mask%3E %3C/defs%3E %3Cg mask='url(#appc)' stroke-linejoin='round'%3E%3Cpolygon points='40.00,14.00 65.98,29.00 40.00,44.00 14.02,29.00' fill='#FFFFFF'/%3E%3Cpolygon points='14.02,29.00 40.00,44.00 40.00,74.00 14.02,59.00' fill='#DDF4E8'/%3E%3Cpolygon points='40.00,44.00 65.98,29.00 65.98,59.00 40.00,74.00' fill='#B2E5CB'/%3E%3C/g%3E %3Cg mask='url(#appd)'%3E%3Cpath d='M57 44 H76 L86 54 V85 Q86 88 83 88 H57 Q54 88 54 85 V47 Q54 44 57 44 Z' fill='#16A36A'/%3E%3C/g%3E %3Cpath d='M76 44 L86 54 H78 Q76 54 76 52 Z' fill='#B2E5CB'/%3E%3C/g%3E %3C/svg%3E ">
@@ -956,7 +958,7 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const ls={get:k=>{try{return localStorage.getItem(LS+k)}catch(e){return null}},set:(k,v)=>{try{v==null?localStorage.removeItem(LS+k):localStorage.setItem(LS+k,v)}catch(e){}}};
 const iso=d=>{d=new Date(d);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)};
 const hoje=()=>iso(new Date());
-const dbr=s=>s?String(s).slice(0,10).split('-').reverse().join('/'):'';
+const dbr=s=>s?String(s).slice(0,10).replace(/[^0-9-]/g,'').split('-').reverse().join('/'):'';
 const DIAS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 const dExt=s=>{const d=new Date(s+'T12:00');const h=hoje(),o=iso(Date.now()-864e5);return{t:s===h?'Hoje':s===o?'Ontem':dbr(s),s:(s===h||s===o?dbr(s)+' · ':'')+DIAS[d.getDay()]}};
 const ETAPAS=[['ent','Entregue']];
@@ -1077,7 +1079,7 @@ $('flogin').addEventListener('submit',async e=>{
   ocupado(bt,true);
   try{
     let email=usu;
-    if(!usu.includes('@')){const r=await sb.rpc('email_do_usuario',{u:usu});if(r.error)throw r.error;if(!r.data)throw{message:'Invalid login'};email=r.data}
+    if(!usu.includes('@')){const r=await emailDoLogin(usu,senha);if(r.bloqueado)throw{message:'Muitas tentativas erradas para este usuário. Aguarde 15 minutos ou peça ao administrador para redefinir a senha.'};if(!r.email)throw{message:'Invalid login'};email=r.email}
     const {data,error}=await sb.auth.signInWithPassword({email,password:senha});if(error)throw error;
     falhas=0;msgLogin='';cadUsu='';ls.set('usuario',$('lembrar').checked?usu:null);$('lsenha').value='';
     bt.classList.remove('busy');bt.classList.add('done');bt.firstElementChild.textContent='Acesso liberado';
@@ -1089,6 +1091,15 @@ $('flogin').addEventListener('submit',async e=>{
 
 /* ===== Cadastro: mesmo fluxo do INVENTRA (usuário sem e-mail, admin libera) ===== */
 const senhaFraca=(s,u)=>{const x=s.toLowerCase();return /^(.)\1+$/.test(s)||['12345678','123456789','1234567890','87654321','qwertyui','qwerty123','password','senha123','senha1234','abc12345','11111111','inventra','inventra123'].includes(x)||(u&&x===String(u).toLowerCase())};
+async function emailDoLogin(usu,senha){const falta=e=>/PGRST202|Could not find|schema cache/i.test(((e&&e.message)||'')+' '+((e&&e.code)||''));
+  const r=await sb.rpc('login_email',{u:usu,s:senha});
+  if(!r.error){const d=r.data||{};return d.ok&&d.email?{email:d.email}:d.bloqueado?{bloqueado:1}:{invalido:1}}
+  if(!falta(r.error))throw r.error;
+  const o=await sb.rpc('email_do_usuario',{u:usu});if(o.error)throw o.error;return o.data?{email:o.data}:{invalido:1}}
+async function usuarioExiste(usu){const falta=e=>/PGRST202|Could not find|schema cache/i.test(((e&&e.message)||'')+' '+((e&&e.code)||''));
+  const r=await sb.rpc('usuario_existe',{u:usu});if(!r.error)return !!r.data;
+  if(!falta(r.error))throw r.error;
+  const o=await sb.rpc('email_do_usuario',{u:usu});if(o.error)throw o.error;return !!o.data}
 let msgLogin='',cadUsu='';
 function modoAuth(m){$('flogin').hidden=m!=='login';$('fcad').hidden=m!=='cad';$('lerr').hidden=true;$('cerr').hidden=true;
   $('lok').hidden=!msgLogin;if(msgLogin)$('lok').innerHTML=I.check+'<span>'+esc(msgLogin)+'</span>';
@@ -1106,9 +1117,8 @@ $('fcad').addEventListener('submit',async e=>{
   if(m)return mostra(m);
   ocupado(bt,true);
   try{
-    const ex=await sb.rpc('email_do_usuario',{u:usu});
-    if(ex.error)throw{message:'O banco precisa de uma atualização (login por usuário). Peça ao administrador para rodar o SQL novo.'};
-    if(ex.data)throw{message:'Esse usuário já existe. Escolha outro.'};
+    let existe;try{existe=await usuarioExiste(usu)}catch(_){throw{message:'O banco precisa de uma atualização (login por usuário). Peça ao administrador para rodar o SQL novo.'}}
+    if(existe)throw{message:'Esse usuário já existe. Escolha outro.'};
     const en=await sb.rpc('email_novo_usuario',{u:usu});
     if(en.error||!en.data)throw{message:'O banco precisa de uma atualização (cadastro sem e-mail). Peça ao administrador para rodar o SQL novo.'};
     const {data,error}=await sb.auth.signUp({email:en.data,password:s,options:{data:{nome:usu,usuario:usu,...($('cgal')?{galpao:$('cgal').value}:{})}}});
@@ -1382,7 +1392,7 @@ function imprimir(L){
 }
 function excel(L){
   if(!L.length)return toast('Não há refs. na lista para exportar.','info');
-  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+  const q=v=>{let t=String(v??'');if(/^[=+\-@\t\r]/.test(t))t="'"+t;return'"'+t.replace(/"/g,'""')+'"'};
   const linhas=[['Ref.','Tipo','Código','Descrição','Data do relatório','Entregue','Situação'].map(q).join(';'),
     ...L.map(o=>{const c=ctrlDe(o);return[refDe(o),tipoDe(o),o.sku,o.produto,dbr(o.criado),dbr(c.ent),SIT[sit(o)][0]].map(q).join(';')})];
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8'}));
