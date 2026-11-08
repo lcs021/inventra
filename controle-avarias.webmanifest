@@ -5,7 +5,7 @@
   "scope": "./",
   "display": "standalone",
   "background_color": "#F5F7F5",
-  "theme_color": "#087A50",
+  "theme_color": "#1E5799",
   "icons": [
     {
       "src": "avaria-icones/icone-app-192.png",
