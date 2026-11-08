@@ -1462,9 +1462,12 @@ function excel(L){
   if(!L.length)return toast('Não há avarias na lista para exportar.','info');
   if(!window.AvariaPlanilha)return toast('O gerador da planilha não carregou. Recarregue a página (Ctrl+F5).','err');
   const linhas=L.map(o=>({ref:refDe(o),rel:String(o.criado||'').slice(0,10),origem:origemTxt(o),sku:o.sku??'',produto:o.produto||'',ent:String(ctrlDe(o).ent||'').slice(0,10),por:entPor(o)}));
-  const a=document.createElement('a');a.href=URL.createObjectURL(AvariaPlanilha.gerar(linhas,{usuario:eu&&eu.nome||'',cd:'Centro de Distribuição',prazo:7}));
+  const serie=t=>{const d=new Date(t);return isNaN(d)?'':(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),d.getHours(),d.getMinutes())-Date.UTC(1899,11,30))/864e5};
+  const historico=[];L.forEach(o=>(ctrlDe(o).log||[]).forEach(l=>{if(!l||!l.t)return;const ent=l.k==='ent';
+    historico.push({t:l.t,serie:serie(l.t),ref:refDe(o),por:l.por||'',acao:ent?(l.v?'Entrega registrada':'Entrega removida'):'Etapa antiga ('+l.k+')',detalhe:l.v?(ent?'Data de entrega: ':'Data: ')+dbr(l.v):'Data apagada'})}));
+  const a=document.createElement('a');a.href=URL.createObjectURL(AvariaPlanilha.gerar(linhas,{usuario:eu&&eu.nome||'',cd:'Centro de Distribuição',historico}));
   a.download=`Controle de Avaria - Planilha ${hoje().split('-').reverse().join('-')}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
-  toast(`${plural(L.length,'avaria','avarias')} no arquivo, com dashboard, relatórios e análises.`,'ok','Excel gerado');
+  toast(`${plural(L.length,'avaria','avarias')} no arquivo, com painel, central, relatório e histórico.`,'ok','Excel gerado');
 }
 function pgPlanilha(){
   const q=(ui.pq||'').trim().toLowerCase();
@@ -1485,7 +1488,7 @@ function pgPlanilha(){
     <div class="plan-w"><table class="plan-g"><thead><tr><th class="n"></th><th>Ref.</th><th>Data do relatório</th><th>Origem</th><th>Código</th><th class="d">Descrição do produto</th><th>Situação</th><th>Data de entrega</th><th>Entregue por</th><th>Dias</th></tr></thead>
     <tbody>${L.map((o,i)=>{const e=sit(o)===1,d=diasAte(o);return`<tr class="${novos.has(o.id)?'novo':''}"><td class="n">${i+1}</td><td class="c b">${refDe(o)}</td><td class="c">${dbr(o.criado)}</td><td class="c">${origemTxt(o)}</td><td class="c mono">${esc(o.sku)}</td><td class="d">${esc(o.produto||'')}</td><td class="c"><span class="pst ${e?'ok':'pd'}">${e?'Entregue':'Não entregue'}</span></td><td class="c">${dbr(ctrlDe(o).ent)}</td><td>${esc(entPor(o))}</td><td class="c">${d}</td></tr>`}).join('')}</tbody></table>
     ${L.length?'':`<div style="padding:28px">${vazio(I.filtro,regs.length?'Nenhuma avaria com esses filtros':'Nenhuma avaria ainda',regs.length?'Limpe a busca ou os filtros.':'Assim que um relatório de avaria for registrado no INVENTRA, ele aparece aqui.')}</div>`}</div>
-    <footer class="plan-r"><span>${L.length===regs.length?plural(L.length,'linha','linhas'):`${L.length} de ${regs.length} linhas`}</span><span class="grow"></span><span>O Excel traz <b>todas</b> as avarias com Dashboard, Lançamentos, Relatórios, Análises, Configurações e Ajuda.</span></footer>
+    <footer class="plan-r"><span>${L.length===regs.length?plural(L.length,'linha','linhas'):`${L.length} de ${regs.length} linhas`}</span><span class="grow"></span><span>O Excel traz <b>todas</b> as avarias: Painel, Central, Lançamentos, Histórico, Relatório, Indicadores, Configurações e Ajuda (Excel 365/2021+).</span></footer>
   </section>`;
   const pq=$('pQ');pq.oninput=e=>{ui.pq=e.target.value;clearTimeout(window._pq);window._pq=setTimeout(()=>{const p=e.target.selectionStart;render();const n=$('pQ');n.focus();n.setSelectionRange(p,p)},180)};
   $('pTp').onchange=e=>{ui.pTp=e.target.value;render()};$('pSit').onchange=e=>{ui.pSit=e.target.value;render()};
