@@ -224,6 +224,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .au-foot{display:flex;justify-content:space-between;gap:12px;padding:0 40px 28px;font-size:11.5px;color:#A0A7A1}
 .au-foot span{display:inline-flex;align-items:center;gap:6px}
 .au-foot svg.i{width:13px;height:13px}
+.au-foot b{color:#2B3035;font-weight:700}
 .au-mobbrand{display:none}
 @media (max-width:1400px){.au-copy h2{font-size:28px}}
 @media (max-height:780px){.au-l{padding-top:28px;padding-bottom:24px}.au-copy h2{font-size:26px}.au-art{padding:6px 0}.au-sig{margin-top:18px;padding-top:14px}.au-form .au-sub{margin-bottom:22px}.au-top,.au-foot{padding-top:14px;padding-bottom:14px}}
@@ -237,7 +238,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
   .au-mobbrand{display:flex;align-items:center;gap:10px;margin-bottom:28px}
   .au-mobbrand b{font-size:13px;font-weight:700;letter-spacing:.08em;color:#1D222A}
   .au-mobbrand small{display:block;font-size:9.5px;letter-spacing:.18em;font-weight:600;color:#8A938B}
-  .au-foot{padding:16px 20px;justify-content:center}.au-foot span+span{display:none}
+  .au-foot{padding:16px 20px;justify-content:center}.au-foot #ft1{display:none!important}.au-foot span+span{display:inline-flex!important}.au-foot span+span{display:none}
 }
 #tlogin input[type=checkbox]:checked{background:#2366B0;border-color:#2366B0}
 #tlogin .inp:focus{border-color:#2366B0;box-shadow:0 0 0 3px rgba(35,102,176,.15)}
@@ -297,6 +298,9 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .sync.off .dot{background:var(--amb)}
 .sync .t{color:var(--muted)}
 .content{padding:16px 24px 32px;width:100%;max-width:none}
+.credito{margin-top:auto;padding:14px 24px 18px;border-top:1px solid var(--line);font-size:11.5px;color:var(--muted);text-align:center}
+.credito b{color:var(--fg);font-weight:700}
+@media (max-width:760px){.content{padding-bottom:14px!important}.credito{padding-bottom:84px}}
 .mnav{display:none}
 /* ---------- sidebar azul claro ---------- */
 .side,.mnav{--side:#CBDFF5;--side-2:#BBD4F0;--side-3:#ADCAEB;--side-line:#B2CBE7;--side-fg:#22344A;--side-mu:#4D6079;--sb-ink:#132235;--sb-acc:#2366B0}
@@ -932,7 +936,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
         <div class="au-alt">Já tem conta? <button type="button" class="au-lnk" id="irLogin">Entrar</button></div>
       </form>
     </div>
-    <div class="au-foot"><span id="ft1">Conexão segura</span><span>Controle de Avaria</span></div>
+    <div class="au-foot"><span id="ft1">Conexão segura</span><span>Criado por&nbsp;<b>Lucas Carvalho</b></span></div>
   </div>
 </div>
 
@@ -965,6 +969,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
     </header>
     <nav class="subnav" id="subnav" hidden></nav>
     <main class="content" id="pagina"></main>
+    <footer class="credito">Criado por <b>Lucas Carvalho</b></footer>
   </div>
   <nav class="mnav" id="mnav"></nav>
 </div>
