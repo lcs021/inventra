@@ -1011,6 +1011,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
+<script src="avaria-planilha.js"></script>
 <script>
 /* ===== Mesmo banco do INVENTRA (config.js do repositório; o valor abaixo é só reserva) ===== */
 const CFG=window.INV_CONFIG||{url:"https://fyuqaitylsxlsixwhzww.supabase.co",key:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5dXFhaXR5bHN4bHNpeHdoend3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMjk4NDMsImV4cCI6MjEwNzYwNTg0M30.gRQ3CIc8d3VXQlckLFoRNL-QPBqXcfdeZy12EaP19rc"};
@@ -1457,109 +1458,13 @@ function imprimir(L){
 const entPor=o=>{const l=(ctrlDe(o).log||[]).filter(x=>x.k==='ent'&&x.v);return l.length?l[l.length-1].por||'':''};
 const origemTxt=o=>{const t=tipoDe(o);return t==='Mercado Livre'?'Mercado Livre':t==='Shopee'?'Shopee':'Avaria CD'};
 const diasAte=o=>{const e=String(ctrlDe(o).ent||'').slice(0,10),r=String(o.criado||'').slice(0,10);if(!e||!r)return'';const d=Math.round((Date.parse(e+'T12:00')-Date.parse(r+'T12:00'))/864e5);return d<0?'':d};
-const XLS=(()=>{
-  const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
-  const crc32=b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0};
-  function zip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;
-    const u16=v=>[v&255,(v>>>8)&255],u32=v=>[v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255];
-    for(const [name,txt] of files){const nb=enc.encode(name),data=enc.encode(txt),c=crc32(data);
-      const lh=new Uint8Array([...u32(0x04034b50),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(c),...u32(data.length),...u32(data.length),...u16(nb.length),...u16(0)]);
-      parts.push(lh,nb,data);
-      cen.push(new Uint8Array([...u32(0x02014b50),...u16(20),...u16(20),...u16(0x0800),...u16(0),...u16(0),...u16(0x21),...u32(c),...u32(data.length),...u32(data.length),...u16(nb.length),...u16(0),...u16(0),...u16(0),...u16(0),...u32(0),...u32(off)]),nb);
-      off+=lh.length+nb.length+data.length}
-    const cs=cen.reduce((a,x)=>a+x.length,0);
-    const end=new Uint8Array([...u32(0x06054b50),...u16(0),...u16(0),...u16(files.length),...u16(files.length),...u32(cs),...u32(off),...u16(0)]);
-    return new Blob([...parts,...cen,end],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
-  const x=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'');
-  const col=n=>{let s='';n++;while(n){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26)}return s};
-  const serial=s=>{const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(s||''));return m?(Date.UTC(+m[1],+m[2]-1,+m[3])-Date.UTC(1899,11,30))/864e5:null};
-  // células: {v, s, t:'n'|'s'|'f', f}
-  const cel=(r,c,o)=>{const a=col(c)+(r+1);if(o==null)return'';if(typeof o!=='object')o={v:o};const s=o.s?` s="${o.s}"`:'';
-    if(o.f!=null)return`<c r="${a}"${s}><f>${x(o.f)}</f>${o.v!=null&&o.v!==''?`<v>${x(o.v)}</v>`:''}</c>`;
-    if(o.v===''||o.v==null)return`<c r="${a}"${s}/>`;
-    if(typeof o.v==='number')return`<c r="${a}"${s}><v>${o.v}</v></c>`;
-    return`<c r="${a}"${s} t="inlineStr"><is><t xml:space="preserve">${x(o.v)}</t></is></c>`};
-  const folha=({rows,cols,merges=[],freeze,filtro,alturas={},paisagem=true})=>{
-    const last=Math.max(...rows.map(r=>r.length),1);
-    return`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="A1:${col(last-1)}${rows.length}"/><sheetViews><sheetView workbookViewId="0" showGridLines="0" zoomScale="100">${freeze?`<pane ySplit="${freeze}" topLeftCell="A${freeze+1}" activePane="bottomLeft" state="frozen"/><selection pane="bottomLeft" activeCell="A${freeze+1}" sqref="A${freeze+1}"/>`:''}</sheetView></sheetViews><sheetFormatPr defaultRowHeight="18" customHeight="1"/><cols>${cols.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${rows.map((r,i)=>`<row r="${i+1}"${alturas[i]?` ht="${alturas[i]}" customHeight="1"`:''}>${r.map((c,j)=>cel(i,j,c)).join('')}</row>`).join('')}</sheetData>${filtro?`<autoFilter ref="${filtro}"/>`:''}${merges.length?`<mergeCells count="${merges.length}">${merges.map(m=>`<mergeCell ref="${m}"/>`).join('')}</mergeCells>`:''}<pageMargins left="0.4" right="0.4" top="0.5" bottom="0.5" header="0.3" footer="0.3"/><pageSetup paperSize="9" orientation="${paisagem?'landscape':'portrait'}" fitToWidth="1" fitToHeight="0"/><headerFooter><oddFooter>&amp;L&amp;8Controle de Avaria&amp;R&amp;8Página &amp;P de &amp;N</oddFooter></headerFooter></worksheet>`};
-  const ESTILOS=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><numFmts count="2"><numFmt numFmtId="164" formatCode="dd/mm/yyyy"/><numFmt numFmtId="165" formatCode="0%"/></numFmts>
-<fonts count="8"><font><sz val="10"/><color rgb="FF1F2937"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="15"/><color rgb="FF1E5799"/><name val="Calibri"/><family val="2"/></font><font><sz val="9"/><color rgb="FF6B7280"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="10"/><color rgb="FFFFFFFF"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="10"/><color rgb="FF1F2937"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="10"/><color rgb="FF1E5799"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="10"/><color rgb="FF8A5A00"/><name val="Calibri"/><family val="2"/></font><font><b/><sz val="11"/><color rgb="FF1E5799"/><name val="Calibri"/><family val="2"/></font></fonts>
-<fills count="6"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF1E5799"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFF4F7FB"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFDCE8F7"/><bgColor indexed="64"/></patternFill></fill><fill><patternFill patternType="solid"><fgColor rgb="FFFCEFD9"/><bgColor indexed="64"/></patternFill></fill></fills>
-<borders count="3"><border><left/><right/><top/><bottom/><diagonal/></border><border><left style="thin"><color rgb="FFD5DCE6"/></left><right style="thin"><color rgb="FFD5DCE6"/></right><top style="thin"><color rgb="FFD5DCE6"/></top><bottom style="thin"><color rgb="FFD5DCE6"/></bottom><diagonal/></border><border><left/><right/><top/><bottom style="medium"><color rgb="FF1E5799"/></bottom><diagonal/></border></borders>
-<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>
-<cellXfs count="20">
-<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>
-<xf numFmtId="0" fontId="1" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="center"/></xf>
-<xf numFmtId="0" fontId="2" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment vertical="center"/></xf>
-<xf numFmtId="0" fontId="3" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center" wrapText="1"/></xf>
-<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>
-<xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>
-<xf numFmtId="1" fontId="4" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="1" fontId="4" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="164" fontId="0" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="164" fontId="0" fillId="3" borderId="1" xfId="0" applyNumberFormat="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="0" fontId="5" fillId="4" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="0" fontId="6" fillId="5" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="0" fontId="0" fillId="3" borderId="1" xfId="0" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="0" fontId="4" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>
-<xf numFmtId="3" fontId="4" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="165" fontId="4" fillId="0" borderId="1" xfId="0" applyNumberFormat="1" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="center" vertical="center"/></xf>
-<xf numFmtId="0" fontId="7" fillId="0" borderId="2" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment vertical="center"/></xf>
-<xf numFmtId="0" fontId="7" fillId="0" borderId="2" xfId="0" applyFont="1" applyBorder="1"/>
-<xf numFmtId="0" fontId="3" fillId="2" borderId="1" xfId="0" applyFont="1" applyFill="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center"/></xf>
-</cellXfs><cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles></styleSheet>`;
-  // índices de estilo
-  const S={tit:1,sub:2,cab:3,tx:4,txZ:5,num:6,numZ:7,dt:8,dtZ:9,ok:10,pend:11,ct:12,ctZ:13,rot:14,val:15,pct:16,sec:17,cabE:19};
-  function gerar(L,quem){
-    L=[...L].sort((a,b)=>refDe(a)-refDe(b)||String(a.criado).localeCompare(String(b.criado)));
-    const agora=new Date(),quando=agora.toLocaleDateString('pt-BR')+' às '+agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-    const CAB=['Ref.','Data do relatório','Origem','Código','Descrição do produto','Situação','Data de entrega','Entregue por','Dias até a entrega'];
-    const H=4,ini=H+1,fim=H+L.length,n=L.length;
-    const rows=[[{v:'CONTROLE DE AVARIA — PLANILHA DE AVARIAS',s:S.tit}],[{v:`Gerado em ${quando}${quem?' por '+quem:''} · ${n} ${n===1?'avaria':'avarias'} · dados do INVENTRA`,s:S.sub}],[],CAB.map(v=>({v,s:S.cab}))];
-    L.forEach((o,i)=>{const z=i%2===1,c=ctrlDe(o),e=sit(o)===1,dr=serial(o.criado),de=serial(c.ent),d=diasAte(o);
-      rows.push([{v:refDe(o),s:z?S.numZ:S.num},{v:dr??'',s:z?S.dtZ:S.dt},{v:origemTxt(o),s:z?S.ctZ:S.ct},{v:String(o.sku??''),s:z?S.ctZ:S.ct},{v:o.produto||'',s:z?S.txZ:S.tx},
-        {v:e?'Entregue':'Não entregue',s:e?S.ok:S.pend},{v:de??'',s:z?S.dtZ:S.dt},{v:entPor(o),s:z?S.txZ:S.tx},{v:d===''?'':d,s:z?S.ctZ:S.ct}])});
-    const av=folha({rows,cols:[8,15,15,12,46,15,15,22,12],merges:['A1:I1','A2:I2'],freeze:H,filtro:n?`A${H}:I${fim}`:null,alturas:{0:26,1:16,3:30}});
-    // ---- Resumo (fórmulas ligadas à aba Avarias) ----
-    const rg=c=>`Avarias!$${c}$${ini}:$${c}$${Math.max(fim,ini)}`;
-    const ent=L.filter(o=>sit(o)===1).length,pen=n-ent;
-    const orig=['Mercado Livre','Shopee','Avaria CD'];
-    const meses={};L.forEach(o=>{const k=String(o.criado||'').slice(0,7);if(!k)return;(meses[k]=meses[k]||{t:0,e:0}).t++;if(sit(o)===1)meses[k].e++});
-    const MES=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
-    const r2=[[{v:'RESUMO DAS AVARIAS',s:S.tit}],[{v:`Atualizado em ${quando}`,s:S.sub}],[],
-      [{v:'Indicadores gerais',s:S.sec},{v:'',s:S.sec},{v:'',s:S.sec},{v:'',s:S.sec}],
-      [{v:'Total de avarias',s:S.rot},{f:`COUNT(${rg('A')})`,v:n,s:S.val}],
-      [{v:'Entregues',s:S.rot},{f:`COUNTIF(${rg('F')},"Entregue")`,v:ent,s:S.val}],
-      [{v:'Não entregues',s:S.rot},{f:`COUNTIF(${rg('F')},"Não entregue")`,v:pen,s:S.val}],
-      [{v:'% entregue',s:S.rot},{f:'IF(B5=0,0,B6/B5)',v:n?ent/n:0,s:S.pct}],
-      [{v:'Média de dias até a entrega',s:S.rot},{f:`IFERROR(ROUND(AVERAGE(${rg('I')}),1),"-")`,v:(()=>{const d=L.map(diasAte).filter(v=>v!=='');return d.length?Math.round(d.reduce((a,b)=>a+b,0)/d.length*10)/10:'-'})(),s:S.val}],
-      [],
-      [{v:'Por origem',s:S.sec},{v:'',s:S.sec},{v:'',s:S.sec},{v:'',s:S.sec}],
-      ['Origem','Avarias','Entregues','Não entregues'].map((v,i)=>({v,s:i?S.cab:S.cabE})),
-      ...orig.map(g=>{const a=L.filter(o=>origemTxt(o)===g);return[{v:g,s:S.rot},{f:`COUNTIF(${rg('C')},"${g}")`,v:a.length,s:S.val},{f:`COUNTIFS(${rg('C')},"${g}",${rg('F')},"Entregue")`,v:a.filter(o=>sit(o)===1).length,s:S.val},{f:`COUNTIFS(${rg('C')},"${g}",${rg('F')},"Não entregue")`,v:a.filter(o=>sit(o)===0).length,s:S.val}]}),
-      [],
-      [{v:'Por mês do relatório',s:S.sec},{v:'',s:S.sec},{v:'',s:S.sec},{v:'',s:S.sec}],
-      ['Mês','Avarias','Entregues','% entregue'].map((v,i)=>({v,s:i?S.cab:S.cabE})),
-      ...Object.keys(meses).sort().map(k=>[{v:MES[+k.slice(5,7)-1]+'/'+k.slice(0,4),s:S.rot},{v:meses[k].t,s:S.val},{v:meses[k].e,s:S.val},{v:meses[k].t?meses[k].e/meses[k].t:0,s:S.pct}])];
-    const re=folha({rows:r2,cols:[30,14,14,16],merges:['A1:D1','A2:D2'],alturas:{0:26},paisagem:false});
-    const files=[
-      ['[Content_Types].xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>`],
-      ['_rels/.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>`],
-      ['docProps/core.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>Planilha de Avarias</dc:title><dc:creator>${x(quem||'Controle de Avaria')}</dc:creator><dcterms:created xsi:type="dcterms:W3CDTF">${agora.toISOString().slice(0,19)}Z</dcterms:created></cp:coreProperties>`],
-      ['docProps/app.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties"><Application>Controle de Avaria</Application></Properties>`],
-      ['xl/workbook.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><bookViews><workbookView activeTab="0"/></bookViews><sheets><sheet name="Avarias" sheetId="1" r:id="rId1"/><sheet name="Resumo" sheetId="2" r:id="rId2"/></sheets><definedNames>${n?`<definedName name="_xlnm._FilterDatabase" localSheetId="0" hidden="1">Avarias!$A$${H}:$I$${fim}</definedName>`:''}<definedName name="_xlnm.Print_Titles" localSheetId="0">Avarias!$${H}:$${H}</definedName></definedNames><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>`],
-      ['xl/_rels/workbook.xml.rels',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`],
-      ['xl/styles.xml',ESTILOS],['xl/worksheets/sheet1.xml',av],['xl/worksheets/sheet2.xml',re]];
-    return zip(files)}
-  return{gerar}})();
 function excel(L){
   if(!L.length)return toast('Não há avarias na lista para exportar.','info');
-  const a=document.createElement('a');a.href=URL.createObjectURL(XLS.gerar(L,eu&&eu.nome));
-  a.download=`Planilha de Avarias ${hoje().split('-').reverse().join('-')}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
-  toast(`${plural(L.length,'avaria','avarias')} na planilha.`,'ok','Excel gerado');
+  if(!window.AvariaPlanilha)return toast('O gerador da planilha não carregou. Recarregue a página (Ctrl+F5).','err');
+  const linhas=L.map(o=>({ref:refDe(o),rel:String(o.criado||'').slice(0,10),origem:origemTxt(o),sku:o.sku??'',produto:o.produto||'',ent:String(ctrlDe(o).ent||'').slice(0,10),por:entPor(o)}));
+  const a=document.createElement('a');a.href=URL.createObjectURL(AvariaPlanilha.gerar(linhas,{usuario:eu&&eu.nome||'',cd:'Centro de Distribuição',prazo:7}));
+  a.download=`Controle de Avaria - Planilha ${hoje().split('-').reverse().join('-')}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
+  toast(`${plural(L.length,'avaria','avarias')} no arquivo, com dashboard, relatórios e análises.`,'ok','Excel gerado');
 }
 function pgPlanilha(){
   const q=(ui.pq||'').trim().toLowerCase();
@@ -1580,11 +1485,11 @@ function pgPlanilha(){
     <div class="plan-w"><table class="plan-g"><thead><tr><th class="n"></th><th>Ref.</th><th>Data do relatório</th><th>Origem</th><th>Código</th><th class="d">Descrição do produto</th><th>Situação</th><th>Data de entrega</th><th>Entregue por</th><th>Dias</th></tr></thead>
     <tbody>${L.map((o,i)=>{const e=sit(o)===1,d=diasAte(o);return`<tr class="${novos.has(o.id)?'novo':''}"><td class="n">${i+1}</td><td class="c b">${refDe(o)}</td><td class="c">${dbr(o.criado)}</td><td class="c">${origemTxt(o)}</td><td class="c mono">${esc(o.sku)}</td><td class="d">${esc(o.produto||'')}</td><td class="c"><span class="pst ${e?'ok':'pd'}">${e?'Entregue':'Não entregue'}</span></td><td class="c">${dbr(ctrlDe(o).ent)}</td><td>${esc(entPor(o))}</td><td class="c">${d}</td></tr>`}).join('')}</tbody></table>
     ${L.length?'':`<div style="padding:28px">${vazio(I.filtro,regs.length?'Nenhuma avaria com esses filtros':'Nenhuma avaria ainda',regs.length?'Limpe a busca ou os filtros.':'Assim que um relatório de avaria for registrado no INVENTRA, ele aparece aqui.')}</div>`}</div>
-    <footer class="plan-r"><span>${L.length===regs.length?plural(L.length,'linha','linhas'):`${L.length} de ${regs.length} linhas`}</span><span class="grow"></span><span>O Excel baixado traz as abas <b>Avarias</b> e <b>Resumo</b>, com filtros e cabeçalho fixo.</span></footer>
+    <footer class="plan-r"><span>${L.length===regs.length?plural(L.length,'linha','linhas'):`${L.length} de ${regs.length} linhas`}</span><span class="grow"></span><span>O Excel traz <b>todas</b> as avarias com Dashboard, Lançamentos, Relatórios, Análises, Configurações e Ajuda.</span></footer>
   </section>`;
   const pq=$('pQ');pq.oninput=e=>{ui.pq=e.target.value;clearTimeout(window._pq);window._pq=setTimeout(()=>{const p=e.target.selectionStart;render();const n=$('pQ');n.focus();n.setSelectionRange(p,p)},180)};
   $('pTp').onchange=e=>{ui.pTp=e.target.value;render()};$('pSit').onchange=e=>{ui.pSit=e.target.value;render()};
-  $('pXls').onclick=()=>excel(L.length?L:regs);
+  $('pXls').onclick=()=>excel(regs);
 }
 
 $('tema').onclick=()=>{const a=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),n=a==='dark'?'light':'dark';document.documentElement.dataset.theme=n;ls.set('tema',n);pintaTema()};
