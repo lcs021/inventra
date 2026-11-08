@@ -912,7 +912,7 @@ const hoje=()=>iso(new Date());
 const dbr=s=>s?String(s).slice(0,10).split('-').reverse().join('/'):'';
 const DIAS=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
 const dExt=s=>{const d=new Date(s+'T12:00');const h=hoje(),o=iso(Date.now()-864e5);return{t:s===h?'Hoje':s===o?'Ontem':dbr(s),s:(s===h||s===o?dbr(s)+' · ':'')+DIAS[d.getDay()]}};
-const ETAPAS=[['ent','Entregue'],['ivano','Data Ivano'],['envio','Data de envio'],['ret','Data de retorno']];
+const ETAPAS=[['ent','Entregue'],['envio','Data de envio'],['ret','Data de retorno']];
 const SIT=[['Não entregue','s0','#A2AAA3'],['Entregue','s1','#C18B31'],['Com o Ivano','s2','#7D63B8'],['Enviado','s3','#4279AD'],['Retornou','s4','#2F8A4C']];
 
 /* ===== ícones · traço único 1.75, família Lucide ===== */
@@ -987,7 +987,7 @@ function marcaSync(){$('syncT').textContent='Atualizado às '+new Date().toLocal
 const ctrlDe=o=>(o.dados&&o.dados.ctrl)||{};
 const refDe=o=>parseInt(o.dados&&o.dados.ref,10);
 const tipoDe=o=>(o.dados&&o.dados.tipo)||'Avaria';
-const sit=o=>{const c=ctrlDe(o);return c.ret?4:c.envio?3:c.ivano?2:c.ent?1:0};
+const sit=o=>{const c=ctrlDe(o);return c.ret?4:c.envio?3:c.ent?1:0};
 const srcTag=t=>t==='Mercado Livre'?'<span class="src ml" title="Mercado Livre">MLV</span>':t==='Shopee'?'<span class="src sh" title="Shopee">SHOPEE</span>':'';
 const stTag=s=>`<span class="st ${SIT[s][1]}">${SIT[s][0]}</span>`;
 const iniciais=n=>String(n||'?').trim().split(/\s+/).slice(0,2).map(p=>p[0]).join('').toUpperCase();
@@ -1155,8 +1155,8 @@ function pgPainel(){
   const dias=Array.from({length:14},(_,i)=>iso(Date.now()-(13-i)*864e5));
   const porDia=dias.map(d=>regs.filter(o=>String(ctrlDe(o).ent||'').slice(0,10)===d).length),mx=Math.max(1,...porDia),tot=porDia.reduce((a,b)=>a+b,0);
   const naoEnt=regs.filter(o=>sit(o)===0).sort((a,b)=>refDe(a)-refDe(b));
-  const movs=regs.flatMap(o=>(ctrlDe(o).log||[]).map(l=>({...l,o}))).sort((a,b)=>b.t<a.t?-1:1).slice(0,8);
-  const nomeK={ent:'Entregue',ivano:'Com o Ivano',envio:'Enviado',ret:'Retornou'};
+  const movs=regs.flatMap(o=>(ctrlDe(o).log||[]).filter(l=>l.k!=='ivano').map(l=>({...l,o}))).sort((a,b)=>b.t<a.t?-1:1).slice(0,8);
+  const nomeK={ent:'Entregue',envio:'Enviado',ret:'Retornou'};
   $('pagina').innerHTML=`${avisoPerm()}${kpisHTML()}
   <div class="pgrid">
     <section class="card"><header><h3>Entregas</h3><span class="meta">últimos 14 dias · ${plural(tot,'ref.','refs.')}</span><span class="grow"></span><button class="btn quiet sm" data-ir="entregas">Histórico ${I.arrow}</button></header>
@@ -1167,7 +1167,7 @@ function pgPainel(){
       :vazio(I.check,'Nada pendente','Todas as refs. já foram entregues.')}</section>
   </div>
   <section class="card"><header><h3>Atividade recente</h3><span class="meta">registros de datas feitos neste sistema</span></header>
-    ${movs.length?`<ul class="list">${movs.map(m=>`<li><span class="r">${refDe(m.o)}</span><div class="t"><div class="a">${m.v?`${esc(nomeK[m.k]||m.k)} <span style="color:var(--muted);font-weight:400">em ${dbr(m.v)}</span>`:`<span style="color:var(--muted);font-weight:400">Data removida:</span> ${esc((ETAPAS.find(e=>e[0]===m.k)||[0,m.k])[1])}`}</div><div class="b">${esc(m.o.produto||m.o.sku||'')} · ${esc(m.por||'Alguém')} · ${new Date(m.t).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</div></div>${m.v?stTag(['ent','ivano','envio','ret'].indexOf(m.k)+1):'<span></span>'}</li>`).join('')}</ul>`
+    ${movs.length?`<ul class="list">${movs.map(m=>`<li><span class="r">${refDe(m.o)}</span><div class="t"><div class="a">${m.v?`${esc(nomeK[m.k]||m.k)} <span style="color:var(--muted);font-weight:400">em ${dbr(m.v)}</span>`:`<span style="color:var(--muted);font-weight:400">Data removida:</span> ${esc((ETAPAS.find(e=>e[0]===m.k)||[0,m.k])[1])}`}</div><div class="b">${esc(m.o.produto||m.o.sku||'')} · ${esc(m.por||'Alguém')} · ${new Date(m.t).toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'})}</div></div>${m.v?stTag({ent:1,envio:3,ret:4}[m.k]):'<span></span>'}</li>`).join('')}</ul>`
       :vazio(I.inbox,'Sem atividade ainda','Quando alguém registrar uma data por aqui, ela aparece nesta lista com o nome e o horário.')}
   </section>`;
   document.querySelectorAll('[data-kf]').forEach(b=>b.onclick=()=>{ui.filtro=b.dataset.kf;tabAnim=true;ir('controle')});
@@ -1186,8 +1186,8 @@ function pgControle(){
   $('subnav').hidden=true;$('subnav').innerHTML='';
   const base=filtraBase(),cont=contagem(base),todo=contagem(regs),tt=regs.length;
   const L=visiveis(),selL=L.filter(o=>selec.has(o.id)),nSel=selL.length;
-  const tabs=[['','Todas',base.length],...SIT.map((s,i)=>[String(i),s[0],cont[i]])];
-  const SM=[['','Referências',tt,''],['0','Pendentes',todo[0],SIT[0][2]],['1','Entregues',todo[1],SIT[1][2]],['2','Com o Ivano',todo[2],SIT[2][2]],['3','Enviadas',todo[3],SIT[3][2]],['4','Retornadas',todo[4],SIT[4][2]]];
+  const tabs=[['','Todas',base.length],...SIT.map((s,i)=>[String(i),s[0],cont[i]]).filter(t=>t[0]!=='2')];
+  const SM=[['','Referências',tt,''],['0','Pendentes',todo[0],SIT[0][2]],['1','Entregues',todo[1],SIT[1][2]],['3','Enviadas',todo[3],SIT[3][2]],['4','Retornadas',todo[4],SIT[4][2]]];
   const sl=$('sumline');sl.hidden=false;
   sl.innerHTML=SM.map(k=>`<button class="sm" data-kf="${k[0]}" aria-pressed="${ui.filtro===k[0]}" style="--c:${k[3]}" data-tip="Filtrar: ${k[1].toLowerCase()}">${k[3]?'<i></i>':''}<b>${k[2]}</b>${k[1].toLowerCase()}</button>`).join('');
   const temFiltro=!!(ui.busca||ui.tipo||ui.periodo);
@@ -1218,7 +1218,7 @@ function pgControle(){
         <td class="c-desc"><div class="pname"><span title="${esc(o.produto||'')}">${esc(o.produto||'Sem descrição')}</span></div><div class="pmeta">Relatório ${dbr(o.criado)}${tg}</div></td>
         ${ETAPAS.map(e=>`<td class="c-dt"><input type="date" class="dt" required data-id="${esc(o.id)}" data-k="${e[0]}" value="${esc(String(c[e[0]]||'').slice(0,10))}" aria-label="${e[1]} da ref. ${r}" ${podeEditar?'':'disabled'}></td>`).join('')}
         <td class="c-st">${stTag(s)}</td></tr>`}).join('')
-        :`<tr><td colspan="9" style="height:auto;border:0">${regs.length?vazio(I.busca,'Nenhuma referência encontrada','Nada corresponde aos filtros atuais. Ajuste a pesquisa, a origem, o período ou a situação.',temFiltro||ui.filtro?'<button class="btn sm" id="limpaTudo">Limpar filtros</button>':''):vazio(I.inbox,'Nenhum relatório de avaria','Assim que um relatório de avaria for salvo no INVENTRA, a referência aparece aqui automaticamente.')}</td></tr>`}</tbody></table></div>
+        :`<tr><td colspan="8" style="height:auto;border:0">${regs.length?vazio(I.busca,'Nenhuma referência encontrada','Nada corresponde aos filtros atuais. Ajuste a pesquisa, a origem, o período ou a situação.',temFiltro||ui.filtro?'<button class="btn sm" id="limpaTudo">Limpar filtros</button>':''):vazio(I.inbox,'Nenhum relatório de avaria','Assim que um relatório de avaria for salvo no INVENTRA, a referência aparece aqui automaticamente.')}</td></tr>`}</tbody></table></div>
     <div class="tfoot"><span>${L.length===regs.length?plural(L.length,'referência','referências'):`${L.length} de ${regs.length} referências`}</span><span class="grow"></span>${I.cloud}<span>Datas sincronizadas com o Controle de assinaturas do INVENTRA</span></div>
   </section>`;
   // tabela ocupa a altura útil
@@ -1304,8 +1304,8 @@ function imprimir(L){
 function excel(L){
   if(!L.length)return toast('Não há refs. na lista para exportar.','info');
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
-  const linhas=[['Ref.','Tipo','Código','Descrição','Data do relatório','Entregue','Data Ivano','Data de envio','Data de Retorno','Situação'].map(q).join(';'),
-    ...L.map(o=>{const c=ctrlDe(o);return[refDe(o),tipoDe(o),o.sku,o.produto,dbr(o.criado),dbr(c.ent),dbr(c.ivano),dbr(c.envio),dbr(c.ret),SIT[sit(o)][0]].map(q).join(';')})];
+  const linhas=[['Ref.','Tipo','Código','Descrição','Data do relatório','Entregue','Data de envio','Data de Retorno','Situação'].map(q).join(';'),
+    ...L.map(o=>{const c=ctrlDe(o);return[refDe(o),tipoDe(o),o.sku,o.produto,dbr(o.criado),dbr(c.ent),dbr(c.envio),dbr(c.ret),SIT[sit(o)][0]].map(q).join(';')})];
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+linhas.join('\r\n')],{type:'text/csv;charset=utf-8'}));
   a.download=`Controle de Avarias ${hoje()}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
   toast(`${plural(L.length,'ref.','refs.')} no arquivo.`,'ok','Planilha exportada');
