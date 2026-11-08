@@ -294,6 +294,21 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .sync .t{color:var(--muted)}
 .content{padding:16px 24px 32px;width:100%;max-width:none}
 .mnav{display:none}
+/* ---------- sidebar azul claro ---------- */
+.side,.mnav{--side:#E3EFFB;--side-2:#D3E5F8;--side-3:#C6DDF5;--side-line:#CBDDF1;--side-fg:#22344A;--side-mu:#5E7088;--sb-ink:#132235;--sb-acc:#2366B0}
+.side{border-right-color:#CBDDF1}
+.side .s-head b,.side .who b{color:var(--sb-ink)}
+.side .nav:hover,.side .sbtn:hover{color:var(--sb-ink)}
+.side .nav[aria-current="page"]{background:#FFFFFF;color:var(--sb-ink);box-shadow:0 1px 2px rgba(19,34,53,.06),0 0 0 1px #CBDDF1}
+.side .nav[aria-current="page"]::before{background:var(--sb-acc)}
+.side .nav[aria-current="page"] svg.i{color:var(--sb-acc)}
+.side .nav .ct{color:#5E7088}
+.side .nav .ct.hot{color:#B45309}
+.side .ava{background:#C6DDF5;color:#1E4E85}
+.side .s-lbl{color:#6B7E95}
+.side [data-tip]:hover::after{background:#132235}
+@media (max-width:760px){.mnav{border-top:1px solid #CBDDF1}.mnav button[aria-current="page"]{color:var(--sb-ink)!important;background:#FFFFFF!important}.mnav button[aria-current="page"] svg.i{color:var(--sb-acc)!important}}
+
 
 /* ---------- faixa de indicadores ---------- */
 .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-1);margin-bottom:16px;overflow:hidden}
