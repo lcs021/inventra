@@ -371,6 +371,30 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .aud-ev.s2{background:color-mix(in srgb,#DC2626 14%,transparent);color:#DC2626}
 @media (max-width:760px){.aud-k{grid-template-columns:repeat(2,1fr)}}
 
+/* ---------- menu: efeitos ao passar o mouse e clicar ---------- */
+.side .nav{overflow:visible;transition:background .18s var(--ease),color .18s,box-shadow .18s,transform .12s var(--ease)}
+.side .nav svg.i{transition:color .18s,transform .28s cubic-bezier(.34,1.56,.64,1)}
+.side .nav .lbl{transition:transform .22s var(--ease)}
+.side .nav:hover{background:rgba(255,255,255,.55);box-shadow:0 1px 2px rgba(19,34,53,.06)}
+.side .nav:hover svg.i{color:var(--sb-acc);transform:scale(1.14) rotate(-6deg)}
+.side .nav:hover .lbl{transform:translateX(3px)}
+.side .nav[aria-current="page"]:hover{background:#FFFFFF}
+.side .nav[aria-current="page"]:hover svg.i{transform:scale(1.08)}
+.side .nav:active{transform:scale(.96)}
+.side .nav:focus-visible{outline:2px solid var(--sb-acc);outline-offset:2px}
+.side .nav.chegou::before{animation:navBarra .38s cubic-bezier(.34,1.56,.64,1)}
+.side .nav.chegou svg.i{animation:navIcone .45s cubic-bezier(.34,1.56,.64,1)}
+.side .nav.chegou{animation:navFundo .3s var(--ease)}
+@keyframes navBarra{from{transform:scaleY(0);opacity:0}to{transform:scaleY(1);opacity:1}}
+@keyframes navIcone{0%{transform:scale(.6) rotate(-18deg)}60%{transform:scale(1.2) rotate(4deg)}100%{transform:none}}
+@keyframes navFundo{from{box-shadow:0 0 0 0 rgba(35,102,176,.35)}to{box-shadow:0 1px 2px rgba(19,34,53,.06),0 0 0 1px #9DBDE2}}
+.mnav button{transition:transform .12s var(--ease),color .18s}
+.mnav button:active{transform:scale(.9)}
+.mnav button.chegou svg.i{animation:navIcone .45s cubic-bezier(.34,1.56,.64,1)}
+.onda{position:fixed;pointer-events:none;overflow:hidden;z-index:60}
+.onda i{position:absolute;border-radius:50%;background:rgba(35,102,176,.28);transform:scale(0);animation:onda .55s ease-out forwards}
+@keyframes onda{to{transform:scale(1);opacity:0}}
+@media (prefers-reduced-motion:reduce){.side .nav,.side .nav svg.i,.side .nav .lbl,.mnav button{transition:none!important;animation:none!important;transform:none!important}.onda{display:none}}
 /* ---------- faixa de indicadores ---------- */
 .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-1);margin-bottom:16px;overflow:hidden}
 .kpi{position:relative;display:flex;flex-direction:column;gap:2px;padding:11px 16px 11px 18px;border:0;border-left:1px solid var(--line);background:none;text-align:left;cursor:pointer;transition:background .12s var(--ease)}
@@ -1276,8 +1300,9 @@ function render(){
   const pend=regs.filter(o=>sit(o)===0).length,entHj=regs.filter(o=>String(ctrlDe(o).ent||'').slice(0,10)===hoje()).length;
   const ct={controle:pend?`<span class="ct hot" title="Pendentes de entrega">${pend}</span>`:'',entregas:entHj?`<span class="ct" title="Entregues hoje">${entHj}</span>`:''};
   if(pag==='auditoria'&&!(eu&&eu.admin))pag='controle';
-  $('navs').innerHTML=pags().map(([k,t,i])=>`<button class="nav" data-pag="${k}" ${rail?`data-tip="${t}" data-tip-pos="right"`:''} ${pag===k?'aria-current="page"':''}>${i}<span class="lbl">${t}</span>${ct[k]||''}</button>`).join('');
-  $('mnav').innerHTML=pags().map(([k,t,i])=>`<button data-pag="${k}" ${pag===k?'aria-current="page"':''}>${i}<span>${k==='entregas'?'Entregas':t}</span></button>`).join('');
+  const chegou=window._navPag!==undefined&&window._navPag!==pag;window._navPag=pag;
+  $('navs').innerHTML=pags().map(([k,t,i])=>`<button class="nav${chegou&&pag===k?' chegou':''}" data-pag="${k}" ${rail?`data-tip="${t}" data-tip-pos="right"`:''} ${pag===k?'aria-current="page"':''}>${i}<span class="lbl">${t}</span>${ct[k]||''}</button>`).join('');
+  $('mnav').innerHTML=pags().map(([k,t,i])=>`<button data-pag="${k}" class="${chegou&&pag===k?'chegou':''}" ${pag===k?'aria-current="page"':''}>${i}<span>${k==='entregas'?'Entregas':t}</span></button>`).join('');
   document.querySelectorAll('[data-pag]').forEach(b=>b.onclick=()=>ir(b.dataset.pag));
   const P=PAGS.find(p=>p[0]===pag)||PAGS[1];
   $('crumbPg').textContent=pag==='controle'?'Controle de Relatórios':P[1];if(pag!=='controle'){$('sumline').hidden=true}$('titulo').textContent=P[3];$('subtitulo').textContent=P[4];pintaTema();
@@ -1551,6 +1576,15 @@ function pgAuditoria(){
   $('aG').onchange=e=>{ui.ag=e.target.value;render()};$('aR').onclick=()=>{audCache=null;render()};
 }
 
+
+// efeito de onda ao clicar nos botões do menu
+document.addEventListener('pointerdown',e=>{
+  const b=e.target.closest&&e.target.closest('.side .nav,.mnav button');if(!b||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const r=b.getBoundingClientRect(),d=Math.max(r.width,r.height)*2.2,w=document.createElement('div');
+  w.className='onda';Object.assign(w.style,{left:r.left+'px',top:r.top+'px',width:r.width+'px',height:r.height+'px',borderRadius:getComputedStyle(b).borderRadius});
+  const c=document.createElement('i');Object.assign(c.style,{width:d+'px',height:d+'px',left:(e.clientX-r.left-d/2)+'px',top:(e.clientY-r.top-d/2)+'px'});
+  w.appendChild(c);document.body.appendChild(w);setTimeout(()=>w.remove(),600);
+},{passive:true});
 function pgPlanilha(){
   const q=(ui.pq||'').trim().toLowerCase();
   const L=regs.filter(o=>(!ui.pSit||String(sit(o))===ui.pSit)&&(!ui.pTp||origemTxt(o)===ui.pTp)&&(!q||[refDe(o),o.sku,o.produto,entPor(o)].join(' ').toLowerCase().includes(q)))
