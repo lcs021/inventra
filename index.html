@@ -2073,6 +2073,246 @@ create policy "admin edita cargos" on public.cargos for all to authenticated
   with check (public.is_admin() and public.meu_galpao() = (select id from public.galpoes order by criado limit 1));
 -- ===== fim da segurança v104 =====
 
+-- ===== Segurança (v105) — auditoria avançada de 09/11/2026 =====
+-- Pode rodar mais de uma vez. Não apaga avarias, garantias nem usuários.
+-- Requer o bloco v104 (login_email, login_falhas). Este arquivo já o inclui antes desta parte.
+
+-- 12. Registro de auditoria (somente leitura para administradores; ninguém grava direto)
+create table if not exists public.auditoria (
+  id bigserial primary key,
+  quando timestamptz not null default now(),
+  galpao_id uuid,
+  ator uuid,
+  ator_nome text,
+  evento text not null,
+  alvo text,
+  detalhe jsonb not null default '{}'::jsonb,
+  ip text
+);
+create index if not exists auditoria_galpao_quando on public.auditoria (galpao_id, quando desc);
+create index if not exists auditoria_evento on public.auditoria (evento, quando desc);
+alter table public.auditoria enable row level security;
+revoke all on public.auditoria from public, anon, authenticated;
+grant select on public.auditoria to authenticated;
+revoke all on sequence public.auditoria_id_seq from public, anon, authenticated;
+drop policy if exists "admin le auditoria" on public.auditoria;
+create policy "admin le auditoria" on public.auditoria for select to authenticated
+  using (public.is_admin() and (galpao_id = public.meu_galpao()
+         or (galpao_id is null and public.meu_galpao() = (select id from public.galpoes order by criado limit 1))));
+
+create or replace function public.ip_requisicao() returns text
+language plpgsql stable set search_path = public as $$
+declare h json; v text;
+begin
+  begin h := nullif(current_setting('request.headers', true), '')::json; exception when others then return null; end;
+  if h is null then return null; end if;
+  v := coalesce(h->>'x-forwarded-for', h->>'x-real-ip', h->>'cf-connecting-ip');
+  return nullif(trim(split_part(coalesce(v, ''), ',', 1)), '');
+end $$;
+
+create or replace function public.audita(ev text, alvo text, det jsonb, gal uuid default null) returns void
+language plpgsql security definer set search_path = public as $$
+declare u uuid := auth.uid(); nm text; g uuid := gal;
+begin
+  if u is not null then
+    select nome, coalesce(g, galpao_id) into nm, g from public.perfis where id = u;
+  end if;
+  insert into public.auditoria (galpao_id, ator, ator_nome, evento, alvo, detalhe, ip)
+  values (g, u, nm, left(ev, 60), left(alvo, 200), coalesce(det, '{}'::jsonb), public.ip_requisicao());
+  if random() < 0.01 then delete from public.auditoria where quando < now() - interval '365 days'; end if;
+end $$;
+revoke all on function public.audita(text, text, jsonb, uuid) from public, anon, authenticated;
+revoke all on function public.ip_requisicao() from public, anon, authenticated;
+
+-- 13. Gatilhos de auditoria: permissões, cargos, exclusões e entregas
+create or replace function public.audita_perfis() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if tg_op = 'INSERT' then
+    perform public.audita('cadastro', coalesce(new.usuario, new.nome), jsonb_build_object('cargo', new.cargo, 'admin', new.admin, 'aprovado', new.aprovado), new.galpao_id);
+  elsif tg_op = 'UPDATE' then
+    if new.cargo is distinct from old.cargo or new.admin is distinct from old.admin
+       or new.aprovado is distinct from old.aprovado or new.recusado is distinct from old.recusado then
+      perform public.audita('permissao_alterada', coalesce(new.usuario, new.nome), jsonb_build_object(
+        'de', jsonb_build_object('cargo', old.cargo, 'admin', old.admin, 'aprovado', old.aprovado, 'recusado', old.recusado),
+        'para', jsonb_build_object('cargo', new.cargo, 'admin', new.admin, 'aprovado', new.aprovado, 'recusado', new.recusado)), new.galpao_id);
+    end if;
+  elsif tg_op = 'DELETE' then
+    perform public.audita('usuario_excluido', coalesce(old.usuario, old.nome), jsonb_build_object('cargo', old.cargo, 'admin', old.admin), old.galpao_id);
+    return old;
+  end if;
+  return new;
+end $$;
+drop trigger if exists audita_perfis on public.perfis;
+create trigger audita_perfis after insert or update or delete on public.perfis for each row execute function public.audita_perfis();
+
+create or replace function public.audita_cargos() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  perform public.audita('cargo_alterado', coalesce(new.nome, old.nome), jsonb_build_object('operacao', lower(tg_op),
+    'de', case when tg_op <> 'INSERT' then to_jsonb(old.perms) end, 'para', case when tg_op <> 'DELETE' then to_jsonb(new.perms) end), null);
+  return coalesce(new, old);
+end $$;
+drop trigger if exists audita_cargos on public.cargos;
+create trigger audita_cargos after insert or update or delete on public.cargos for each row execute function public.audita_cargos();
+
+create or replace function public.audita_ocorrencias() returns trigger
+language plpgsql security definer set search_path = public as $$
+declare chaves text[];
+begin
+  if tg_op = 'DELETE' then
+    perform public.audita('registro_excluido', coalesce(old.dados->>'ref', old.sku, old.id::text),
+      jsonb_build_object('id', old.id, 'categoria', old.categoria, 'sku', old.sku, 'produto', left(old.produto, 120), 'autor', old.autor), old.galpao_id);
+    return old;
+  end if;
+  if (old.dados->'ctrl'->>'ent') is distinct from (new.dados->'ctrl'->>'ent') then
+    perform public.audita('entrega_alterada', coalesce(new.dados->>'ref', new.sku),
+      jsonb_build_object('id', new.id, 'de', old.dados->'ctrl'->>'ent', 'para', new.dados->'ctrl'->>'ent'), new.galpao_id);
+  end if;
+  select array_agg(k order by k) into chaves from (
+    select key as k from jsonb_each(to_jsonb(new)) n
+    where key not in ('dados') and n.value is distinct from (to_jsonb(old)->key)
+    union
+    select 'dados.' || key from jsonb_each(coalesce(new.dados, '{}'::jsonb)) n
+    where key <> 'ctrl' and n.value is distinct from (coalesce(old.dados, '{}'::jsonb)->key)
+    union
+    select 'dados.' || key from jsonb_each(coalesce(old.dados, '{}'::jsonb)) o
+    where key <> 'ctrl' and not (coalesce(new.dados, '{}'::jsonb) ? key)
+  ) x;
+  if chaves is not null then
+    perform public.audita('registro_alterado', coalesce(new.dados->>'ref', new.sku, new.id::text),
+      jsonb_build_object('id', new.id, 'categoria', new.categoria, 'campos', to_jsonb(chaves)), new.galpao_id);
+  end if;
+  return new;
+end $$;
+drop trigger if exists audita_ocorrencias on public.ocorrencias;
+create trigger audita_ocorrencias after update or delete on public.ocorrencias for each row execute function public.audita_ocorrencias();
+
+-- 14. Validação no servidor (vale mesmo se alguém chamar a API direto)
+create or replace function public.valida_ocorrencia() returns trigger
+language plpgsql set search_path = public as $$
+declare ent text := new.dados->'ctrl'->>'ent';
+begin
+  if (tg_op = 'INSERT' or new.tipo is distinct from old.tipo) and position('<' in coalesce(new.tipo, '')) > 0 then
+    raise exception 'Tipo inválido' using errcode = '22023';
+  end if;
+  if (tg_op = 'INSERT' or new.categoria is distinct from old.categoria) and position('<' in coalesce(new.categoria, '')) > 0 then
+    raise exception 'Categoria inválida' using errcode = '22023';
+  end if;
+  if (tg_op = 'INSERT' or new.sku is distinct from old.sku) and length(coalesce(new.sku, '')) > 120 then
+    raise exception 'Código muito longo' using errcode = '22023';
+  end if;
+  if (tg_op = 'INSERT' or new.produto is distinct from old.produto) and length(coalesce(new.produto, '')) > 1000 then
+    raise exception 'Descrição muito longa' using errcode = '22023';
+  end if;
+  if ent is not null and ent <> '' and (tg_op = 'INSERT' or ent is distinct from (old.dados->'ctrl'->>'ent')) then
+    if ent !~ '^\d{4}-\d{2}-\d{2}$' then raise exception 'Data de entrega inválida' using errcode = '22023'; end if;
+    perform ent::date;
+    if ent::date > current_date + 1 then raise exception 'Data de entrega no futuro' using errcode = '22023'; end if;
+  end if;
+  if pg_column_size(new.dados) > 1048576
+     and (tg_op = 'INSERT' or pg_column_size(new.dados) > pg_column_size(old.dados)) then
+    raise exception 'Registro grande demais' using errcode = '22023';
+  end if;
+  return new;
+end $$;
+drop trigger if exists valida_ocorrencia on public.ocorrencias;
+create trigger valida_ocorrencia before insert or update on public.ocorrencias for each row execute function public.valida_ocorrencia();
+
+create or replace function public.valida_nome_cadastro() returns trigger
+language plpgsql set search_path = public as $$
+begin
+  if (tg_op = 'INSERT' or new.nome is distinct from old.nome)
+     and (position('<' in coalesce(new.nome, '')) > 0 or length(coalesce(new.nome, '')) > 80) then
+    raise exception 'Nome inválido' using errcode = '22023';
+  end if;
+  return new;
+end $$;
+drop trigger if exists valida_nome_cargo on public.cargos;
+create trigger valida_nome_cargo before insert or update on public.cargos for each row execute function public.valida_nome_cadastro();
+drop trigger if exists valida_nome_setor on public.setores;
+create trigger valida_nome_setor before insert or update on public.setores for each row execute function public.valida_nome_cadastro();
+
+-- 15. Login: bloqueio progressivo por usuário + bloqueio por IP (ataque a vários usuários) + registro
+alter table public.login_falhas add column if not exists ip text;
+create index if not exists login_falhas_ip_idx on public.login_falhas (ip, quando desc);
+
+create or replace function public.login_email(u text, s text) returns jsonb
+language plpgsql volatile security definer set search_path = public, extensions, auth as $$
+declare
+  k text := lower(regexp_replace(trim(coalesce(u, '')), '\s+', ' ', 'g'));
+  e text; h text; g uuid; f15 int; f24 int; fip int; ult timestamptz; espera interval; vip text := public.ip_requisicao();
+begin
+  if k = '' or s is null or length(s) > 200 or length(k) > 120 then
+    return jsonb_build_object('ok', false);
+  end if;
+  delete from public.login_falhas where quando < now() - interval '2 days';
+  -- muitas falhas vindas do mesmo IP (tentando vários usuários): bloqueia o IP por 15 minutos
+  if vip is not null then
+    select count(*) into fip from public.login_falhas where login_falhas.ip = vip and quando > now() - interval '15 minutes';
+    if fip >= 30 then
+      return jsonb_build_object('ok', false, 'bloqueado', true, 'minutos', 15);
+    end if;
+  end if;
+  select count(*) filter (where quando > now() - interval '15 minutes'), count(*), max(quando)
+    into f15, f24, ult from public.login_falhas where usuario = k and quando > now() - interval '24 hours';
+  espera := case when f24 >= 20 then interval '24 hours' when f24 >= 10 then interval '1 hour' when f15 >= 5 then interval '15 minutes' else null end;
+  if espera is not null and ult > now() - espera then
+    return jsonb_build_object('ok', false, 'bloqueado', true, 'minutos', ceil(extract(epoch from (ult + espera - now())) / 60));
+  end if;
+
+  select au.email, au.encrypted_password, p.galpao_id into e, h, g
+  from public.perfis p join auth.users au on au.id = p.id
+  where lower(p.usuario) = k limit 1;
+
+  if h is not null and h like '$2%' and h = extensions.crypt(s, h) then
+    delete from public.login_falhas where usuario = k;
+    perform public.audita('login_ok', k, '{}'::jsonb, g);
+    return jsonb_build_object('ok', true, 'email', e);
+  end if;
+  if h is null then perform extensions.crypt(s, extensions.gen_salt('bf', 10)); end if;
+  insert into public.login_falhas (usuario, ip) values (k, vip);
+  f15 := f15 + 1; f24 := f24 + 1;
+  perform public.audita(case when f15 = 5 or f24 in (10, 20) then 'login_bloqueado' else 'login_falha' end, k,
+    jsonb_build_object('usuario_existe', h is not null, 'falhas_15min', f15, 'falhas_24h', f24), g);
+  return jsonb_build_object('ok', false, 'bloqueado', f15 >= 5 or f24 >= 10,
+    'minutos', case when f24 >= 20 then 1440 when f24 >= 10 then 60 when f15 >= 5 then 15 else 0 end);
+end
+$$;
+revoke all on function public.login_email(text, text) from public;
+grant execute on function public.login_email(text, text) to anon, authenticated;
+
+-- 16. Eventos enviados pelas telas (saída do sistema), com limite de uso
+create or replace function public.registrar_evento(tipo text) returns void
+language plpgsql security definer set search_path = public as $$
+declare n int;
+begin
+  if auth.uid() is null or tipo not in ('logout', 'logout_todos') then return; end if;
+  select count(*) into n from public.auditoria where ator = auth.uid() and quando > now() - interval '1 hour';
+  if n >= 120 then return; end if;
+  perform public.audita(tipo, null, '{}'::jsonb, null);
+end $$;
+revoke all on function public.registrar_evento(text) from public, anon;
+grant execute on function public.registrar_evento(text) to authenticated;
+
+-- 17. Ações administrativas também ficam registradas
+do $$ begin
+  if to_regprocedure('public.admin_redefinir_senha(uuid,text)') is not null then
+    execute 'create or replace function public.audita_senha_admin() returns trigger language plpgsql security definer set search_path = public, auth as $f$
+      begin
+        if new.encrypted_password is distinct from old.encrypted_password and auth.uid() is not null and auth.uid() <> new.id then
+          perform public.audita(''senha_redefinida_admin'', (select coalesce(usuario, nome) from public.perfis where id = new.id), ''{}''::jsonb, null);
+        end if;
+        return new;
+      end $f$';
+    execute 'drop trigger if exists audita_senha_admin on auth.users';
+    execute 'create trigger audita_senha_admin after update on auth.users for each row execute function public.audita_senha_admin()';
+  end if;
+exception when insufficient_privilege then
+  raise notice 'Sem permissão para criar gatilho em auth.users; redefinições de senha não serão auditadas.';
+end $$;
+-- ===== fim da segurança v105 =====
+
 notify pgrst, 'reload schema';
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
@@ -2155,7 +2395,7 @@ async function carregar(){
   }
   carregou=true;render();
 }
-$('sair').addEventListener('click',async()=>{await sb.auth.signOut();tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null}});
+$('sair').addEventListener('click',async()=>{try{await sb.rpc('registrar_evento',{tipo:'logout'})}catch(e){}await sb.auth.signOut();tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null}});
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>go(b.dataset.tab)));
 const icChev='<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
 const icMod={Garantia:'<path d="M12 3 4 6v6c0 4.5 3.4 8.3 8 9 4.6-.7 8-4.5 8-9V6z"/><path d="m9 12 2 2 4-4"/>',
@@ -2371,13 +2611,13 @@ function bindLogin(){const f=$('flogin');($('lemail').value?$('lsenha'):$('lemai
     gravaLembrado($('lembrar').checked?usu:'');
     let email=usu;
     if(!usu.includes('@')){let r;try{r=await emailDoLogin(usu,senha)}catch(x){return falha(/email_do_usuario|function|schema cache/i.test((x&&x.message)||'')?'O banco precisa de uma atualização (login por usuário). Peça ao administrador para rodar o SQL novo.':erroMsg(x))}
-      if(r.bloqueado)return falha('Muitas tentativas erradas para este usuário. Aguarde 15 minutos ou peça ao administrador para redefinir a senha.');
+      if(r.bloqueado)return falha(`Acesso bloqueado temporariamente por excesso de tentativas. Tente de novo em ${r.min>=60?Math.ceil(r.min/60)+' h':r.min+' min'} ou peça ao administrador para redefinir a senha.`);
       if(!r.email)return falha('Usuário ou senha incorretos.');email=r.email}
     const {error}=await sb.auth.signInWithPassword({email,password:senha});saving=false;
     if(error){falha(erroMsg(error))}else falhasLogin=0})}
 async function emailDoLogin(usu,senha){const falta=e=>/PGRST202|Could not find|schema cache/i.test(((e&&e.message)||'')+' '+((e&&e.code)||''));
   const r=await sb.rpc('login_email',{u:usu,s:senha});
-  if(!r.error){const d=r.data||{};return d.ok&&d.email?{email:d.email}:d.bloqueado?{bloqueado:1}:{invalido:1}}
+  if(!r.error){const d=r.data||{};return d.ok&&d.email?{email:d.email}:d.bloqueado?{bloqueado:1,min:d.minutos||15}:{invalido:1}}
   if(!falta(r.error))throw r.error;
   const o=await sb.rpc('email_do_usuario',{u:usu});if(o.error)throw o.error;return o.data?{email:o.data}:{invalido:1}}
 async function usuarioExiste(usu){const falta=e=>/PGRST202|Could not find|schema cache/i.test(((e&&e.message)||'')+' '+((e&&e.code)||''));
@@ -2438,7 +2678,7 @@ function listaHTML(){if(ui.cat==='Consertos Baiano')return baiListaHTML();const 
   ${ui.cat==='Garantia'?`<div class="chips">${['',...GST].map(s=>`<button type="button" class="chip" data-gst="${s}" aria-pressed="${ui.gst===s}">${s||'Todas'}${s?' ('+ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')===s).length+')':''}</button>`).join('')}</div>`:''}
   ${ui.cat==='Minucioso'?setoresGridHTML():''}
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">
-  <select id="ftipo" aria-label="Tipo" ${ui.cat==='Minucioso'?'hidden':''}><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${t}</option>`).join('')}</select></div>
+  <select id="ftipo" aria-label="Tipo" ${ui.cat==='Minucioso'?'hidden':''}><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${esc(t)}</option>`).join('')}</select></div>
   <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
   <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
@@ -3639,7 +3879,7 @@ function pintaTopo(){if(!eu)return;const N=notifs(),b=$('bell'),n=$('bellN');b.h
    <button type="button" class="pop-i" role="menuitem" id="uTodos"><span class="pop-t"><b>Sair de todos os aparelhos</b></span></button>
    <button type="button" class="pop-i" role="menuitem" id="uTema"><span class="pop-t"><b>Alternar tema claro e escuro</b></span></button>
    <button type="button" class="pop-i danger" role="menuitem" id="uSair"><span class="pop-t"><b>Sair</b></span></button>`;
-  $('uTema').onclick=()=>{fechaPops();alternaTema()};$('uTodos').onclick=async()=>{fechaPops();try{await sb.auth.signOut({scope:'global'})}catch(e){}tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null};render()};$('uSair').onclick=()=>{fechaPops();$('sair').click()}}
+  $('uTema').onclick=()=>{fechaPops();alternaTema()};$('uTodos').onclick=async()=>{fechaPops();try{await sb.rpc('registrar_evento',{tipo:'logout_todos'})}catch(e){}try{await sb.auth.signOut({scope:'global'})}catch(e){}tela='login';msgLogin='';draft=null;ui={...ui,tab:'lista',det:null};render()};$('uSair').onclick=()=>{fechaPops();$('sair').click()}}
 document.addEventListener('click',e=>{const bb=e.target.closest&&e.target.closest('#bell'),ub=e.target.closest&&e.target.closest('#uBtn');
   if(bb||ub){const alvo=bb?'bellpop':'uPop',btn=bb?'bell':'uBtn',abrir=$(alvo).hidden;fechaPops();if(abrir){$(alvo).hidden=false;$(btn).setAttribute('aria-expanded','true')}return}
   if(!(e.target.closest&&e.target.closest('.pop')))fechaPops()});
@@ -3664,7 +3904,7 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   if(!ui.eqTab)ui.eqTab=pend.length?'pend':'ativos';
   const q=(ui.eqBusca||'').trim().toLowerCase(),bate=p=>!q||[p.nome,p.usuario,p.email,cargoNome(p.cargo)].join(' ').toLowerCase().includes(q);
   const regs=id=>ocs.filter(o=>o.autor===id),mesAt=mesKey(Date.now());
-  const opcoes=sel=>Object.keys(CARGOS).map(c=>`<option ${c===sel?'selected':''}>${c}</option>`).join('');
+  const opcoes=sel=>Object.keys(CARGOS).map(c=>`<option ${c===sel?'selected':''}>${esc(c)}</option>`).join('');
   const cargoPill=p=>{const c=p.admin&&!p.aprovado?'Admin':cargoNome(p.cargo),cor=CARGO_COR[c]||'#64748b';return`<span class="cpill" style="--k:${cor}">${esc(c)}${p.admin?' · admin':''}</span>`};
   const topo=(p,extra)=>`<div class="pc-top"><span class="pav" style="background:${corNome(p.nome)}">${esc(iniciais(p.nome))}</span><div class="pc-id"><b>${esc(p.nome||'Sem nome')}${p.id===uid?' <span class="voce">você</span>':''}</b><small>${p.usuario?'Usuário: '+esc(p.usuario)+(mostraEmail(p)?' · ':''):''}${mostraEmail(p)?esc(p.email):''}</small></div>${extra||''}</div>`;
   const stats=p=>{const r=regs(p.id),m=r.filter(o=>mesKey(o.criado)===mesAt).length,ult=r[0];return`<div class="pc-stats"><div><b>${r.length}</b><span>registros</span></div><div><b>${m}</b><span>este mês</span></div><div><b>${ult?idade(ult.criado):'—'}</b><span>último</span></div></div>`};
@@ -3715,7 +3955,7 @@ function permHTML(){const pcg=ui.permCargo||'Auxiliar de Inventário',pa=CARGOS[
   const mods=PERMS.filter(p=>p[0].startsWith('mod:')),acs=PERMS.filter(p=>!p[0].startsWith('mod:'));
   return`<section class="permbox" id="perms">
   <div class="phead"><div class="pring" style="--p:${pct}"><span>${on}<small>/${PERMS.length}</small></span></div>
-    <div class="ptx"><span class="pkick">Permissões</span><h3>${pcg}</h3><p>${pcg==='Visitante'?'O <b>Visitante</b> não tem função na equipe: ele só vê o que você marcar aqui. Tudo começa bloqueado.':'Escolha o que o auxiliar pode ver e fazer.'} Muda na hora para todos. O <b>Chefe de Inventário</b> sempre pode tudo.</p><div class="chips" style="margin-top:8px">${['Auxiliar de Inventário','Visitante'].map(c=>`<button type="button" class="chip" data-pcg="${c}" aria-pressed="${c===pcg}">${c==='Visitante'?'Visitante':'Auxiliar'}</button>`).join('')}</div></div>
+    <div class="ptx"><span class="pkick">Permissões</span><h3>${pcg}</h3><p>${pcg==='Visitante'?'O <b>Visitante</b> não tem função na equipe: ele só vê o que você marcar aqui. Tudo começa bloqueado.':'Escolha o que o auxiliar pode ver e fazer.'} Muda na hora para todos. O <b>Chefe de Inventário</b> sempre pode tudo.</p><div class="chips" style="margin-top:8px">${['Auxiliar de Inventário','Visitante'].map(c=>`<button type="button" class="chip" data-pcg="${esc(c)}" aria-pressed="${c===pcg}">${c==='Visitante'?'Visitante':'Auxiliar'}</button>`).join('')}</div></div>
     <div class="pbulk"><button type="button" class="btn sm" data-pall="1" ${cargosOk?'':'disabled'}>Liberar tudo</button><button type="button" class="btn sm" data-pall="0" ${cargosOk?'':'disabled'}>Bloquear tudo</button></div></div>
   ${cargosOk?'':'<div class="err">O banco precisa de uma atualização (permissões). Rode o SQL novo no Supabase.</div>'}
   <div class="pgrp"><div class="pgh"><span>Módulos</span><small>${mods.filter(p=>pa.includes(p[0])).length} de ${mods.length} liberados</small></div><div class="plist">${mods.map(row).join('')}</div></div>

@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<script>try{if(top!==self)document.documentElement.style.display="none"}catch(e){document.documentElement.style.display="none"}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Controle de Relatórios</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' %3E %3Crect width='100' height='100' rx='22' fill='#1E5799'/%3E %3Cg transform='translate(50 50) scale(.66) translate(-50 -48)'%3E%3Cdefs%3E %3Cmask id='appc' maskUnits='userSpaceOnUse' x='0' y='0' width='100' height='100'%3E%3Crect width='100' height='100' fill='#fff'/%3E%3Cg stroke='#000' stroke-width='2.4' stroke-linecap='round'%3E%3Cline x1='40.00' y1='44.00' x2='14.02' y2='29.00'/%3E%3Cline x1='40.00' y1='44.00' x2='65.98' y2='29.00'/%3E%3Cline x1='40.00' y1='44.00' x2='40.00' y2='74.00'/%3E%3C/g%3E%3Cpath d='M57 44 H76 L86 54 V85 Q86 88 83 88 H57 Q54 88 54 85 V47 Q54 44 57 44 Z' fill='#000' stroke='#000' stroke-width='7' stroke-linejoin='round'/%3E%3C/mask%3E %3Cmask id='appd' maskUnits='userSpaceOnUse' x='0' y='0' width='100' height='100'%3E%3Crect width='100' height='100' fill='#fff'/%3E%3Cg stroke='#000' stroke-width='3.4' stroke-linecap='round'%3E%3Cline x1='61' y1='63' x2='78' y2='63'/%3E%3Cline x1='61' y1='72' x2='78' y2='72'/%3E%3Cline x1='61' y1='81' x2='71' y2='81'/%3E%3C/g%3E%3Cpath d='M76 42 L88 54' stroke='#000' stroke-width='2.8'/%3E%3C/mask%3E %3C/defs%3E %3Cg mask='url(#appc)' stroke-linejoin='round'%3E%3Cpolygon points='40.00,14.00 65.98,29.00 40.00,44.00 14.02,29.00' fill='#FFFFFF'/%3E%3Cpolygon points='14.02,29.00 40.00,44.00 40.00,74.00 14.02,59.00' fill='#DCE8F7'/%3E%3Cpolygon points='40.00,44.00 65.98,29.00 65.98,59.00 40.00,74.00' fill='#B3CDEC'/%3E%3C/g%3E %3Cg mask='url(#appd)'%3E%3Cpath d='M57 44 H76 L86 54 V85 Q86 88 83 88 H57 Q54 88 54 85 V47 Q54 44 57 44 Z' fill='#4A8BD6'/%3E%3C/g%3E %3Cpath d='M76 44 L86 54 H78 Q76 54 76 52 Z' fill='#B3CDEC'/%3E%3C/g%3E %3C/svg%3E ">
@@ -353,6 +354,21 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .plan-f select.inp{width:auto;flex:0 0 auto;min-width:170px}
 .plan-g{width:100%}
 @media (max-width:760px){.plan-w{max-height:none}.plan-h .btn{width:100%;justify-content:center}.plan-f select.inp{flex:1 1 140px;min-width:0}.plan-r span:last-child{display:none}}
+
+/* ---------- auditoria ---------- */
+.aud-k{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.aud-c{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.aud-c span{font-size:11.5px;color:var(--muted)}
+.aud-c b{font-size:22px;font-weight:650;color:var(--fg);font-variant-numeric:tabular-nums}
+.aud-c.warn b{color:var(--amb)}
+.aud-c.crit{border-color:color-mix(in srgb,#DC2626 45%,var(--line))}
+.aud-c.crit b{color:#DC2626}
+.aud-g td{white-space:nowrap}
+.aud-g .d{white-space:normal;min-width:240px;color:var(--fg2)}
+.aud-ev{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11.5px;font-weight:600;background:var(--subtle);color:var(--fg2)}
+.aud-ev.s1{background:color-mix(in srgb,var(--amb) 14%,transparent);color:var(--amb)}
+.aud-ev.s2{background:color-mix(in srgb,#DC2626 14%,transparent);color:#DC2626}
+@media (max-width:760px){.aud-k{grid-template-columns:repeat(2,1fr)}}
 
 /* ---------- faixa de indicadores ---------- */
 .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-1);margin-bottom:16px;overflow:hidden}
@@ -1066,12 +1082,18 @@ const PAGS=[
   ['controle','Controle',I.controle,'Controle de Relatórios','Gerenciamento e acompanhamento de ocorrências.'],
   ['entregas','Entregas',I.truck,'Entregas','Histórico do que foi entregue, dia a dia.'],
   ['planilha','Planilha',I.excel,'Planilha de Avarias','Todas as avarias em planilha, atualizada automaticamente.'],
+  ['auditoria','Auditoria',I.shield,'Auditoria de segurança','Acessos, permissões e alterações registradas pelo banco. Visível só para administradores.'],
 ];
+const pags=()=>PAGS.filter(p=>p[0]!=='auditoria'||(eu&&eu.admin));
 const erroMsg=e=>{const m=(e&&(e.message||e.error_description))||String(e||'');
   if(/Invalid login/i.test(m))return'Usuário ou senha incorretos.';
   if(/Failed to fetch|NetworkError|Load failed/i.test(m))return'Sem conexão com o banco. Verifique a internet.';
   if(/row-level security|permission/i.test(m))return'Seu usuário não tem permissão para isso.';
-  if(/email_do_usuario|schema cache/i.test(m))return'O banco do INVENTRA precisa da atualização de login por usuário.';return m||'Erro desconhecido'};
+  if(/email_do_usuario|schema cache/i.test(m))return'O banco do INVENTRA precisa da atualização de login por usuário.';
+  if(e&&e.code==='22023')return m; // validação do servidor (mensagem pensada para o usuário)
+  if(/^Acesso bloqueado|^Esse usuário|^O banco precisa|^Usuário ou senha/.test(m))return m;
+  try{console.warn('Erro do servidor:',e&&e.code,m)}catch(_){}
+  return'Não foi possível concluir a operação. Tente de novo; se continuar, avise o administrador.'};
 
 let sb=null,eu=null,podeEditar=false,regs=[],canal=null,pag=ls.get('pag')||'controle';
 let ui={filtro:'',busca:'',tipo:'',periodo:'',de:'',ate:''},selec=new Set(),novos=new Set(),falhas=0,bloq=0,jobs=0,tabAnim=false;
@@ -1143,7 +1165,7 @@ $('flogin').addEventListener('submit',async e=>{
   ocupado(bt,true);
   try{
     let email=usu;
-    if(!usu.includes('@')){const r=await emailDoLogin(usu,senha);if(r.bloqueado)throw{message:'Muitas tentativas erradas para este usuário. Aguarde 15 minutos ou peça ao administrador para redefinir a senha.'};if(!r.email)throw{message:'Invalid login'};email=r.email}
+    if(!usu.includes('@')){const r=await emailDoLogin(usu,senha);if(r.bloqueado)throw{message:`Acesso bloqueado temporariamente por excesso de tentativas. Tente de novo em ${r.min>=60?Math.ceil(r.min/60)+' h':r.min+' min'} ou peça ao administrador para redefinir a senha.`};if(!r.email)throw{message:'Invalid login'};email=r.email}
     const {data,error}=await sb.auth.signInWithPassword({email,password:senha});if(error)throw error;
     falhas=0;msgLogin='';cadUsu='';ls.set('usuario',$('lembrar').checked?usu:null);$('lsenha').value='';
     bt.classList.remove('busy');bt.classList.add('done');bt.firstElementChild.textContent='Acesso liberado';
@@ -1157,7 +1179,7 @@ $('flogin').addEventListener('submit',async e=>{
 const senhaFraca=(s,u)=>{const x=s.toLowerCase();return /^(.)\1+$/.test(s)||['12345678','123456789','1234567890','87654321','qwertyui','qwerty123','password','senha123','senha1234','abc12345','11111111','inventra','inventra123'].includes(x)||(u&&x===String(u).toLowerCase())};
 async function emailDoLogin(usu,senha){const falta=e=>/PGRST202|Could not find|schema cache/i.test(((e&&e.message)||'')+' '+((e&&e.code)||''));
   const r=await sb.rpc('login_email',{u:usu,s:senha});
-  if(!r.error){const d=r.data||{};return d.ok&&d.email?{email:d.email}:d.bloqueado?{bloqueado:1}:{invalido:1}}
+  if(!r.error){const d=r.data||{};return d.ok&&d.email?{email:d.email}:d.bloqueado?{bloqueado:1,min:d.minutos||15}:{invalido:1}}
   if(!falta(r.error))throw r.error;
   const o=await sb.rpc('email_do_usuario',{u:usu});if(o.error)throw o.error;return o.data?{email:o.data}:{invalido:1}}
 async function usuarioExiste(usu){const falta=e=>/PGRST202|Could not find|schema cache/i.test(((e&&e.message)||'')+' '+((e&&e.code)||''));
@@ -1194,7 +1216,7 @@ $('fcad').addEventListener('submit',async e=>{
   }catch(err){mostra(erroMsg(err))}
   ocupado(bt,false);
 });
-async function sair(){try{await sb.auth.signOut()}catch(e){}mostraLogin()}
+async function sair(){try{await sb.rpc('registrar_evento',{tipo:'logout'})}catch(e){}try{await sb.auth.signOut()}catch(e){}mostraLogin()}
 
 async function entrouComo(uid){
   tela('tcarrega');
@@ -1252,13 +1274,14 @@ function render(){
   const rail=innerWidth<=1180;
   const pend=regs.filter(o=>sit(o)===0).length,entHj=regs.filter(o=>String(ctrlDe(o).ent||'').slice(0,10)===hoje()).length;
   const ct={controle:pend?`<span class="ct hot" title="Pendentes de entrega">${pend}</span>`:'',entregas:entHj?`<span class="ct" title="Entregues hoje">${entHj}</span>`:''};
-  $('navs').innerHTML=PAGS.map(([k,t,i])=>`<button class="nav" data-pag="${k}" ${rail?`data-tip="${t}" data-tip-pos="right"`:''} ${pag===k?'aria-current="page"':''}>${i}<span class="lbl">${t}</span>${ct[k]||''}</button>`).join('');
-  $('mnav').innerHTML=PAGS.map(([k,t,i])=>`<button data-pag="${k}" ${pag===k?'aria-current="page"':''}>${i}<span>${k==='entregas'?'Entregas':t}</span></button>`).join('');
+  if(pag==='auditoria'&&!(eu&&eu.admin))pag='controle';
+  $('navs').innerHTML=pags().map(([k,t,i])=>`<button class="nav" data-pag="${k}" ${rail?`data-tip="${t}" data-tip-pos="right"`:''} ${pag===k?'aria-current="page"':''}>${i}<span class="lbl">${t}</span>${ct[k]||''}</button>`).join('');
+  $('mnav').innerHTML=pags().map(([k,t,i])=>`<button data-pag="${k}" ${pag===k?'aria-current="page"':''}>${i}<span>${k==='entregas'?'Entregas':t}</span></button>`).join('');
   document.querySelectorAll('[data-pag]').forEach(b=>b.onclick=()=>ir(b.dataset.pag));
   const P=PAGS.find(p=>p[0]===pag)||PAGS[1];
   $('crumbPg').textContent=pag==='controle'?'Controle de Relatórios':P[1];if(pag!=='controle'){$('sumline').hidden=true}$('titulo').textContent=P[3];$('subtitulo').textContent=P[4];pintaTema();
   if(pag!=='controle'){$('subnav').hidden=true;$('subnav').innerHTML=''}
-  ({painel:pgPainel,controle:pgControle,entregas:pgEntregas,planilha:pgPlanilha}[pag]||pgControle)();
+  ({painel:pgPainel,controle:pgControle,entregas:pgEntregas,planilha:pgPlanilha,auditoria:pgAuditoria}[pag]||pgControle)();
   novos.clear();tabAnim=false;
 }
 let _w=innerWidth;addEventListener('resize',()=>{clearTimeout(window._rz);window._rz=setTimeout(()=>{if(eu&&(_w<=1180)!==(innerWidth<=1180))render();_w=innerWidth},150)});
@@ -1469,6 +1492,64 @@ function excel(L){
   a.download=`Controle de Relatórios - Planilha ${hoje().split('-').reverse().join('-')}.xlsx`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},800);
   toast(`${plural(L.length,'avaria','avarias')} no arquivo, com painel, central, relatório e histórico.`,'ok','Excel gerado');
 }
+/* ======================= AUDITORIA (somente administradores) ======================= */
+const AUD_EV={
+  login_ok:['Login','Acesso',0],login_falha:['Senha incorreta','Acesso',1],login_bloqueado:['Acesso bloqueado','Acesso',2],
+  logout:['Saída','Acesso',0],logout_todos:['Saiu de todos os dispositivos','Acesso',0],cadastro:['Novo cadastro','Usuários',1],
+  permissao_alterada:['Permissão alterada','Usuários',2],usuario_excluido:['Usuário excluído','Usuários',2],senha_redefinida_admin:['Senha redefinida pelo admin','Usuários',2],
+  cargo_alterado:['Cargo alterado','Usuários',2],entrega_alterada:['Data de entrega alterada','Registros',0],registro_alterado:['Registro alterado','Registros',0],
+  registro_excluido:['Registro excluído','Registros',2]};
+let audCache=null,audErro='',audCarregando=false;
+async function audCarregar(){
+  if(audCarregando)return;audCarregando=true;audErro='';
+  try{const {data,error}=await sb.from('auditoria').select('id,quando,ator_nome,evento,alvo,detalhe,ip').order('quando',{ascending:false}).limit(500);
+    if(error)throw error;audCache=data||[]}
+  catch(e){audCache=[];const m=(e&&e.message)||'';audErro=/auditoria|schema cache|does not exist|PGRST20/i.test(m+' '+(e&&e.code))?'falta':'erro'}
+  audCarregando=false;if(pag==='auditoria')render();
+}
+const audQuando=t=>{const d=new Date(t);return isNaN(d)?'':`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+function audDetalhe(x){const d=x.detalhe||{};
+  if(x.evento==='permissao_alterada'){const a=d.de||{},b=d.para||{},m=[];
+    if(a.cargo!==b.cargo)m.push(`cargo: ${a.cargo||'—'} → ${b.cargo||'—'}`);
+    if(a.admin!==b.admin)m.push(b.admin?'virou administrador':'deixou de ser administrador');
+    if(a.aprovado!==b.aprovado)m.push(b.aprovado?'acesso liberado':'acesso retirado');
+    if(a.recusado!==b.recusado)m.push(b.recusado?'cadastro recusado':'recusa desfeita');return m.join(' · ')}
+  if(x.evento==='entrega_alterada')return`${d.de?dbr(d.de):'sem data'} → ${d.para?dbr(d.para):'sem data'}`;
+  if(x.evento==='registro_alterado')return'Campos: '+(d.campos||[]).map(c=>String(c).replace('dados.','')).join(', ');
+  if(x.evento==='registro_excluido')return[d.categoria,d.sku,d.produto].filter(Boolean).join(' · ');
+  if(x.evento==='cargo_alterado')return d.operacao==='delete'?'cargo apagado':`${(d.para||[]).length} permissões`;
+  if(x.evento==='login_falha'||x.evento==='login_bloqueado')return`${d.usuario_existe===false?'usuário inexistente · ':''}${d.falhas_15min||0} em 15 min · ${d.falhas_24h||0} em 24 h`;
+  if(x.evento==='cadastro')return d.aprovado?'liberado automaticamente':'aguardando liberação';
+  return'';
+}
+function pgAuditoria(){
+  if(!(eu&&eu.admin)){pag='controle';return render()}
+  if(audCache===null){audCarregar();$('pagina').innerHTML=`<section class="card"><div style="padding:28px">${vazio(I.shield,'Carregando auditoria…','')}</div></section>`;return}
+  if(audErro==='falta'){$('pagina').innerHTML=`<section class="card"><div style="padding:28px">${vazio(I.shield,'A auditoria ainda não está ativa','Rode o SQL de segurança v105 no Supabase (SQL Editor) para começar a registrar acessos, permissões e alterações.')}</div></section>`;return}
+  if(audErro){$('pagina').innerHTML=`<section class="card"><div style="padding:28px">${vazio(I.alert,'Não foi possível ler a auditoria','Verifique a conexão e tente atualizar.')}</div></section>`;return}
+  const q=(ui.aq||'').trim().toLowerCase(),gr=ui.ag||'';
+  const dia=Date.now()-864e5,ult=audCache.filter(x=>new Date(x.quando).getTime()>=dia);
+  const k=[['Senhas incorretas (24 h)',ult.filter(x=>x.evento==='login_falha').length,1],['Bloqueios (24 h)',ult.filter(x=>x.evento==='login_bloqueado').length,2],
+    ['Mudanças de permissão (24 h)',ult.filter(x=>['permissao_alterada','cargo_alterado','senha_redefinida_admin'].includes(x.evento)).length,2],['Exclusões (24 h)',ult.filter(x=>['registro_excluido','usuario_excluido'].includes(x.evento)).length,2]];
+  const L=audCache.filter(x=>{const e=AUD_EV[x.evento]||[x.evento,'Outros',0];
+    return(!gr||e[1]===gr||(gr==='Críticos'&&e[2]===2))&&(!q||[x.ator_nome,x.alvo,x.ip,e[0],audDetalhe(x)].join(' ').toLowerCase().includes(q))});
+  $('pagina').innerHTML=`
+  <section class="aud-k">${k.map(([t,n,sev])=>`<div class="aud-c ${n&&sev===2?'crit':n?'warn':''}"><span>${esc(t)}</span><b>${n}</b></div>`).join('')}</section>
+  <section class="card plan">
+    <div class="plan-f">
+      <div class="ifield search" style="flex:1;min-width:200px">${I.busca}<input class="inp" id="aQ" placeholder="Buscar usuário, alvo, IP ou evento" value="${esc(ui.aq||'')}"></div>
+      <select class="inp" id="aG" aria-label="Tipo de evento"><option value="">Todos os eventos</option>${['Críticos','Acesso','Usuários','Registros'].map(t=>`<option ${gr===t?'selected':''}>${t}</option>`).join('')}</select>
+      <button class="btn" id="aR">${I.refresh}<span>Atualizar</span></button>
+    </div>
+    <div class="plan-w"><table class="plan-g aud-g"><thead><tr><th>Quando</th><th>Evento</th><th>Quem</th><th>Alvo</th><th class="d">Detalhe</th><th>IP</th></tr></thead>
+    <tbody>${L.map(x=>{const e=AUD_EV[x.evento]||[x.evento,'Outros',0];return`<tr class="sev${e[2]}"><td class="c mono">${esc(audQuando(x.quando))}</td><td><span class="aud-ev s${e[2]}">${esc(e[0])}</span></td><td>${esc(x.ator_nome||'—')}</td><td>${esc(x.alvo||'')}</td><td class="d">${esc(audDetalhe(x))}</td><td class="mono">${esc(x.ip||'')}</td></tr>`}).join('')}</tbody></table>
+    ${L.length?'':`<div style="padding:28px">${vazio(I.shield,audCache.length?'Nenhum evento com esses filtros':'Nenhum evento registrado ainda',audCache.length?'Limpe a busca ou o filtro.':'Os próximos acessos e alterações aparecem aqui.')}</div>`}</div>
+    <footer class="plan-r"><span>${plural(L.length,'evento','eventos')} · últimos 500 registros · senhas e tokens nunca são gravados</span></footer>
+  </section>`;
+  const aq=$('aQ');aq.oninput=e=>{ui.aq=e.target.value;clearTimeout(window._aq);window._aq=setTimeout(()=>{const p=e.target.selectionStart;render();const n=$('aQ');n.focus();n.setSelectionRange(p,p)},180)};
+  $('aG').onchange=e=>{ui.ag=e.target.value;render()};$('aR').onclick=()=>{audCache=null;render()};
+}
+
 function pgPlanilha(){
   const q=(ui.pq||'').trim().toLowerCase();
   const L=regs.filter(o=>(!ui.pSit||String(sit(o))===ui.pSit)&&(!ui.pTp||origemTxt(o)===ui.pTp)&&(!q||[refDe(o),o.sku,o.produto,entPor(o)].join(' ').toLowerCase().includes(q)))
