@@ -2736,7 +2736,7 @@ function montaRelatorioXL(cfg){ // cfg:{titulo,sub,cor,kpis,graficos(2),rankings
   drow.push({r:1,h:20,cells:cols.map((_,i)=>[i,i?'':cfg.sub,2])});dm.push(`A2:${XL.col(cols.length-1)}2`);
   drow.push({r:2,h:6,cells:cols.map((_,i)=>[i,'',18])});
   drow.push({r:hdr,h:30,cells:cols.map((c,i)=>[i,c.t,7])});
-  cfg.linhas.forEach((l,i)=>{const z=i%2===1;drow.push({r:hdr+1+i,h:18,cells:cols.map((c,j)=>{const v=l[c.k];
+  cfg.linhas.forEach((l,i)=>{const z=i%2===1;const nl=Math.max(1,...cols.map(c=>{const v=l[c.k];return (c.tipo==='moeda'||c.tipo==='int'||v==null)?1:String(v).split('\n').reduce((a,p)=>a+Math.max(1,Math.ceil(p.length/Math.max(4,(c.w||12)*1.05))),0)}));drow.push({r:hdr+1+i,h:Math.min(400,Math.max(18,nl*15+3)),cells:cols.map((c,j)=>{const v=l[c.k];
     const s=c.tipo==='moeda'?(z?11:10):c.tipo==='int'?(z?13:12):(z?9:8);return[j,(c.tipo==='moeda'||c.tipo==='int')?(v===''||v==null||isNaN(v)?'':Number(v)):v,s]})})});
   const ult=hdr+cfg.linhas.length;
   if(cfg.linhas.length&&cols.some(c=>c.soma)){drow.push({r:ult+1,h:22,cells:cols.map((c,j)=>[j,j===0?'TOTAL':c.soma?cfg.linhas.reduce((a,l)=>a+(Number(l[c.k])||0),0):'',j===0?15:c.tipo==='moeda'?16:c.soma?17:15])})}
@@ -2779,7 +2779,7 @@ async function exportarExcel(lista,op={}){
   const periodo=op.periodo?op.periodo:ui.de||ui.ate?(ui.de===ui.ate?ui.de.split('-').reverse().join('/'):(ui.de?ui.de.split('-').reverse().join('/'):'início')+' a '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):'Todo o período';
   const filtros=op.periodo||op.cat==='Geral'?[]:[ui.gst&&'Situação: '+ui.gst,ui.setor&&'Setor: '+ui.setor,ui.tipo&&'Tipo: '+ui.tipo,ui.pessoa&&'Pessoa: '+nome(ui.pessoa),ui.busca&&'Busca: "'+ui.busca+'"'].filter(Boolean);
   const agora=new Date();
-  const nomeCat={'Garantia':'Garantias','Relatório':'Relatórios','Minucioso':'Minucioso','Consertos Baiano':'Consertos Baiano','Geral':'todos os módulos'}[cat]||cat;
+  const nomeCat={'Garantia':'Garantias','Relatório':'Relatórios','Minucioso':'Minucioso','Consertos Baiano':'Consertos Baiano','Avaria':'Avaria','Geral':'todos os módulos'}[cat]||cat;
   const sub=[`${lista.length} registro${lista.length===1?'':'s'}`,'Período: '+periodo,...filtros,'Gerado em '+agora.toLocaleDateString('pt-BR')+' às '+agora.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+(eu&&eu.nome?' por '+eu.nome:'')].join('   ·   ');
   const cor={'Garantia':'E2621B','Relatório':'0F766E','Minucioso':'15803D','Consertos Baiano':'7C3AED','Geral':'14B8A6'}[cat]||'0F766E';
   const pessoa=contaPor(lista,o=>nome(o.autor));
@@ -2818,6 +2818,13 @@ async function exportarExcel(lista,op={}){
     colunas=[{t:'Data',k:'dc',w:12},{t:'Código',k:'sku',w:12},{t:'Descrição do produto',k:'prod',w:34},{t:'Qtde',k:'q',tipo:'int',w:8,soma:1},{t:'Preço de custo',k:'custo',tipo:'moeda',w:15},{t:'Requisitante',k:'req',w:20},{t:'Valor',k:'val',tipo:'moeda',w:12,cf:'zero'},{t:'Total',k:'tot',tipo:'moeda',w:16,soma:1,cf:'barra'},{t:'Registrado por',k:'por',w:18}];
     rankings=[{titulo:'Peças mais consertadas',cabNome:'Peça',cabVal:'Qtd',itens:top(peca,o=>Number(o.qtd)||1)},{titulo:'Valor por requisitante',cabNome:'Requisitante',cabVal:'Valor',moeda:1,itens:top(o=>o.requisitante||'Sem requisitante',o=>totalBai(o)||0)}];
     linhas=lista.map(o=>({...base(o),dc:dataBai(o),q:Number(o.qtd)||1,custo:o.custo??'',req:o.requisitante||'',val:o.valor_conserto??'',tot:totalBai(o)??''}));
+  }else if(cat==='Avaria'){
+    const sa=s=>String(s==null?'':s).replace(/\*/g,'').trim(),dd=o=>o.dados||{},cst=lista.reduce((a,o)=>a+(Number(o.custo)||0),0);
+    kpis=[{rot:'Relatórios',val:lista.length,det:'de avaria no período'},{rot:'Custo total',val:Math.round(cst*100)/100,moeda:1,det:'soma do custo das peças'},{rot:'Tipos',val:new Set(lista.map(o=>avTipo(o)[0])).size,det:'tipos diferentes'},{rot:'Pessoas',val:pessoa.length,det:'que registraram'}];
+    graficos=[{tipo:'col',titulo:'Relatórios por mês',itens:porMesXL(lista)},{tipo:'bar',titulo:'Por tipo',itens:topN(contaPor(lista,o=>avTipo(o)[0]),8)},{tipo:'bar',titulo:'Por pessoa',itens:topN(pessoa,8)}];
+    colunas=[{t:'Ref.',k:'ref',w:8},{t:'Data',k:'data',w:12},{t:'Tipo',k:'tipo',w:20},{t:'Código',k:'sku',w:14},{t:'Peça',k:'prod',w:30},{t:'Fabricante',k:'fab',w:16},{t:'Custo',k:'custo',tipo:'moeda',w:13,soma:1},{t:'Caso',k:'caso',w:22},{t:'Descrição do ocorrido',k:'oc',w:60},{t:'Constatação',k:'cons',w:44},{t:'Conclusão',k:'conc',w:44},{t:'Observações',k:'notas',w:34},{t:'Envolvido',k:'env',w:18},{t:'Gerentes',k:'ger',w:24},{t:'Conferente',k:'conf',w:18},{t:'Data de entrega',k:'ent',w:15},{t:'Registrado por',k:'por',w:18}];
+    rankings=[{titulo:'Peças com mais avarias',cabNome:'Peça',cabVal:'Relatórios',itens:top(peca)},{titulo:'Quem mais registrou',cabNome:'Pessoa',cabVal:'Relatórios',itens:pessoa.slice(0,8)}];
+    linhas=lista.map(o=>{const x=dd(o);return{...base(o),tipo:avTipo(o)[0],ref:x.ref??'',custo:o.custo??'',caso:sa(x.caso),oc:sa(x.oc),cons:sa(x.cons),conc:sa(x.conc),notas:[x.n1,x.n2].filter(Boolean).map(sa).join('\n'),env:sa(x.env),ger:[x.g1,x.g2].filter(Boolean).map(sa).join(' / '),conf:sa(x.conf),ent:x.ctrl&&x.ctrl.ent?String(x.ctrl.ent).slice(0,10).split('-').reverse().join('/'):''}}).sort((a,b)=>Number(a.ref||0)-Number(b.ref||0))
   }else{
     kpis=[{rot:'Relatórios',val:lista.length,det:'registrados no período'},{rot:'Peças',val:lista.reduce((a,o)=>a+qt(o),0),det:'quantidade somada'},{rot:'Tipos',val:new Set(lista.map(o=>o.tipo)).size,det:'tipos diferentes'},{rot:'Pessoas',val:pessoa.length,det:'que registraram'}];
     graficos=[{tipo:'col',titulo:'Relatórios por mês',itens:porMesXL(lista)},{tipo:'bar',titulo:'Por tipo',itens:topN(contaPor(lista,o=>o.tipo),8)},{tipo:'bar',titulo:'Por pessoa',itens:topN(pessoa,8)},{tipo:'rosca',titulo:'Com foto ou vídeo',itens:[['Com foto/vídeo',lista.filter(o=>(o.fotos||[]).length||(o.videos||[]).length).length],['Sem foto/vídeo',lista.filter(o=>!(o.fotos||[]).length&&!(o.videos||[]).length).length]].filter(x=>x[1]),cores:['2457D6','CBD5E1']}];
@@ -2826,7 +2833,7 @@ async function exportarExcel(lista,op={}){
     linhas=lista.map(o=>({...base(o),praz:relResolvido(o)?'Resolvido':relAtrasado(o)?'Atrasado':'No prazo'}));
   }
   const blob=montaRelatorioXL({titulo:'INVENTRA  ·  '+(op.titulo||'Relatório de '+nomeCat),sub,cor,kpis,graficos:(op.g1?[op.g1,...graficos.slice(1)]:graficos).slice(0,2),rankings,colunas,linhas});
-  const partes=['inventra',{'Garantia':'garantias','Minucioso':'minucioso','Consertos Baiano':'consertos-baiano','Geral':'relatorio-geral'}[cat]||'relatorios'];if(op.arquivo)partes.push(op.arquivo);if(cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
+  const partes=['inventra',{'Garantia':'garantias','Minucioso':'minucioso','Consertos Baiano':'consertos-baiano','Avaria':'avaria','Geral':'relatorio-geral'}[cat]||'relatorios'];if(op.arquivo)partes.push(op.arquivo);if(cat==='Minucioso'&&ui.setor)partes.push(ui.setor.toLowerCase().replace(/[^a-z0-9]+/gi,'-'));if(ui.gst)partes.push(ui.gst.split(' ')[0].toLowerCase());
   if(ui.pessoa)partes.push(nome(ui.pessoa).split(' ')[0].toLowerCase());if(!op.arquivo)partes.push(ui.de||ui.ate?(ui.de||'inicio')+'_a_'+(ui.ate||hoje()):hoje());
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=partes.join('-').normalize('NFD').replace(/[̀-ͯ]/g,'')+'.xlsx';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);
   toast('Relatório em Excel gerado ('+lista.length+(lista.length===1?' registro)':' registros)'));
