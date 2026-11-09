@@ -395,6 +395,26 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .onda i{position:absolute;border-radius:50%;background:rgba(35,102,176,.28);transform:scale(0);animation:onda .55s ease-out forwards}
 @keyframes onda{to{transform:scale(1);opacity:0}}
 @media (prefers-reduced-motion:reduce){.side .nav,.side .nav svg.i,.side .nav .lbl,.mnav button{transition:none!important;animation:none!important;transform:none!important}.onda{display:none}}
+/* ---------- menu v2: destaque que desliza, brilho e elevação ---------- */
+#navs{position:relative;z-index:1}
+.navw{position:relative;isolation:isolate}
+.navw .nav-pill{position:absolute;left:0;right:0;z-index:0;border-radius:6px;background:#FFFFFF;box-shadow:0 1px 2px rgba(19,34,53,.06),0 0 0 1px #9DBDE2,0 6px 16px -10px rgba(30,87,153,.55);pointer-events:none;transition:top .42s cubic-bezier(.34,1.32,.64,1),height .3s var(--ease)}
+#navPill::before{content:"";position:absolute;left:-10px;top:8px;bottom:8px;width:3px;border-radius:0 2px 2px 0;background:var(--sb-acc);transition:transform .3s}
+#navPill.anda::before{animation:pillBarra .42s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pillBarra{0%{transform:scaleY(.2)}55%{transform:scaleY(1.35)}100%{transform:scaleY(1)}}
+#navs .nav{z-index:1;overflow:hidden}
+#navs .nav[aria-current="page"],#navs .nav[aria-current="page"]:hover{background:transparent;box-shadow:none}
+#navs .nav[aria-current="page"]::before{display:none}
+#navs .nav[aria-current="page"] .lbl{font-weight:600}
+#navs .nav::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);transform:skewX(-18deg);opacity:0;pointer-events:none}
+#navs .nav:hover::after{animation:brilho .7s ease-out}
+@keyframes brilho{0%{left:-60%;opacity:0}20%{opacity:1}100%{left:120%;opacity:0}}
+#navs .nav:not([aria-current="page"]):hover{transform:translateY(-1px);box-shadow:0 4px 12px -6px rgba(30,87,153,.45)}
+#navs .nav:not([aria-current="page"]):active{transform:translateY(0) scale(.96);box-shadow:none}
+#navs .nav .ct.hot{display:inline-grid;place-items:center;min-width:20px;height:18px;padding:0 6px;border-radius:9px;background:var(--sb-acc);color:#fff;font-size:10.5px;font-weight:700}
+#navs .nav:hover .ct.hot{animation:pulo .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pulo{50%{transform:scale(1.18)}}
+@media (prefers-reduced-motion:reduce){#navPill{transition:none!important}#navs .nav::after,#navPill::before{animation:none!important}#navs .nav{transform:none!important}}
 /* ---------- faixa de indicadores ---------- */
 .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh-1);margin-bottom:16px;overflow:hidden}
 .kpi{position:relative;display:flex;flex-direction:column;gap:2px;padding:11px 16px 11px 18px;border:0;border-left:1px solid var(--line);background:none;text-align:left;cursor:pointer;transition:background .12s var(--ease)}
@@ -1021,7 +1041,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
   <aside class="side">
     <div class="s-head"><span class="logo" data-logo></span><div class="nm"><b>CONTROLE DE RELATÓRIOS</b></div></div>
     <div class="s-body">
-      <div class="s-grp"><div class="s-lbl">Operação</div><div id="navs"></div></div>
+      <div class="s-grp"><div class="s-lbl">Operação</div><div class="navw"><span class="nav-pill" id="navPill" hidden></span><div id="navs"></div></div></div>
       <div class="s-grp"><div class="s-lbl">Preferências</div>
         <button class="nav" id="tema"><span id="temaIc" style="display:contents"></span><span class="lbl" id="temaTx">Tema escuro</span></button></div>
     </div>
@@ -1302,6 +1322,10 @@ function render(){
   if(pag==='auditoria'&&!(eu&&eu.admin))pag='controle';
   const chegou=window._navPag!==undefined&&window._navPag!==pag;window._navPag=pag;
   $('navs').innerHTML=pags().map(([k,t,i])=>`<button class="nav${chegou&&pag===k?' chegou':''}" data-pag="${k}" ${rail?`data-tip="${t}" data-tip-pos="right"`:''} ${pag===k?'aria-current="page"':''}>${i}<span class="lbl">${t}</span>${ct[k]||''}</button>`).join('');
+  {const pl=$('navPill'),at=$('navs').querySelector('[aria-current="page"]');
+    if(!at)pl.hidden=true;else{const novo=pl.hidden;pl.hidden=false;if(novo)pl.style.transition='none';
+      pl.style.top=at.offsetTop+'px';pl.style.height=at.offsetHeight+'px';if(novo){pl.offsetHeight;pl.style.transition=''}
+      if(chegou){pl.classList.remove('anda');pl.offsetHeight;pl.classList.add('anda')}}}
   $('mnav').innerHTML=pags().map(([k,t,i])=>`<button data-pag="${k}" class="${chegou&&pag===k?'chegou':''}" ${pag===k?'aria-current="page"':''}>${i}<span>${k==='entregas'?'Entregas':t}</span></button>`).join('');
   document.querySelectorAll('[data-pag]').forEach(b=>b.onclick=()=>ir(b.dataset.pag));
   const P=PAGS.find(p=>p[0]===pag)||PAGS[1];
