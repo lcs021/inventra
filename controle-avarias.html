@@ -22,9 +22,9 @@
    ========================================================= */
 :root{
   --g:#2366B0;--g-deep:#1A4F8A;--g-hi:#2B72C0;--g-50:#E7EFF9;--g-25:#F3F7FC;--g-ink:#1A4F8A;
-  --bg:#F3F5F9;--surface:#FFFFFF;--subtle:#F8FAFC;--hover:#F1F5F9;
+  --bg:#DDE3EB;--surface:#EEF1F5;--subtle:#E7EBF1;--hover:#E3E8EF;
   --fg:#1E293B;--fg2:#475569;--muted:#64748B;--faint:#94A3B8;
-  --line:#E2E8F0;--line2:#CBD5E1;--line3:#A9B6C8;
+  --line:#D3DAE4;--line2:#C2CBD8;--line3:#9EABBF;
   --red:#C94A4A;--red-50:#FCEFEF;--red-ink:#B03636;
   --amb:#C18B31;--amb-50:#FDF5E6;--amb-ink:#97650C;
   --blu:#4279AD;--blu-50:#EDF3FA;--blu-ink:#2B5F96;
@@ -177,7 +177,7 @@ input[type=checkbox]:indeterminate::after{content:"";width:8px;height:1.75px;bac
 .au-sig span{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:500;color:#ADB2B9}
 .au-sig span{font-size:12px;color:#A1A7AF}.au-sig svg.i{width:15px;height:15px;color:#5B95D6;stroke-width:1.75}
 
-.au-r{display:flex;flex-direction:column;height:100%;background:#FFFFFF;overflow:auto}
+.au-r{display:flex;flex-direction:column;height:100%;background:#EEF1F5;overflow:auto}
 .au-top{display:flex;justify-content:flex-end;align-items:center;gap:7px;padding:28px 40px 0;font-size:12px;color:#868D98}
 .au-top svg.i{width:14px;height:14px}
 .au-main{flex:1;display:flex;align-items:center;justify-content:center;padding:24px 40px}
@@ -839,7 +839,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 /* tabela */
 .occ .tscroll{max-height:none;height:calc(100vh - var(--occ-off,300px));min-height:320px}
 .occ table.grid{min-width:1060px;table-layout:fixed}
-.occ table.grid th{height:40px;background:#fff;color:#2D3136;font-size:12px;font-weight:600;letter-spacing:0;border-bottom:1px solid #DCDEE2;box-shadow:0 1px 0 #DCDEE2;padding:0 12px}
+.occ table.grid th{height:40px;background:var(--subtle);color:#2D3136;font-size:12px;font-weight:600;letter-spacing:0;border-bottom:1px solid #DCDEE2;box-shadow:0 1px 0 #DCDEE2;padding:0 12px}
 .occ table.grid td{height:52px;padding:0 12px;border-bottom:1px solid #EDEFF2}
 .occ table.grid tbody tr:hover td{background:#FAFAFB}
 .occ table.grid tbody tr.sel td{background:#F1F4F7}
@@ -858,9 +858,9 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 .occ .dt{width:100%;max-width:124px;height:32px;padding:0 6px 0 10px;border:1px solid transparent;border-radius:6px;background:transparent;font-size:13px;font-weight:500;color:var(--fg);font-variant-numeric:tabular-nums;transition:border-color .15s,background .15s,box-shadow .15s}
 .occ .dt:invalid{border-style:solid;color:var(--faint);font-weight:400;background:transparent}
 .occ .dt:valid{background:#F4F5F7}
-.occ tr:hover .dt{border-color:#DCDEE2;background:#fff}
+.occ tr:hover .dt{border-color:var(--line2);background:var(--surface)}
 .occ tr:hover .dt:invalid{color:var(--muted)}
-.occ .dt:focus{border-color:var(--g)!important;background:#fff!important;box-shadow:0 0 0 3px rgba(35,102,176,.12);color:var(--fg)}
+.occ .dt:focus{border-color:var(--g)!important;background:var(--surface)!important;box-shadow:0 0 0 3px rgba(35,102,176,.12);color:var(--fg)}
 .occ .dt::-webkit-calendar-picker-indicator{width:12px;height:12px;opacity:.3;margin-left:4px}
 .occ tr:hover .dt::-webkit-calendar-picker-indicator{opacity:.6}
 .occ .dt:disabled{background:transparent!important;border-color:transparent!important}
