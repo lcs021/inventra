@@ -14,7 +14,7 @@
 <meta name="theme-color" content="#1E5799">
 <meta name="apple-mobile-web-app-title" content="Controle de Relatórios">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;650&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@400;450;500;600;650&display=swap">
 <style>
 /* =========================================================
    DESIGN SYSTEM · Controle de Relatórios
@@ -945,6 +945,52 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
   #folha .pg{page-break-after:always}
   #folha .pg:last-child{page-break-after:auto}
 }
+
+/* =========================================================
+   CAMADA DE DESIGN — "etiqueta de galpão"
+   Archivo (largura variável) para títulos, números e refs.;
+   Inter para o corpo. A ref. vira uma etiqueta com furo e
+   borda de situação: âmbar pendente, azul entregue.
+   ========================================================= */
+:root{--disp:"Archivo",var(--font)}
+/* títulos e números em Archivo */
+h1,.card>header h3,.au-form h1,.au-copy h2,.kpi .v b,.aud-c b,.s-head b,.au-brand b,.au-mobbrand b,.sheet-head h2{font-family:var(--disp)}
+h1{font-stretch:112%;font-weight:640;letter-spacing:-.012em}
+.au-form h1{font-stretch:114%;font-weight:660;letter-spacing:-.02em}
+.au-copy h2{font-stretch:116%;letter-spacing:-.02em}
+.card>header h3{font-stretch:108%;font-weight:620;font-size:14px;letter-spacing:0}
+.kpi .v b{font-stretch:122%;font-weight:600;letter-spacing:-.01em}
+.aud-c b{font-stretch:122%;font-weight:600}
+/* marca sem caixa-alta espaçada */
+.au-brand b{font-size:16px;font-weight:680;font-stretch:112%;letter-spacing:-.01em;text-transform:none}
+.au-mobbrand b{font-size:14px;font-weight:680;font-stretch:112%;letter-spacing:-.01em}
+.s-head b{font-size:13px;font-weight:680;font-stretch:106%;letter-spacing:-.01em}
+.au-brand small,.au-mobbrand small,.s-head small{letter-spacing:0;text-transform:none}
+.trk-h{letter-spacing:0!important;text-transform:none!important;font-size:12px!important}
+.trk-n{letter-spacing:.02em;font-family:var(--disp);font-stretch:118%}
+.trk-st b{letter-spacing:0;text-transform:none;font-size:13.5px;font-family:var(--disp);font-stretch:110%}
+.po-h span{letter-spacing:0;text-transform:none;font-size:12px}
+.au-tag{letter-spacing:0!important;text-transform:none!important;font-size:12px!important;font-weight:600!important}
+.sheet-head h2{letter-spacing:0;text-transform:none;font-size:15px;font-stretch:110%;font-weight:640}
+/* sem monoespaçada: números tabulares */
+.plan-g .mono{font-family:inherit;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--fg2)}
+/* cartões mais chapados, menos "kit" */
+.card{box-shadow:none}
+/* ---------- a etiqueta ---------- */
+.etq{--e:var(--amb);position:relative;display:inline-flex;align-items:center;height:22px;min-width:46px;padding:0 8px 0 16px;
+  border-radius:3px 6px 6px 3px;background:var(--surface);border:1px solid var(--line2);box-shadow:inset 3px 0 0 var(--e);
+  font:600 13px/1 var(--disp);font-stretch:120%;font-variant-numeric:tabular-nums;color:var(--fg);white-space:nowrap;vertical-align:middle}
+.etq::before{content:"";position:absolute;left:8px;top:50%;width:4px;height:4px;margin-top:-2px;border-radius:50%;background:var(--bg);box-shadow:inset 0 0 0 1px var(--line3)}
+.etq.ok{--e:var(--g)}
+tr.sel .etq,tr:hover .etq{border-color:var(--line3)}
+/* colunas de ref. abrem espaço para a etiqueta */
+.c-ref{width:88px!important;text-align:left!important;padding:0 10px 0 14px!important}
+td.c-ref{font-size:inherit}
+.list li{grid-template-columns:72px minmax(0,1fr) auto}
+.list .r,td.r{text-align:left}
+th.r,td.r{width:88px;text-align:left;padding-left:16px;padding-right:12px}
+.plan-g td.c.b{text-align:center}
+@media (forced-colors:active){.etq{border-left:4px solid CanvasText}}
 </style>
 </head>
 <body>
@@ -954,10 +1000,10 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 <div id="tlogin" hidden>
   <aside class="au-l" aria-hidden="false">
     <div class="grid"></div>
-    <div class="au-brand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE RELATÓRIOS</b></div><span class="au-env"><i></i>Ambiente operacional</span></div>
+    <div class="au-brand"><span class="au-mark" data-logo></span><div><b>Controle de Relatórios</b></div><span class="au-env"><i></i>Ambiente operacional</span></div>
     <div class="au-art" aria-hidden="true">
       <div class="trk">
-        <div class="trk-h"><span>CICLO DA AVARIA</span><span><i></i>CONTROLE DOCUMENTAL</span></div>
+        <div class="trk-h"><span>Ciclo da avaria</span><span><i></i>Controle documental</span></div>
         <ol class="trk-s">
           <li class="trk-st">
             <div class="trk-box"><span class="trk-n">01</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div>
@@ -997,8 +1043,8 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
     <div class="au-top"><span id="topIc"></span>Acesso integrado ao INVENTRA</div>
     <div class="au-main">
       <form class="au-form" id="flogin" novalidate>
-        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE RELATÓRIOS</b></div></div>
-        <span class="au-tag" id="tagL">ACESSO À PLATAFORMA</span>
+        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>Controle de Relatórios</b></div></div>
+        <span class="au-tag" id="tagL">Acesso à plataforma</span>
         <h1>Bem-vindo ao<br>Controle de Relatórios</h1>
         <p class="au-sub">Acesse sua conta para continuar gerenciando suas operações.</p>
         <div class="au-msg err" id="lerr" hidden></div><span id="lok" hidden></span>
@@ -1014,8 +1060,8 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
       </form>
 
       <form class="au-form" id="fcad" novalidate hidden>
-        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>CONTROLE DE RELATÓRIOS</b></div></div>
-        <span class="au-tag" id="tagC">NOVO ACESSO</span>
+        <div class="au-mobbrand"><span class="au-mark" data-logo></span><div><b>Controle de Relatórios</b></div></div>
+        <span class="au-tag" id="tagC">Novo acesso</span>
         <h1>Criar cadastro</h1>
         <p class="au-sub">Depois de criar, o administrador do INVENTRA libera seu acesso.</p>
         <div class="au-msg err" id="cerr" hidden></div>
@@ -1039,7 +1085,7 @@ td.c-cod{font-variant-numeric:tabular-nums;color:var(--fg2);font-size:13px}
 <!-- ======================= SISTEMA ======================= -->
 <div id="tapp" hidden>
   <aside class="side">
-    <div class="s-head"><span class="logo" data-logo></span><div class="nm"><b>CONTROLE DE RELATÓRIOS</b></div></div>
+    <div class="s-head"><span class="logo" data-logo></span><div class="nm"><b>Controle de Relatórios</b></div></div>
     <div class="s-body">
       <div class="s-grp"><div class="s-lbl">Operação</div><div class="navw"><span class="nav-pill" id="navPill" hidden></span><div id="navs"></div></div></div>
       <div class="s-grp"><div class="s-lbl">Preferências</div>
@@ -1166,6 +1212,7 @@ function marcaSync(){$('syncT').textContent='Atualizado às '+new Date().toLocal
 
 const ctrlDe=o=>(o.dados&&o.dados.ctrl)||{};
 const refDe=o=>parseInt(o.dados&&o.dados.ref,10);
+const etq=o=>`<span class="etq${sit(o)?' ok':''}" title="${sit(o)?'Entregue':'Não entregue'}">${refDe(o)}</span>`;
 const tipoDe=o=>(o.dados&&o.dados.tipo)||'Avaria';
 const sit=o=>{const c=ctrlDe(o);return c.ent?1:0};
 const srcTag=t=>t==='Mercado Livre'?'<span class="src ml" title="Mercado Livre">MLV</span>':t==='Shopee'?'<span class="src sh" title="Shopee">SHOPEE</span>':'';
@@ -1387,7 +1434,7 @@ function pgPainel(){
     <section class="card ch"><header><h3>Entregas</h3><span class="meta">últimos 14 dias · ${plural(tot,'ref.','refs.')}</span><span class="grow"></span><button class="btn quiet sm" data-ir="entregas">Histórico ${I.arrow}</button></header>
       <div class="cb">${grafico(dias,porDia)}</div></section>
     <section class="card"><header><h3>Aguardando entrega</h3><span class="meta">${plural(naoEnt.length,'ref.','refs.')}</span></header>
-      ${naoEnt.length?`<ul class="list">${naoEnt.slice(0,6).map(o=>`<li><span class="r">${refDe(o)}</span><div class="t"><div class="a">${esc(o.produto||'Sem descrição')}</div><div class="b">${esc(o.sku)} · relatório de ${dbr(o.criado)}</div></div>${srcTag(tipoDe(o))||'<span></span>'}</li>`).join('')}</ul>
+      ${naoEnt.length?`<ul class="list">${naoEnt.slice(0,6).map(o=>`<li><span class="r">${etq(o)}</span><div class="t"><div class="a">${esc(o.produto||'Sem descrição')}</div><div class="b">${esc(o.sku)} · relatório de ${dbr(o.criado)}</div></div>${srcTag(tipoDe(o))||'<span></span>'}</li>`).join('')}</ul>
       <footer><button class="btn sm" data-kf="0">Ver todas</button><span style="flex:1"></span>${podeEditar?`<button class="btn primary sm" id="entTudo">${I.truck}Entregar ${naoEnt.length}</button>`:''}</footer>`
       :vazio(I.check,'Nada pendente','Todas as refs. já foram entregues.')}</section>
   </div>
@@ -1440,7 +1487,7 @@ function pgControle(){
         <th class="c-ref">Ref.</th><th class="c-cod">Código</th><th class="c-desc">Descrição</th>${ETAPAS.map(e=>`<th class="c-dt">${e[1]}</th>`).join('')}<th class="c-st">Situação</th></tr></thead>
       <tbody>${L.length?L.map(o=>{const s=sit(o),c=ctrlDe(o),r=refDe(o),tg=srcTag(tipoDe(o));return`<tr class="${selec.has(o.id)?'sel':''} ${novos.has(o.id)?'flash':''}" data-row="${esc(o.id)}">
         <td class="c-ck"><input type="checkbox" data-sel="${esc(o.id)}" ${selec.has(o.id)?'checked':''} aria-label="Selecionar ref. ${r}"></td>
-        <td class="c-ref">${r}</td><td class="c-cod">${esc(o.sku)}</td>
+        <td class="c-ref">${etq(o)}</td><td class="c-cod">${esc(o.sku)}</td>
         <td class="c-desc"><div class="pname"><span title="${esc(o.produto||'')}">${esc(o.produto||'Sem descrição')}</span></div><div class="pmeta">Relatório ${dbr(o.criado)}${tg}</div></td>
         ${ETAPAS.map(e=>`<td class="c-dt"><input type="date" class="dt" required data-id="${esc(o.id)}" data-k="${e[0]}" value="${esc(String(c[e[0]]||'').slice(0,10))}" aria-label="${e[1]} da ref. ${r}" ${podeEditar?'':'disabled'}></td>`).join('')}
         <td class="c-st">${stTag(s)}</td></tr>`}).join('')
@@ -1487,7 +1534,7 @@ function pgEntregas(){
     <header><h3>${x.t}</h3><span class="meta">${x.s}</span><span class="pill">${plural(L.length,'ref.','refs.')}</span><span class="grow"></span>
       <button class="btn quiet sm" data-imp="${d}" data-tip="Folha oficial com as refs. deste dia">${I.print}Imprimir folha</button></header>
     <table><thead><tr><th class="r">Ref.</th><th class="k">Código</th><th>Descrição</th><th style="width:150px">Situação atual</th></tr></thead><tbody>
-    ${L.map(o=>`<tr><td class="r">${refDe(o)}</td><td class="k">${esc(o.sku)}</td><td><span class="pname"><span>${esc(o.produto||'Sem descrição')}</span>${srcTag(tipoDe(o))}</span></td><td>${stTag(sit(o))}</td></tr>`).join('')}
+    ${L.map(o=>`<tr><td class="r">${etq(o)}</td><td class="k">${esc(o.sku)}</td><td><span class="pname"><span>${esc(o.produto||'Sem descrição')}</span>${srcTag(tipoDe(o))}</span></td><td>${stTag(sit(o))}</td></tr>`).join('')}
     </tbody></table></section>`}).join('')}</div>`
   :`<section class="card">${regs.some(o=>ctrlDe(o).ent)?vazio(I.filtro,'Nenhuma entrega no período','Ajuste as datas ou limpe o filtro.'):vazio(I.truck,'Nenhuma entrega registrada','Selecione refs. no Controle e use “Entregar”. Elas aparecem aqui, agrupadas por dia.',`<button class="btn sm" data-ir="controle">Ir para o Controle ${I.arrow}</button>`)}</section>`}`;
   $('eDe').onchange=e=>{ui.de=e.target.value;render()};$('eAte').onchange=e=>{ui.ate=e.target.value;render()};
@@ -1626,7 +1673,7 @@ function pgPlanilha(){
       <select class="inp" id="pSit" aria-label="Situação"><option value="">Todas as situações</option><option value="0" ${ui.pSit==='0'?'selected':''}>Não entregue</option><option value="1" ${ui.pSit==='1'?'selected':''}>Entregue</option></select>
     </div>
     <div class="plan-w"><table class="plan-g"><thead><tr><th class="n"></th><th>Ref.</th><th>Data do relatório</th><th>Origem</th><th>Código</th><th class="d">Descrição do produto</th><th>Situação</th><th>Data de entrega</th><th>Entregue por</th><th>Dias</th></tr></thead>
-    <tbody>${L.map((o,i)=>{const e=sit(o)===1,d=diasAte(o);return`<tr class="${novos.has(o.id)?'novo':''}"><td class="n">${i+1}</td><td class="c b">${refDe(o)}</td><td class="c">${dbr(o.criado)}</td><td class="c">${origemTxt(o)}</td><td class="c mono">${esc(o.sku)}</td><td class="d">${esc(o.produto||'')}</td><td class="c"><span class="pst ${e?'ok':'pd'}">${e?'Entregue':'Não entregue'}</span></td><td class="c">${dbr(ctrlDe(o).ent)}</td><td>${esc(entPor(o))}</td><td class="c">${d}</td></tr>`}).join('')}</tbody></table>
+    <tbody>${L.map((o,i)=>{const e=sit(o)===1,d=diasAte(o);return`<tr class="${novos.has(o.id)?'novo':''}"><td class="n">${i+1}</td><td class="c b">${etq(o)}</td><td class="c">${dbr(o.criado)}</td><td class="c">${origemTxt(o)}</td><td class="c mono">${esc(o.sku)}</td><td class="d">${esc(o.produto||'')}</td><td class="c"><span class="pst ${e?'ok':'pd'}">${e?'Entregue':'Não entregue'}</span></td><td class="c">${dbr(ctrlDe(o).ent)}</td><td>${esc(entPor(o))}</td><td class="c">${d}</td></tr>`}).join('')}</tbody></table>
     ${L.length?'':`<div style="padding:28px">${vazio(I.filtro,regs.length?'Nenhuma avaria com esses filtros':'Nenhuma avaria ainda',regs.length?'Limpe a busca ou os filtros.':'Assim que um relatório de avaria for registrado no INVENTRA, ele aparece aqui.')}</div>`}</div>
     <footer class="plan-r"><span>${L.length===regs.length?plural(L.length,'linha','linhas'):`${L.length} de ${regs.length} linhas`}</span></footer>
   </section>`;
