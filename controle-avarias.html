@@ -1331,7 +1331,7 @@ async function carregar(silencioso){
   try{for(;;){const {data,error}=await sb.from('ocorrencias').select('id,categoria,sku,produto,dados,criado,autor').eq('categoria','Avaria').order('criado',{ascending:true}).range(de,de+P-1);
     if(error){silencioso?toast(erroMsg(error),'err','Não foi possível atualizar'):falha(erroMsg(error));return false}
     todos.push(...data);if(data.length<P)break;de+=P}}finally{proc(false)}
-  regs=todos.filter(o=>o.categoria==='Avaria'&&!isNaN(refDe(o)));marcaSync();return true;
+  regs=todos.filter(o=>o.categoria==='Avaria'&&!isNaN(refDe(o)));window._ultCarga=Date.now();marcaSync();return true;
 }
 function ouvir(){
   if(canal)sb.removeChannel(canal);
@@ -1345,11 +1345,18 @@ function ouvir(){
   }).subscribe(st=>{const on=st==='SUBSCRIBED',s=$('sync');s.classList.toggle('on',on);s.classList.toggle('off',!on);
     s.querySelector('.l').textContent=on?'Sincronizado':'Sem tempo real';s.dataset.tip=on?'Conectado ao INVENTRA em tempo real':'Atualiza ao voltar para a aba ou em Atualizar'});
 }
-document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&eu&&!$('tapp').hidden){if(await carregar(true))render()}});
+document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&eu&&!$('tapp').hidden&&Date.now()-(window._ultCarga||0)>30000){if(await carregar(true))render()}});
 $('atualizar').onclick=async()=>{const b=$('atualizar');ocupado(b,true);const ok=await carregar(true);ocupado(b,false);if(ok){render();toast(plural(regs.length,'ref. carregada','refs. carregadas')+' do INVENTRA.','ok','Dados atualizados')}};
 
-/* grava no mesmo campo do Controle de assinaturas do INVENTRA (dados.ctrl), lendo antes para não apagar nada */
+/* grava no mesmo campo do Controle de assinaturas do INVENTRA (dados.ctrl).
+   v106: o banco junta a mudança na hora de gravar (ctrl_definir), então duas pessoas mexendo
+   ao mesmo tempo não apagam o trabalho uma da outra. Sem o SQL v106, usa o jeito antigo. */
+const semRpc=e=>/ctrl_definir|PGRST202|Could not find the function/i.test(((e&&e.code)||'')+' '+((e&&e.message)||''));
 async function salvaCtrl(id,mud){
+  const rp=await sb.rpc('ctrl_definir',{p_id:id,p_campos:mud});
+  if(!rp.error){const o=regs.find(x=>x.id===id);if(o&&rp.data)o.dados=rp.data;return}
+  if(rp.error.code==='42501')throw{message:'permission'};
+  if(!semRpc(rp.error))throw rp.error;
   const {data,error}=await sb.from('ocorrencias').select('dados').eq('id',id).single();if(error)throw error;
   const d=data.dados||{},c=d.ctrl||{},quando=new Date().toISOString();
   const log=[...(c.log||[]),...Object.keys(mud).map(k=>({k,v:mud[k]||'',por:eu.nome||'',t:quando}))].slice(-20);

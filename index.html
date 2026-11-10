@@ -2421,6 +2421,159 @@ end $$;
 -- ===== fim da segurança v105 =====
 
 notify pgrst, 'reload schema';
+
+-- =====================================================================
+-- v106 — Back-end do Controle de Relatórios / INVENTRA
+-- Rode no Supabase > SQL Editor. Pode rodar mais de uma vez (idempotente).
+-- Não apaga dados, não muda colunas, não muda quem vê o quê.
+--
+-- 1. ctrl_definir(): grava as datas do controle (dados.ctrl) de forma atômica.
+--    Antes, os dois apps liam o registro, mudavam no navegador e regravavam o
+--    "dados" inteiro: se duas pessoas mexessem ao mesmo tempo, uma apagava a
+--    alteração da outra. Agora o banco junta a mudança na hora de gravar.
+--    O histórico (quem/quando) passa a ser carimbado pelo servidor.
+-- 2. Regras de acesso (RLS) mais rápidas: as funções de permissão passam a ser
+--    calculadas uma vez por consulta, não uma vez por linha.
+-- 3. Alterar/apagar exigem também a permissão do módulo (mod:Categoria) —
+--    ninguém altera às cegas registros de um módulo que não consegue ver.
+-- 4. Índices para as consultas que os apps fazem.
+-- =====================================================================
+
+begin;  -- tudo ou nada: se algo falhar, nada muda
+
+-- ---------- 1. Gravação atômica do controle ----------
+create or replace function public.ctrl_definir(p_id uuid, p_campos jsonb)
+returns jsonb
+language plpgsql
+security invoker              -- roda com as permissões de quem chama: o RLS continua valendo
+set search_path = public
+as $$
+declare
+  k text; v text;
+  quem text := coalesce((select nullif(trim(nome), '') from public.perfis where id = auth.uid()), 'Usuário');
+  agora text := to_char(now() at time zone 'utc', 'YYYY-MM-DD"T"HH24:MI:SS.MS"Z"');
+  novos jsonb := '[]'::jsonb;
+  res jsonb;
+begin
+  if auth.uid() is null then
+    raise exception 'Sessão expirada' using errcode = '42501';
+  end if;
+  if p_campos is null or jsonb_typeof(p_campos) <> 'object' or p_campos = '{}'::jsonb then
+    raise exception 'Nada para gravar' using errcode = '22023';
+  end if;
+  for k, v in select key, coalesce(value #>> '{}', '') from jsonb_each(p_campos) loop
+    if k not in ('ent', 'ivano', 'envio', 'ret') then
+      raise exception 'Campo de controle inválido: %', left(k, 40) using errcode = '22023';
+    end if;
+    if jsonb_typeof(p_campos -> k) not in ('string', 'null') then
+      raise exception 'Data inválida' using errcode = '22023';
+    end if;
+    if v <> '' then
+      if v !~ '^\d{4}-\d{2}-\d{2}$' then raise exception 'Data inválida' using errcode = '22023'; end if;
+      perform v::date;
+      if v::date > current_date + 1 then raise exception 'Data no futuro' using errcode = '22023'; end if;
+    end if;
+    novos := novos || jsonb_build_object('k', k, 'v', v, 'por', quem, 't', agora);
+  end loop;
+
+  -- Uma única instrução: lê e grava a linha com trava, sem janela para corrida.
+  update public.ocorrencias o
+     set dados = jsonb_set(
+           coalesce(o.dados, '{}'::jsonb), '{ctrl}',
+           (coalesce(o.dados -> 'ctrl', '{}'::jsonb)
+              || (select coalesce(jsonb_object_agg(key, coalesce(value #>> '{}', '')), '{}'::jsonb) from jsonb_each(p_campos)))
+           || jsonb_build_object('log',
+                (select coalesce(jsonb_agg(e order by n), '[]'::jsonb) from (
+                   select e, n from jsonb_array_elements(
+                     coalesce(case when jsonb_typeof(o.dados -> 'ctrl' -> 'log') = 'array' then o.dados -> 'ctrl' -> 'log' end, '[]'::jsonb) || novos
+                   ) with ordinality as x(e, n)
+                   order by n desc limit 20) y)),
+           true)
+   where o.id = p_id
+  returning o.dados into res;
+
+  if res is null then
+    -- não existe, é de outro galpão ou o usuário não tem permissão (o RLS esconde)
+    raise exception 'Sem permissão para alterar este registro' using errcode = '42501';
+  end if;
+  return res;
+end
+$$;
+revoke all on function public.ctrl_definir(uuid, jsonb) from public, anon;
+grant execute on function public.ctrl_definir(uuid, jsonb) to authenticated;
+
+-- ---------- 2. Permissões calculadas uma vez por consulta ----------
+-- '*' = acesso total (admin ou Chefe de Inventário aprovado); senão, as permissões do cargo.
+-- Mesma regra de tem_perm(), só que devolvida de uma vez.
+create or replace function public.perms_efetivas() returns text[]
+language sql stable security definer set search_path = public as $$
+  select coalesce((
+    select case
+      when pf.admin or (pf.aprovado and pf.cargo = 'Chefe de Inventário') then array['*']
+      when pf.aprovado then coalesce((select c.perms from public.cargos c where c.nome = pf.cargo), '{}')
+      else '{}'::text[] end
+    from public.perfis pf where pf.id = auth.uid()), '{}'::text[])
+$$;
+revoke all on function public.perms_efetivas() from public, anon;
+grant execute on function public.perms_efetivas() to authenticated;
+
+drop policy if exists "ver ocorrencias" on public.ocorrencias;
+create policy "ver ocorrencias" on public.ocorrencias for select to authenticated
+  using ((select public.is_aprovado())
+     and galpao_id = (select public.meu_galpao())
+     and ((select public.perms_efetivas()) && array['*', 'mod:' || coalesce(categoria, 'Relatório')]));
+
+drop policy if exists "registrar ocorrencias" on public.ocorrencias;
+create policy "registrar ocorrencias" on public.ocorrencias for insert to authenticated
+  with check ((select public.is_aprovado())
+     and autor = (select auth.uid())
+     and galpao_id = (select public.meu_galpao())
+     and (select public.tem_perm('registrar'))
+     and ((select public.perms_efetivas()) && array['*', 'mod:' || coalesce(categoria, 'Relatório')]));
+
+drop policy if exists "tratar ocorrencias" on public.ocorrencias;
+create policy "tratar ocorrencias" on public.ocorrencias for update to authenticated
+  using ((select public.tem_perm('garantia'))
+     and galpao_id = (select public.meu_galpao())
+     and ((select public.perms_efetivas()) && array['*', 'mod:' || coalesce(categoria, 'Relatório')]))
+  with check ((select public.tem_perm('garantia'))
+     and galpao_id = (select public.meu_galpao())
+     and ((select public.perms_efetivas()) && array['*', 'mod:' || coalesce(categoria, 'Relatório')]));
+
+drop policy if exists "apagar ocorrencias" on public.ocorrencias;
+create policy "apagar ocorrencias" on public.ocorrencias for delete to authenticated
+  using ((select public.tem_perm('apagar'))
+     and galpao_id = (select public.meu_galpao())
+     and ((select public.perms_efetivas()) && array['*', 'mod:' || coalesce(categoria, 'Relatório')]));
+
+drop policy if exists "ver perfis" on public.perfis;
+create policy "ver perfis" on public.perfis for select to authenticated
+  using (id = (select auth.uid()) or ((select public.is_aprovado()) and galpao_id = (select public.meu_galpao())));
+drop policy if exists "admin altera perfis" on public.perfis;
+create policy "admin altera perfis" on public.perfis for update to authenticated
+  using ((select public.is_admin()) and galpao_id = (select public.meu_galpao()))
+  with check ((select public.is_admin()) and galpao_id = (select public.meu_galpao()));
+
+drop policy if exists "ver setores" on public.setores;
+create policy "ver setores" on public.setores for select to authenticated
+  using ((select public.is_aprovado()) and galpao_id = (select public.meu_galpao()));
+drop policy if exists "admin edita setores" on public.setores;
+create policy "admin edita setores" on public.setores for all to authenticated
+  using ((select public.is_admin()) and galpao_id = (select public.meu_galpao()))
+  with check ((select public.is_admin()) and galpao_id = (select public.meu_galpao()));
+
+-- ---------- 3. Índices ----------
+-- lista do Controle/INVENTRA: por galpão e categoria, em ordem de criação
+create index if not exists ocorrencias_galpao_cat_criado on public.ocorrencias (galpao_id, categoria, criado);
+-- chaves estrangeiras usadas em junções e no "on delete set null"
+create index if not exists ocorrencias_autor_idx on public.ocorrencias (autor);
+create index if not exists perfis_galpao_idx on public.perfis (galpao_id);
+create index if not exists atividade_galpao_quando on public.atividade (galpao_id, quando desc);
+
+commit;
+
+analyze public.ocorrencias;
+analyze public.perfis;
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.110.9/dist/umd/supabase.js"></script>
 <script src="config.js"></script>
@@ -3907,9 +4060,17 @@ function ctrlAvHTML(){const L=ctrlLinhas(),ns=ctrlSelec().length;
   <div class="box stack"><div class="row" style="gap:10px;flex-wrap:wrap;align-items:center"><select id="ctrlFiltro" aria-label="Quais linhas mostrar"><option value="0" ${ui.ctrlTodos?'':'selected'}>Só o que ainda não retornou</option><option value="1" ${ui.ctrlTodos?'selected':''}>Todas as avarias</option></select><button type="button" class="btn sm" id="ctrlTodas">Marcar todas</button><button type="button" class="btn sm" id="ctrlNenhuma">Desmarcar todas</button><button type="button" class="btn primary" id="ctrlImp">${ns?`🖨 Imprimir ${ns} ${ns===1?'selecionada':'selecionadas'}`:'🖨 Imprimir folha em branco'}</button><button type="button" class="btn" id="ctrlPdf">📄 Baixar PDF</button><button type="button" class="btn" id="ctrlDoc">📝 Baixar Word</button></div>
   <span class="muted small">Ref., código e descrição vêm dos relatórios de avaria. Marque na coluna ✓ o que vai na folha. Ao imprimir, a Data de Entrega sai com a data de hoje (se ainda estiver vazia) e fica salva; preencha as outras datas; as assinaturas ficam em branco para assinar à mão. Ao imprimir, a folha é completada com linhas em branco numeradas na sequência.</span></div>
   <div class="ctrlwrap"><table class="ctrl">${ctrlTop(true)}<tbody>${L.length?L.map(r=>`<tr>${ctrlCelulas(r,true)}</tr>`).join(''):`<tr><td colspan="12" style="height:60px">Nenhuma avaria pendente de retorno.</td></tr>`}</tbody></table></div></div>`}
+/* v106: grava datas do controle de forma atômica no banco (sem apagar mudança de outra pessoa).
+   Sem o SQL v106 no Supabase, cai no jeito antigo. */
+async function ctrlGrava(o,mud){
+  const rp=await sb.rpc('ctrl_definir',{p_id:o.id,p_campos:mud});
+  if(!rp.error){if(rp.data)o.dados=rp.data;return null}
+  if(!/ctrl_definir|PGRST202|Could not find the function/i.test((rp.error.code||'')+' '+(rp.error.message||'')))return rp.error;
+  const dados={...(o.dados||{}),ctrl:{...((o.dados&&o.dados.ctrl)||{}),...mud}};
+  const {error}=await sb.from('ocorrencias').update({dados}).eq('id',o.id);if(!error)o.dados=dados;return error}
 async function prepCtrl(){
   const h=hoje(),sel=ctrlSelec(),L=sel.map(r=>({...r,c:{...r.c,ent:r.c.ent||h}}));
-  if(pode('garantia'))await Promise.all(sel.filter(r=>!r.c.ent).map(async r=>{const dados={...(r.o.dados||{}),ctrl:{...r.c,ent:h}};const {error}=await sb.from('ocorrencias').update({dados}).eq('id',r.o.id);if(!error)r.o.dados=dados}));
+  if(pode('garantia'))await Promise.all(sel.filter(r=>!r.c.ent).map(r=>ctrlGrava(r.o,{ent:h})));
   return folhaCtrl(L)}
 async function imprimirCtrl(titulo){let a=$('printArea');if(!a){a=document.createElement('div');a.id='printArea';document.body.appendChild(a)}
   a.innerHTML=await prepCtrl();document.body.classList.add('imprimindo');
@@ -3938,9 +4099,8 @@ function bindCtrlAv(){$('ctrlVoltar').onclick=()=>{ui.ctrlav=false;render()};
   $('ctrlFiltro').onchange=e=>{ui.ctrlTodos=e.target.value==='1';render()};$('ctrlImp').onclick=()=>imprimirCtrl();$('ctrlPdf').onclick=baixarCtrlPdf;$('ctrlDoc').onclick=baixarCtrlWord;$('ctrlTodas').onclick=()=>{ui.ctrlSel=new Set(ctrlLinhas().map(x=>String(x.o.id)));render()};$('ctrlNenhuma').onclick=()=>{ui.ctrlSel=new Set();render()};
   document.querySelectorAll('[data-sel]').forEach(i=>i.onchange=()=>{const id=i.dataset.sel;i.checked?ui.ctrlSel.add(id):ui.ctrlSel.delete(id);const n=ctrlSelec().length;$('ctrlImp').textContent=n?`🖨 Imprimir ${n} ${n===1?'selecionada':'selecionadas'}`:'🖨 Imprimir folha em branco'});
   document.querySelectorAll('[data-ctrl]').forEach(i=>i.onchange=async()=>{const [id,k]=i.dataset.ctrl.split('|'),o=ocs.find(x=>String(x.id)===id);if(!o)return;
-    const dados={...(o.dados||{}),ctrl:{...((o.dados&&o.dados.ctrl)||{}),[k]:i.value||''}};
-    const {error}=await sb.from('ocorrencias').update({dados}).eq('id',id);if(error){toast(erroMsg(error));i.value=String(((o.dados&&o.dados.ctrl)||{})[k]||'').slice(0,10);return}
-    o.dados=dados;toast('Data salva');if(k==='ret'&&!ui.ctrlTodos)setTimeout(render,400)})}
+    const error=await ctrlGrava(o,{[k]:i.value||''});if(error){toast(erroMsg(error));i.value=String(((o.dados&&o.dados.ctrl)||{})[k]||'').slice(0,10);return}
+    toast('Data salva');if(k==='ret'&&!ui.ctrlTodos)setTimeout(render,400)})}
 
 /* ---------- Log de atividade ---------- */
 let atv=null,atvErro='',galpaoNome='',multiOk=false;
