@@ -38,19 +38,19 @@
   --ease:cubic-bezier(.2,.7,.2,1);color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --g:#3F7FCC;--g-deep:#2F6AB3;--g-hi:#6FA2DE;--g-50:#16243A;--g-25:#121C2B;--g-ink:#9CC2EE;
-  --bg:#0F141B;--surface:#161C24;--subtle:#1B222C;--hover:#222A35;
-  --fg:#E6EBF2;--fg2:#B6C0CD;--muted:#8391A5;--faint:#5E6B7D;
-  --line:#253040;--line2:#2F3B4D;--line3:#3D4B60;
+  --g:#3B82F6;--g-deep:#2563EB;--g-hi:#60A5FA;--g-50:#14233B;--g-25:#101B2D;--g-ink:#93C5FD;
+  --bg:#0B0F14;--surface:#151D27;--subtle:#18212C;--hover:#1E2937;
+  --fg:#F1F5F9;--fg2:#CBD5E1;--muted:#94A3B8;--faint:#64748B;
+  --line:#263241;--line2:#334155;--line3:#3F4E63;
   --red-50:#2B1717;--red-ink:#EE8A8A;--amb-50:#2A2112;--amb-ink:#E6B65A;--blu-50:#142130;--blu-ink:#8DB7E6;--vio-50:#211B2E;--vio-ink:#BBA8E8;--neu-50:#1B222C;--neu-ink:#A7B2C1;
   --side:#161719;--side-2:#1E2023;--side-3:#27292D;--side-line:#26292D;
   --sh-1:none;--sh-pop:0 12px 32px -8px rgba(0,0,0,.6);color-scheme:dark;
 }}
 :root[data-theme="dark"]{
-  --g:#3F7FCC;--g-deep:#2F6AB3;--g-hi:#6FA2DE;--g-50:#16243A;--g-25:#121C2B;--g-ink:#9CC2EE;
-  --bg:#0F141B;--surface:#161C24;--subtle:#1B222C;--hover:#222A35;
-  --fg:#E6EBF2;--fg2:#B6C0CD;--muted:#8391A5;--faint:#5E6B7D;
-  --line:#253040;--line2:#2F3B4D;--line3:#3D4B60;
+  --g:#3B82F6;--g-deep:#2563EB;--g-hi:#60A5FA;--g-50:#14233B;--g-25:#101B2D;--g-ink:#93C5FD;
+  --bg:#0B0F14;--surface:#151D27;--subtle:#18212C;--hover:#1E2937;
+  --fg:#F1F5F9;--fg2:#CBD5E1;--muted:#94A3B8;--faint:#64748B;
+  --line:#263241;--line2:#334155;--line3:#3F4E63;
   --red-50:#2B1717;--red-ink:#EE8A8A;--amb-50:#2A2112;--amb-ink:#E6B65A;--blu-50:#142130;--blu-ink:#8DB7E6;--vio-50:#211B2E;--vio-ink:#BBA8E8;--neu-50:#1B222C;--neu-ink:#A7B2C1;
   --side:#161719;--side-2:#1E2023;--side-3:#27292D;--side-line:#26292D;
   --sh-1:none;--sh-pop:0 12px 32px -8px rgba(0,0,0,.6);color-scheme:dark;
@@ -1002,6 +1002,25 @@ th.r,td.r{width:88px;text-align:left;padding-left:16px;padding-right:12px}
   .mnav button{flex:0 0 auto;min-width:64px}
   .mnav .s-lbl{display:none}
 }
+
+/* ---- barra lateral escura (todos os temas) ---- */
+.side,.mnav{--side:#111821;--side-2:#18212C;--side-3:#1B2634;--side-line:#263241;--side-fg:#C5CFDB;--side-mu:#8493A6;--sb-ink:#F1F5F9;--sb-acc:#3B82F6}
+.side{border-right-color:#263241}
+.side .s-head b,.side .who b{color:#F1F5F9}
+.side .nav:hover,.side .sbtn:hover{color:#F1F5F9}
+.side .nav:hover{background:rgba(255,255,255,.05);box-shadow:none}
+.side .nav:hover svg.i{color:#93B4E8}
+.side .nav[aria-current="page"]{background:transparent;color:#F1F5F9;box-shadow:none}
+.side .nav[aria-current="page"] svg.i{color:#60A5FA}
+.side .nav .ct{color:#8493A6}
+.side .nav .ct.hot,#navs .nav .ct.hot{background:#3B82F6;color:#fff}
+.side .ava{background:#1E3A5F;color:#93C5FD}
+.side .s-lbl{color:#64748B}
+.side [data-tip]:hover::after{background:#0B0F14;box-shadow:0 0 0 1px #263241}
+.navw .nav-pill{background:rgba(59,130,246,.14);box-shadow:inset 0 0 0 1px rgba(59,130,246,.28),inset 2px 0 0 #3B82F6}
+#navs .nav::after{display:none}
+#navs .nav:not([aria-current="page"]):hover{box-shadow:none;transform:none}
+@media (max-width:760px){.mnav{border-top:1px solid #263241}.mnav button[aria-current="page"]{color:#F1F5F9!important;background:rgba(59,130,246,.16)!important}.mnav button[aria-current="page"] svg.i{color:#60A5FA!important}}
 </style>
 </head>
 <body>
@@ -1191,7 +1210,7 @@ const PAGS=[
   ['entregas','Entregas',I.truck,'Entregas','Histórico do que foi entregue, dia a dia.'],
   ['planilha','Planilha',I.excel,'Planilha de Avarias','Todas as avarias em planilha, atualizada automaticamente.'],
   ['i-Garantia','Garantia',I.gar,'Garantia','Peças quebradas ou com defeito para acionar a garantia do fornecedor.','Garantia'],
-  ['i-Minucioso','Minucioso',I.min,'Minucioso','Falta de produtos por setor, para o chefe assinar.','Minucioso'],
+  ['i-Minucioso','Minucioso',I.min,'Minucioso','Controle de falta de produtos por setor e acompanhamento dos relatórios operacionais.','Minucioso'],
   ['i-Baiano','Consertos Baiano',I.bai,'Consertos Baiano','Peças sem garantia enviadas para conserto.','Consertos Baiano'],
   ['i-Avaria','Avaria',I.alertT,'Avaria','Relatórios de avaria no formato oficial.','Avaria'],
   ['i-resumo','Resumo',I.res,'Resumo','Totais e custos por módulo e período.','@resumo'],

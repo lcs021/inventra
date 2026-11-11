@@ -1489,9 +1489,9 @@ table.ctrl th,table.ctrl td{border:1px solid #000!important}
   --alta:#c94a4a;--baixa:#3f8f6b;--sh1:0 1px 2px rgba(15,23,42,.05);--sh2:0 1px 2px rgba(15,23,42,.05);--r:6px;
   --font:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--head:"Archivo","Inter",system-ui,sans-serif;
   --sbg:#b6d1ef;--sline:#9dbde2;--sfg:#22344a;--smu:#41546c;--sink:#132235}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f141b;--surface:#161c24;--sunken:#1b222c;--line:#253040;--line2:#2f3b4d;--fg:#e6ebf2;--muted:#8391a5;--ink:#0b0f14;--ink-fg:#e6ebf2;
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0b0f14;--surface:#151d27;--sunken:#18212c;--line:#263241;--line2:#334155;--fg:#f1f5f9;--muted:#94a3b8;--ink:#0b0f14;--ink-fg:#e6ebf2;
   --accent:#3f7fcc;--accent-deep:#2f6ab3;--accent-ink:#fff;--accent-soft:#16243a;--gold:#3f7fcc;--gar:#e6b65a;--gar-soft:#2a2112;--gar-ink:#e6b65a;--min:#5fbf93;--min-soft:#14291f;--min-ink:#8fdcb8;--bai:#bba8e8;--bai-soft:#211b2e;--bai-ink:#bba8e8;--ava:#ee8a8a;--alta:#ee8a8a;--baixa:#5fbf93;--sh1:none;--sh2:none}}
-:root[data-theme="dark"]{--bg:#0f141b;--surface:#161c24;--sunken:#1b222c;--line:#253040;--line2:#2f3b4d;--fg:#e6ebf2;--muted:#8391a5;--ink:#0b0f14;--ink-fg:#e6ebf2;
+:root[data-theme="dark"]{--bg:#0b0f14;--surface:#151d27;--sunken:#18212c;--line:#263241;--line2:#334155;--fg:#f1f5f9;--muted:#94a3b8;--ink:#0b0f14;--ink-fg:#e6ebf2;
   --accent:#3f7fcc;--accent-deep:#2f6ab3;--accent-ink:#fff;--accent-soft:#16243a;--gold:#3f7fcc;--gar:#e6b65a;--gar-soft:#2a2112;--gar-ink:#e6b65a;--min:#5fbf93;--min-soft:#14291f;--min-ink:#8fdcb8;--bai:#bba8e8;--bai-soft:#211b2e;--bai-ink:#bba8e8;--ava:#ee8a8a;--alta:#ee8a8a;--baixa:#5fbf93;--sh1:none;--sh2:none}
 html{font-size:15px}
 body{background:var(--bg)!important;background-image:none!important;font-family:var(--font)!important;letter-spacing:-.003em!important;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
@@ -1697,6 +1697,97 @@ html.emb .permbox .pbulk.confl{width:auto;flex:0 1 auto;flex-wrap:nowrap}
 html.emb .permbox .pbulk.confl span{flex:none;white-space:nowrap}
 html.emb .confl .btn.danger{background:#C0392B!important;border-color:#C0392B!important;color:#fff!important}
 html.emb .confl .btn.primary{background:#2366B0!important;border-color:#2366B0!important;color:#fff!important}
+
+/* ===== Minucioso: painel operacional (modo embutido) ===== */
+html.emb .mkpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+html.emb .kcard{display:flex;align-items:center;gap:12px;height:64px;padding:0 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+html.emb .kcard .kic{width:34px;height:34px;border-radius:8px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--k) 14%,transparent);color:var(--k)}
+html.emb .kcard .kic svg{width:18px;height:18px}
+html.emb .kcard b{display:block;font-size:20px;font-weight:650;line-height:1.1;font-variant-numeric:tabular-nums;color:var(--fg)}
+html.emb .kcard span{display:block;font-size:12px;color:var(--muted);margin-top:2px}
+html.emb .msets{display:flex;flex-wrap:wrap;gap:6px}
+html.emb .msets .subtab{height:30px;padding:0 11px;border-radius:6px;border:1px solid var(--line);background:none;font-size:12.5px;font-weight:500;color:var(--muted);gap:7px;transition:border-color .15s,color .15s,background .15s}
+html.emb .msets .subtab:hover{border-color:var(--line2);color:var(--fg)}
+html.emb .msets .subtab[aria-pressed="true"]{background:rgba(59,130,246,.14);border-color:#3B82F6;color:var(--fg)}
+html.emb .msets .subtab .sc{font:600 11.5px/1 inherit;background:none;color:var(--muted);padding:0;font-variant-numeric:tabular-nums}
+html.emb .msets .subtab[aria-pressed="true"] .sc{background:none;color:#60A5FA}
+html.emb .mchef{margin:-4px 0 0;font-size:12.5px;color:var(--muted)}
+html.emb .mchef b{color:var(--fg);font-weight:600}
+html.emb .filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+html.emb .msearch{position:relative;flex:1 1 320px;display:block}
+html.emb .msearch svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted);pointer-events:none}
+html.emb .msearch input{width:100%;height:38px;padding:0 12px 0 36px!important;font-size:13.5px;border:1px solid var(--line)!important;border-radius:8px!important;background:var(--surface)!important;transition:border-color .15s,box-shadow .15s}
+html.emb .msearch input:focus{outline:0;border-color:#3B82F6!important;box-shadow:0 0 0 3px rgba(59,130,246,.2)}
+html.emb .fbtn{display:inline-flex!important;align-items:center;gap:7px;height:38px!important;padding:0 12px!important}
+html.emb .fbtn svg,html.emb .exprow .btn svg{width:15px;height:15px;flex:none}
+html.emb .fbtn .fn{min-width:18px;height:18px;border-radius:9px;background:#3B82F6;color:#fff;font-size:11px;font-weight:600;display:inline-grid;place-items:center;padding:0 5px}
+html.emb .btn.ghost{background:none;border-color:transparent;color:var(--muted);height:38px}
+html.emb .btn.ghost:hover{color:var(--fg)}
+html.emb .maisf{padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px;margin:0;animation:mIn .16s ease-out}
+html.emb .maisf[hidden]{display:none}
+@keyframes mIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+html.emb .exprow{margin-top:2px}
+html.emb .exprow>.muted{font-size:12.5px;font-weight:500}
+html.emb .exprow .btn{display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 12px;font-size:12.5px;font-weight:500;border-radius:7px;transition:background .15s,border-color .15s,opacity .15s}
+html.emb .exprow .btn.primary{background:#2F6FE0;border-color:#2F6FE0;color:#fff}
+html.emb .exprow .btn.primary:hover:not(:disabled){background:#2563EB}
+html.emb .btn.busy{pointer-events:none;opacity:.75}
+html.emb .btn.busy svg{animation:mSpin .8s linear infinite}
+@keyframes mSpin{to{transform:rotate(360deg)}}
+/* lista em linhas de 3 áreas */
+html.emb .mlist{display:block!important;background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+html.emb .mhead,html.emb .mrow{display:grid!important;grid-template-columns:minmax(230px,2.4fr) minmax(120px,1.15fr) minmax(110px,1fr) 76px 108px 76px 128px;column-gap:16px;align-items:center;padding:0 16px}
+html.emb .mhead{height:34px;background:var(--sunken);border-bottom:1px solid var(--line);font-size:11.5px;font-weight:600;color:var(--muted)}
+html.emb .mhead .r,html.emb .m-num{text-align:right;justify-self:end}
+html.emb .mrow{position:relative;width:100%;margin:0!important;padding-top:10px!important;padding-bottom:10px!important;text-align:left;border:0!important;border-bottom:1px solid var(--line)!important;border-radius:0!important;background:none!important;box-shadow:none!important;cursor:pointer;color:var(--fg);transition:background .12s}
+html.emb .mrow:last-child{border-bottom:0!important}
+html.emb .mrow::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:#22C55E}
+html.emb .mrow:hover{background:color-mix(in srgb,var(--fg) 4%,transparent)!important}
+html.emb .mrow:focus-visible{outline:2px solid #3B82F6;outline-offset:-2px}
+html.emb .m-id{display:flex;align-items:center;gap:12px;min-width:0}
+html.emb .mrow .thumb{width:42px!important;height:42px!important;min-width:42px;border-radius:7px;background:var(--sunken);display:grid;place-items:center;color:var(--muted);font-size:12px;overflow:hidden;position:relative}
+html.emb .mrow .thumb svg{width:20px;height:20px}
+html.emb .mrow .thumb img{width:100%;height:100%;object-fit:cover}
+html.emb .m-nm{min-width:0}
+html.emb .m-nm b{display:block;font-size:13.5px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.emb .m-nm small,html.emb .m-set small,html.emb .m-dt small{display:block;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.emb .m-c{min-width:0;font-size:13px;font-variant-numeric:tabular-nums}
+html.emb .m-set b{font-weight:600;display:block}
+html.emb .m-resp{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.emb .m-num .neg,html.emb .m-num b{color:#EF4444;font-weight:650}
+html.emb .m-num[data-l="Valor"]{font-weight:500}
+html.emb .m-dt span{display:block}
+html.emb .m-st{display:flex;align-items:center;justify-content:space-between;gap:8px}
+html.emb .mst{display:inline-flex;align-items:center;gap:5px;height:24px;padding:0 9px;border-radius:6px;font-size:12px;font-weight:500;white-space:nowrap}
+html.emb .mst svg{width:13px;height:13px}
+html.emb .mst.ok{background:rgba(34,197,94,.14);color:#22A559}
+:root[data-theme="dark"] html.emb .mst.ok,html.emb[data-theme="dark"] .mst.ok{color:#4ADE80}
+html.emb .m-go{display:grid;place-items:center;color:var(--faint,var(--muted));transition:transform .15s,color .15s}
+html.emb .m-go svg{width:16px;height:16px}
+html.emb .mrow:hover .m-go{transform:translateX(2px);color:var(--fg)}
+html.emb .mrow .m-c::before{display:none}
+html.emb .empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:44px 16px;color:var(--muted);text-align:center;background:var(--surface);border:1px dashed var(--line2);border-radius:8px}
+html.emb .empty .eico{width:40px;height:40px;border-radius:10px;background:var(--sunken);display:grid;place-items:center}
+html.emb .empty .eico svg{width:20px;height:20px}
+html.emb .empty b{color:var(--fg);font-size:14px;font-weight:600}
+html.emb .empty span{font-size:12.5px}
+@media (max-width:1180px){
+ html.emb .mhead,html.emb .mrow{grid-template-columns:minmax(200px,2fr) minmax(100px,1fr) minmax(90px,1fr) 64px 92px 64px 118px;column-gap:12px;padding:0 12px}
+}
+@media (max-width:900px){
+ html.emb .mkpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+ html.emb .mhead{display:none!important}
+ html.emb .mrow{grid-template-columns:1fr 1fr!important;row-gap:8px;padding:12px 14px 12px 16px!important}
+ html.emb .m-id{grid-column:1/-1}
+ html.emb .m-num,html.emb .mhead .r{text-align:left;justify-self:start}
+ html.emb .mrow .m-c::before{display:block;content:attr(data-l);font-size:11px;color:var(--muted);margin-bottom:1px}
+ html.emb .m-st{grid-column:1/-1}
+ html.emb .msearch{flex-basis:100%}
+}
+@media (prefers-reduced-motion:reduce){html.emb .maisf,html.emb .btn.busy svg{animation:none}}
+html.emb .msearch input#busca{padding:0 12px 0 38px!important;height:38px!important;width:100%!important}
+html.emb .filters>.fbtn,html.emb .filters>.btn{flex:none!important;width:auto!important}
+html.emb .filters>.msearch{flex:1 1 320px!important;width:auto!important}
 </style>
 </head>
 <body>
@@ -3049,14 +3140,27 @@ function filtrar(){const q=ui.busca.trim().toLowerCase();
     const d=dia(o.criado);if(ui.de&&d<ui.de)return false;if(ui.ate&&d>ui.ate)return false;
     if(q&&![o.sku,o.produto,o.fab,o.setor,o.chefe,o.origem,o.fornecedor,o.id_quebra,o.endereco,o.requisitante,nome(o.autor),o.obs].join(' ').toLowerCase().includes(q))return false;return true})
   .sort((a,b)=>ts(b.criado)-ts(a.criado))}
-function cardHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
+const MI={search:'<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',filt:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',print:'<path d="M6.5 9V3.5h11V9"/><path d="M6.5 17.5h-2A1.5 1.5 0 0 1 3 16v-5.5A1.5 1.5 0 0 1 4.5 9h15a1.5 1.5 0 0 1 1.5 1.5V16a1.5 1.5 0 0 1-1.5 1.5h-2"/><rect x="6.5" y="14" width="11" height="6.5" rx="1"/>',xl:'<path d="M14.5 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7.5z"/><path d="M14.5 3v4.5H19M9 12.5l4 4.5M13 12.5 9 17"/>',pdf:'<path d="M14.5 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7.5z"/><path d="M14.5 3v4.5H19M8.5 13h7M8.5 17h5"/>',doc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h3"/>',pecas:'<path d="m21 8-9-5-9 5 9 5z"/><path d="M3 8v8l9 5 9-5V8M12 13v8"/>',cifra:'<circle cx="12" cy="12" r="9"/><path d="M14.5 9.2c-.5-.8-1.4-1.2-2.5-1.2-1.5 0-2.5.8-2.5 1.9 0 2.6 5 1.2 5 3.9 0 1.1-1 1.9-2.5 1.9-1.1 0-2-.4-2.6-1.3M12 6.5V8m0 8v1.5"/>',ok:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',chev:'<path d="m9 6 6 6-6 6"/>',inbox:'<path d="M3 13h5l1.5 3h5L16 13h5"/><path d="M5.5 5h13L21 13v5a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18v-5z"/>'};
+function minRowHTML(o){const f=(o.fotos||[])[0],nv=(o.videos||[]).length,tt=totalMin(o),dt=new Date(o.criado);
+  const dd=dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),hh=dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  const sub=[o.sku,o.fab].filter(Boolean).map(esc).join(' · ');
+  return`<button class="card mrow" data-id="${esc(o.id)}">
+  <div class="m-id"><div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶':svgI(MI.pecas)}${f&&nv?'<span class="vb">▶</span>':''}</div><div class="m-nm"><b>${esc(o.produto||o.sku||'Relatório minucioso')}</b><small>${sub||'Sem código'}</small></div></div>
+  <div class="m-c m-set" data-l="Setor"><b>${esc(o.setor||'Sem setor')}</b>${o.chefe?`<small>Chefe: ${esc(o.chefe)}</small>`:''}</div>
+  <div class="m-c m-resp" data-l="Responsável">${esc(nome(o.autor))}</div>
+  <div class="m-c m-num" data-l="Em falta">${o.falta!=null?`<b class="neg">${esc(o.falta)}</b>`:difDe(o)!=null?difHTML(difDe(o)):'—'}</div>
+  <div class="m-c m-num" data-l="Valor">${tt!=null?brl(tt):'—'}</div>
+  <div class="m-c m-dt" data-l="Registro"><span>${dd}</span><small>${hh}</small></div>
+  <div class="m-st"><span class="mst ok">${svgI(MI.ok)}Concluído</span><i class="m-go">${svgI(MI.chev)}</i></div></button>`}
+const mHeadHTML=()=>`<div class="mhead" aria-hidden="true"><span>Produto</span><span>Setor</span><span>Responsável</span><span class="r">Em falta</span><span class="r">Valor</span><span>Registro</span><span>Status</span></div>`;
+function cardHTML(o){if(o.categoria==='Minucioso')return minRowHTML(o);const f=(o.fotos||[])[0],nv=(o.videos||[]).length;return`<button class="card" data-id="${esc(o.id)}">
   <div class="thumb">${f?`<img data-path="${esc(f)}" alt="">`:nv?'▶ vídeo':'sem foto'}${f&&nv?'<span class="vb">▶</span>':''}</div>
   <div class="b"><div class="row"><span class="t">${esc(o.categoria==='Minucioso'?(o.produto||o.sku||'Relatório minucioso'):o.categoria==='Avaria'?(avTipo(o)[1].replace(' (MLV)','')+((o.dados&&o.dados.ref)?' · Ref. '+o.dados.ref:'')+' · '+(o.produto||o.sku||'')):o.tipo)}</span>${catBadge(o.categoria)}</div>${ehRel(o)?`<div class="line">${relBadge(o)}</div>`:''}${o.categoria==='Avaria'?`<div class="line">${avImpBadge(o)}</div>`:''}${o.categoria==='Garantia'?`<div class="line">${gstBadge(o)}${o.origem?' · Origem: '+esc(o.origem):''}${o.fornecedor?' · '+esc(o.fornecedor):''}${o.id_quebra?' · ID '+esc(o.id_quebra):''}</div>`:''}${o.categoria==='Minucioso'?`<div class="line"><span class="gst e">✓ Concluído</span></div><div class="line"><b style="color:var(--min)">${esc(o.setor||'Sem setor')}</b>${o.chefe?' · Chefe: '+esc(o.chefe):''}${o.falta!=null?' · Falta: <b style="color:var(--alta)">'+esc(o.falta)+'</b>':difDe(o)!=null?' · Dif: '+difHTML(difDe(o)):''}${totalMin(o)!=null?' · '+brl(totalMin(o)):''}</div>`:''}
   ${o.endereco||o.sku?`<div class="line">${o.endereco?`<span class="addr">${esc(o.endereco)}</span> `:''}${esc(o.sku||'')}</div>`:''}
   <div class="line">${esc(o.produto||'Sem descrição')}${o.fab?' · '+esc(o.fab):''}${o.qtd?' · '+esc(o.qtd)+' un':''}</div>
   <div class="line"><b style="color:var(--fg);font-weight:600">${esc(nome(o.autor))}</b> · ${fData(o.criado)}</div></div></button>`}
 function listaHTML(){if(ui.cat==='Consertos Baiano')return baiListaHTML();const l=filtrar(),pessoas=Object.values(perfis).filter(p=>p.nome).sort((a,b)=>a.nome.localeCompare(b.nome,'pt-BR'));
-  const ativos=[ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length;
+  const ativos=[ui.pessoa,ui.de,ui.ate,ui.tipo,ui.busca].filter(Boolean).length,nAv=[ui.pessoa,ui.de||ui.ate,ui.tipo].filter(Boolean).length,abre=!!(ui.fOpen||[ui.pessoa,ui.de,ui.ate,ui.fano].some(Boolean));
   const rapido=(k,t,de,ate)=>`<button type="button" class="chip" data-per="${k}" aria-pressed="${ui.de===de&&ui.ate===ate}">${t}</button>`;
   return`<div class="stack">
   <div class="listhead"><h2>${ui.cat==='Garantia'?'Garantias':ui.cat==='Minucioso'?'Minucioso'+(ui.setor?' · '+esc(ui.setor):''):'Relatórios'}</h2>${catBadge(ui.cat)}</div>
@@ -3064,25 +3168,30 @@ function listaHTML(){if(ui.cat==='Consertos Baiano')return baiListaHTML();const 
     return`<div class="chips">${[['','Todos',rs.length],['atr','⚠ Atrasados',na],['pra','No prazo',np],['res','✓ Resolvidos',nr]].map(([k,tx,q])=>`<button type="button" class="chip${k==='atr'&&q?' chatr':''}" data-relst="${k}" aria-pressed="${(ui.relSt||'')===k}">${tx} (${q})</button>`).join('')}</div>`})():''}
   ${ui.cat==='Garantia'?`<div class="chips">${['',...GST].map(s=>`<button type="button" class="chip" data-gst="${s}" aria-pressed="${ui.gst===s}">${s||'Todas'}${s?' ('+ocs.filter(o=>o.categoria==='Garantia'&&(o.gar_status||'Pendente')===s).length+')':''}</button>`).join('')}</div>`:''}
   ${ui.cat==='Minucioso'?setoresGridHTML():''}
-  <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">
-  <select id="ftipo" aria-label="Tipo" ${ui.cat==='Minucioso'?'hidden':''}><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${esc(t)}</option>`).join('')}</select></div>
-  ${EMB?`<details class="maisf" ${[ui.pessoa,ui.de,ui.ate].some(Boolean)?'open':''}><summary>Mais filtros</summary>`:''}
+  <div class="filters">${EMB?`<label class="msearch">${svgI(MI.search)}<input id="busca" type="search" placeholder="Buscar código, peça, fabricante ou fornecedor..." value="${esc(ui.busca)}" autocomplete="off"></label>`:`<input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">`}
+  <select id="ftipo" aria-label="Tipo" ${ui.cat==='Minucioso'?'hidden':''}><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${esc(t)}</option>`).join('')}</select>${EMB?`<button type="button" class="btn sm fbtn" data-ftog aria-expanded="${abre}">${svgI(MI.filt)}Filtros${nAv?`<span class="fn">${nAv}</span>`:''}</button>${ativos?'<button type="button" class="btn sm ghost" id="limparF">Limpar filtros</button>':''}`:''}</div>
+  ${EMB?`<div class="maisf" ${abre?'':'hidden'}>`:''}
   <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
   <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
-  <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
-  ${EMB?'</details>':''}
-  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):ui.cat==='Minucioso'?(l.length===1?'relatório minucioso':'relatórios minuciosos')+(ui.setor?' em '+esc(ui.setor):''):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>${ui.cat==='Minucioso'?`<button type="button" class="btn sm" id="imprLista" ${l.length?'':'disabled'}>🖨 Imprimir todos (${l.length})</button>`:''}${ui.cat==='Avaria'?'<button type="button" class="btn sm" id="ctrlAv">📋 Controle de assinaturas</button>':''}<button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button><button type="button" class="btn sm" id="exportarPdf" ${l.length?'':'disabled'}>📄 Exportar PDF</button></div>
-  <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
+  <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos&&!EMB?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
+  ${EMB?'</div>':''}
+  <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):ui.cat==='Minucioso'?(l.length===1?'relatório minucioso':'relatórios minuciosos')+(ui.setor?' em '+esc(ui.setor):''):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>${ui.cat==='Minucioso'?`<button type="button" class="btn sm" id="imprLista" ${l.length?'':'disabled'}>${svgI(MI.print)}Imprimir todos (${l.length})</button>`:''}${ui.cat==='Avaria'?'<button type="button" class="btn sm" id="ctrlAv">📋 Controle de assinaturas</button>':''}<button type="button" class="btn sm primary" id="exportar" ${l.length?'':'disabled'}>${svgI(MI.xl)}Exportar Excel</button><button type="button" class="btn sm" id="exportarPdf" ${l.length?'':'disabled'}>${svgI(MI.pdf)}Exportar PDF</button></div>
+  <div class="list${ui.cat==='Minucioso'?' mlist':''}">${ui.cat==='Minucioso'&&l.length?mHeadHTML():''}${l.length?l.map(cardHTML).join(''):`<div class="empty">${EMB?`<i class="eico">${svgI(MI.inbox)}</i><b>${ocs.length?'Nenhum relatório com esses filtros':'Nenhum relatório registrado'}</b><span>${ocs.length?'Ajuste a busca ou limpe os filtros para ver mais resultados.':'Use a aba Registrar para criar o primeiro.'}</span>`:(ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.')}</div>`}</div></div>`}
 function setoresGridHTML(){
   const base=ocs.filter(o=>o.categoria==='Minucioso'&&(!ui.de||dia(o.criado)>=ui.de)&&(!ui.ate||dia(o.criado)<=ui.ate)&&(!ui.pessoa||o.autor===ui.pessoa));
   const n=s=>base.filter(o=>!s||o.setor===s).length;
   const tab=(s,txt)=>`<button type="button" class="subtab" data-fset="${esc(s)}" aria-pressed="${ui.setor===s}">${esc(txt)}<span class="sc">${n(s)}</span></button>`;
   const l=base.filter(o=>!ui.setor||o.setor===ui.setor),pf=l.reduce((a,o)=>a+(Number(o.falta)||0),0),vt=l.reduce((a,o)=>a+(totalMin(o)||0),0),semMot=l.filter(o=>!o.motivo_chefe).length;
+  const K=(ic,cor,v,t)=>`<div class="kcard" style="--k:${cor}"><i class="kic">${svgI(ic)}</i><div><b>${v}</b><span>${t}</span></div></div>`;
+  const ch=ui.setor?chefeDe(ui.setor):'';
+  if(EMB)return`<div class="mkpis">${K(MI.doc,'#3B82F6',l.length,'relatório'+(l.length===1?'':'s'))}${K(MI.pecas,'#EF4444',pf,'peças em falta')}${K(MI.cifra,'#F59E0B',brl(vt),'valor em falta')}${K(MI.ok,'#22C55E',l.length,'concluído'+(l.length===1?'':'s'))}</div>
+  <div class="msets" role="tablist" aria-label="Setor">${tab('','Todos os setores')}${SETORES.map(s=>tab(s,s)).join('')}</div>${ui.setor?`<p class="mchef">${ch?'Chefe do setor: <b>'+esc(ch)+'</b>':'Sem chefe definido para este setor. Defina na tela Equipe.'}</p>`:''}`;
   return`<div class="box sethead"><div class="row"><div><b>${ui.setor?esc(ui.setor):'Todos os setores'}</b><div class="muted small">${ui.setor?(chefeDe(ui.setor)?'Chefe: <b style="color:var(--fg)">'+esc(chefeDe(ui.setor))+'</b>':'Sem chefe definido · defina na aba Equipe'):'Escolha um setor no menu para ver só os relatórios dele'}</div></div><span class="cat min">Minucioso</span></div>
   <div class="setnums"><div><b>${l.length}</b><span>relatório${l.length===1?'':'s'}</span></div><div><b class="dif neg">${pf}</b><span>peças em falta</span></div><div><b style="font-size:1rem">${brl(vt)}</b><span>valor em falta</span></div><div><b style="color:var(--baixa)">✓ ${l.length}</b><span>concluído${l.length===1?'':'s'}</span></div></div></div>`}
 function bindCards(){document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{ui.det=c.dataset.id;render();scrollTo(0,0)}))}
 function bindLista(){bindBaiGraf();{const cb=$('ctrlAv');if(cb)cb.onclick=()=>{ui.ctrlav=true;ui.ctrlSel=null;window.scrollTo(0,0);render()}}const plb=$('baiPdfL');if(plb)plb.onclick=()=>{const l=filtrar();if(l.length)baiPdf(l.reverse())};const pb=$('imprBai');if(pb)pb.onclick=()=>{const l=filtrar();if(l.length)imprimirBai(l.reverse())};document.querySelectorAll('tr[data-id]').forEach(r=>r.onclick=()=>{ui.det=r.dataset.id;render();scrollTo(0,0)});
+  {const ft=document.querySelector('[data-ftog]');if(ft)ft.onclick=()=>{ui.fOpen=ft.getAttribute('aria-expanded')!=='true';render()}}
   const b=$('busca');b.addEventListener('input',e=>{ui.busca=e.target.value;const p=b.selectionStart;render();const n=$('busca');n.focus();n.setSelectionRange(p,p)});
   $('ftipo').addEventListener('change',e=>{ui.tipo=e.target.value;render()});
   $('fpessoa').addEventListener('change',e=>{ui.pessoa=e.target.value;render()});
@@ -3097,7 +3206,7 @@ function bindLista(){bindBaiGraf();{const cb=$('ctrlAv');if(cb)cb.onclick=()=>{u
   document.querySelectorAll('[data-fset]').forEach(b=>b.addEventListener('click',()=>{ui.setor=b.dataset.fset;render();const a=document.querySelector('.subtab[aria-pressed="true"]');if(a)a.scrollIntoView({inline:'center',block:'nearest'})}));
   document.querySelectorAll('[data-gst]').forEach(b=>b.addEventListener('click',()=>{ui.gst=b.dataset.gst;render()}));
   document.querySelectorAll('[data-relst]').forEach(b=>b.addEventListener('click',()=>{ui.relSt=b.dataset.relst;render()}));
-  $('exportar').onclick=()=>exportarExcel(filtrar());{const ep=$('exportarPdf');if(ep)ep.onclick=()=>exportarPDF(filtrar())}
+  $('exportar').onclick=async()=>{const bt=$('exportar');bt.classList.add('busy');bt.disabled=true;try{await exportarExcel(filtrar())}finally{if(bt.isConnected){bt.classList.remove('busy');bt.disabled=false}}};{const ep=$('exportarPdf');if(ep)ep.onclick=()=>exportarPDF(filtrar())}
   const pl=$('imprLista');if(pl)pl.onclick=()=>{const l=filtrar();if(!l.length)return;imprimirMin(l)};
   bindCards()}
 
@@ -3611,7 +3720,7 @@ function baiListaHTML(){const l=filtrar(),pessoas=Object.values(perfis).filter(p
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
   <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
   <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
-  <div class="exprow"><div class="muted small">${l.length} conserto${l.length===1?'':'s'} na lista</div><button type="button" class="btn sm" id="imprBai" ${l.length?'':'disabled'}>🖨 Imprimir lista (${l.length})</button><button type="button" class="btn sm" id="baiPdfL">📄 Baixar PDF</button><button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button><button type="button" class="btn sm" id="exportarPdf" ${l.length?'':'disabled'}>📄 Exportar PDF</button></div>
+  <div class="exprow"><div class="muted small">${l.length} conserto${l.length===1?'':'s'} na lista</div><button type="button" class="btn sm" id="imprBai" ${l.length?'':'disabled'}>🖨 Imprimir lista (${l.length})</button><button type="button" class="btn sm" id="baiPdfL">📄 Baixar PDF</button><button type="button" class="btn sm primary" id="exportar" ${l.length?'':'disabled'}>${svgI(MI.xl)}Exportar Excel</button><button type="button" class="btn sm" id="exportarPdf" ${l.length?'':'disabled'}>${svgI(MI.pdf)}Exportar PDF</button></div>
   ${l.length?`<div class="tabwrap"><table class="btab"><thead><tr><th>Código</th><th>Descrição</th><th class="num">Qtde</th><th class="num">Custo</th><th>Requisitante</th><th class="num">Valor</th><th class="num">Total</th><th>Data</th></tr></thead>
   <tbody>${l.map(o=>`<tr class="lk" data-id="${esc(o.id)}"><td class="mono">${esc(o.sku||'')}</td><td class="ds">${esc(o.produto||'')}</td><td class="num">${esc(o.qtd??1)}</td><td class="num">${brl(o.custo)}</td><td>${esc(o.requisitante||'')}</td><td class="num">${brl(o.valor_conserto)}</td><td class="num"><b>${brl(totalBai(o))}</b></td><td class="nw">${dataBai(o)}</td></tr>`).join('')}</tbody>
   <tfoot><tr><td colspan="6">Total</td><td class="num" style="color:var(--bai)">${brl(tot)}</td><td></td></tr></tfoot></table></div>`:`<div class="empty">${ocs.some(o=>o.categoria==='Consertos Baiano')?'Nenhum conserto com esses filtros.':'Nenhum conserto registrado ainda.<br>Clique em <b>Novo registro</b> no menu para lançar o primeiro.'}</div>`}</div>`}
