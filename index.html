@@ -1610,6 +1610,57 @@ html.emb .maisf>*:not(summary){margin-top:8px}
 html.emb .exprow{display:flex!important;flex-wrap:wrap;align-items:center;gap:8px}
 html.emb .exprow>.muted{margin-right:auto}
 html.emb .stack{gap:12px}
+
+/* embutido: Equipe simples */
+html.emb .eqtela .kpis{display:flex!important;flex-wrap:wrap;gap:4px!important;border-bottom:1px solid var(--line);margin:0 0 4px!important;padding:0!important}
+html.emb .eqtela .kpi{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex!important;flex-direction:row-reverse;align-items:center;gap:7px;padding:9px 12px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+html.emb .eqtela .kpi b{font-size:12px!important;font-weight:600;color:var(--faint,var(--muted));font-family:inherit!important;line-height:1}
+html.emb .eqtela .kpi span{font-size:13px!important;font-weight:500;color:inherit}
+html.emb .eqtela .kpi[aria-pressed="true"]{color:var(--fg);border-bottom-color:var(--accent,#2366B0)}
+html.emb .eqtela .kpi[aria-pressed="true"] b{color:var(--accent,#2366B0)}
+html.emb .eqtela .kpi::before,html.emb .eqtela .kpi::after{display:none!important}
+html.emb .eqsearch{max-width:420px}
+html.emb .eqsearch input{height:34px!important;font-size:13.5px!important}
+html.emb .eqtela .pgrid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))!important;gap:10px!important}
+html.emb .eqtela .pcard{padding:12px 14px!important;gap:10px!important;box-shadow:none!important}
+html.emb .eqtela .pav{width:32px!important;height:32px!important;font-size:12px!important}
+html.emb .eqtela .pc-id b{font-size:14px!important}
+html.emb .eqtela .pc-id small{font-size:12px!important}
+html.emb .eqtela .pc-stats{display:flex!important;gap:16px!important}
+html.emb .eqtela .pc-stats>div{background:none!important;border:0!important;padding:0!important;display:flex;gap:5px;align-items:baseline}
+html.emb .eqtela .pc-stats b{font-size:13px!important}
+html.emb .eqtela .pc-stats span{font-size:12px!important}
+html.emb .eqtela .pc-act{display:flex!important;flex-wrap:wrap!important;align-items:center;gap:6px!important;border-top:1px solid var(--line);padding-top:10px!important;margin-top:2px}
+html.emb .eqtela .pc-sel{flex-direction:row!important;align-items:center;gap:6px;margin:0!important}
+html.emb .eqtela .pc-sel span{font-size:12px!important}
+html.emb .eqtela .pc-sel select,html.emb .eqtela select{height:30px!important;min-height:0!important;padding:0 24px 0 8px!important;font-size:12.5px!important;width:auto!important}
+html.emb .eqtela .btn,html.emb .eqtela .btn.sm,html.emb .permbox .btn{width:auto!important;height:30px!important;min-height:0!important;padding:0 11px!important;font-size:12.5px!important;font-weight:500!important;border-radius:6px!important;flex:none}
+html.emb .eqtela .ctl2{display:flex;gap:6px}
+html.emb .permbox{padding:0!important;border-radius:8px!important}
+html.emb .permbox .phead{padding:14px 16px!important;gap:14px!important}
+html.emb .permbox .pring{width:44px!important;height:44px!important}
+html.emb .permbox .pring span{font-size:15px!important}
+html.emb .permbox .ptx h3{font-size:15px!important;margin:0!important}
+html.emb .permbox .ptx p{font-size:12.5px!important;margin:2px 0 0!important}
+html.emb .permbox .pkick{display:none}
+html.emb .permbox .pbulk{display:flex;gap:6px}
+html.emb .permbox .plist{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px!important;padding:0 16px 12px!important}
+html.emb .permbox .prow{padding:8px 12px!important;min-height:0!important;gap:10px!important;box-shadow:none!important}
+html.emb .permbox .pic{width:28px!important;height:28px!important}
+html.emb .permbox .pt b{font-size:13px!important}
+html.emb .permbox .pt small{font-size:11.5px!important}
+html.emb .permbox .pst{font-size:11.5px!important}
+html.emb .permbox .pgh{padding:6px 16px!important}
+html.emb .eqtela .chefdel-b{font-size:12px!important;padding:4px 8px!important}
+
+html.emb .eqtela .kpi{background:none!important;border:0!important;border-bottom:2px solid transparent!important;box-shadow:none!important;border-radius:0!important;height:auto!important;min-height:0!important;width:auto!important}
+html.emb .eqtela .kpi[aria-pressed="true"]{border-bottom-color:#2366B0!important;background:none!important}
+html.emb .eqtela .pc-stats>div{flex-direction:row!important;align-items:baseline!important;text-align:left!important;margin:0!important}
+html.emb .eqtela .pc-stats{margin:0!important}
+html.emb .eqtela .pc-act{justify-content:flex-start!important}
+html.emb .eqtela .pc-act>*{margin:0!important}
+html.emb .eqtela .pc-top{align-items:center}
+html.emb .eqtela .pc-top .cpill{align-self:flex-start}
 </style>
 </head>
 <body>
