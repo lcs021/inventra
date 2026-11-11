@@ -1594,6 +1594,22 @@ html.emb body,html.emb body.withside{background:var(--bg)!important;background-i
 html.emb body.withside main#view,html.emb body.withside #alertas{margin-left:0!important}
 html.emb .wrap,html.emb body.withside .wrap{max-width:none!important;margin:0!important;padding:16px 24px 32px!important}
 @media (max-width:760px){html.emb .wrap,html.emb body.withside .wrap{padding:12px 12px 24px!important}}
+
+/* embutido: layout simples */
+html.emb .listhead,html.emb .card .cat,html.emb .sethead .cat,html.emb .sethead .muted.small{display:none!important}
+html.emb .sethead{border:0!important;background:none!important;padding:0!important;box-shadow:none!important}
+html.emb .setnums{gap:28px!important;display:flex!important}
+html.emb .setnums>div{border:0!important;background:none!important;padding:0!important;min-width:0}
+html.emb .setnums b{font-size:1.15rem!important}
+html.emb .maisf{margin:0}
+html.emb .maisf>summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);padding:6px 0;list-style:none;display:inline-flex;align-items:center;gap:6px}
+html.emb .maisf>summary::-webkit-details-marker{display:none}
+html.emb .maisf>summary::before{content:"▸";font-size:11px;transition:transform .15s}
+html.emb .maisf[open]>summary::before{transform:rotate(90deg)}
+html.emb .maisf>*:not(summary){margin-top:8px}
+html.emb .exprow{display:flex!important;flex-wrap:wrap;align-items:center;gap:8px}
+html.emb .exprow>.muted{margin-right:auto}
+html.emb .stack{gap:12px}
 </style>
 </head>
 <body>
@@ -2963,10 +2979,12 @@ function listaHTML(){if(ui.cat==='Consertos Baiano')return baiListaHTML();const 
   ${ui.cat==='Minucioso'?setoresGridHTML():''}
   <div class="filters"><input id="busca" type="search" placeholder="Buscar código, peça, fabricante, fornecedor" value="${esc(ui.busca)}">
   <select id="ftipo" aria-label="Tipo" ${ui.cat==='Minucioso'?'hidden':''}><option value="">Todos os tipos</option>${[...new Set([...(TIPOS_CAT[ui.cat]||TIPOS),...ocs.filter(o=>(o.categoria||'Relatório')===ui.cat).map(o=>o.tipo)])].map(t=>`<option ${t===ui.tipo?'selected':''}>${esc(t)}</option>`).join('')}</select></div>
+  ${EMB?`<details class="maisf" ${[ui.pessoa,ui.de,ui.ate].some(Boolean)?'open':''}><summary>Mais filtros</summary>`:''}
   <div class="filters"><select id="fpessoa" aria-label="Pessoa"><option value="">Todas as pessoas</option>${pessoas.map(p=>`<option value="${esc(p.id)}" ${p.id===ui.pessoa?'selected':''}>${esc(p.nome)}</option>`).join('')}</select>
   <div class="datas"><label class="dt"><span>De</span><input id="fde" type="date" value="${esc(ui.de)}"></label><label class="dt"><span>Até</span><input id="fate" type="date" value="${esc(ui.ate)}"></label></div></div>
   <div class="datas"><label class="dt"><span>Ano</span><select id="fano"><option value="">Todos os anos</option>${ANOS.map(a=>`<option ${String(a)===ui.fano?'selected':''}>${a}</option>`).join('')}</select></label><label class="dt"><span>Mês</span><select id="fmesl" ${ui.fano?'':'disabled'}><option value="">Ano inteiro</option>${MESES_L.map((m,i)=>`<option value="${String(i+1).padStart(2,'0')}" ${String(i+1).padStart(2,'0')===ui.fmes?'selected':''}>${m[0].toUpperCase()+m.slice(1)}</option>`).join('')}</select></label></div>
   <div class="chips">${rapido('hoje','Hoje',hoje(),hoje())}${rapido('7','Últimos 7 dias',diasAtras(6),hoje())}${rapido('30','Últimos 30 dias',diasAtras(29),hoje())}${ativos?'<button type="button" class="chip limpar" id="limparF">Limpar filtros</button>':''}</div>
+  ${EMB?'</details>':''}
   <div class="exprow"><div class="muted small">${l.length} ${ui.cat==='Garantia'?(l.length===1?'garantia':'garantias'):ui.cat==='Relatório'?(l.length===1?'relatório':'relatórios'):ui.cat==='Minucioso'?(l.length===1?'relatório minucioso':'relatórios minuciosos')+(ui.setor?' em '+esc(ui.setor):''):(l.length===1?'registro':'registros')}${ui.pessoa?' de '+esc(nome(ui.pessoa)):''}${ui.de||ui.ate?(ui.de===ui.ate?' em '+ui.de.split('-').reverse().join('/'):' de '+(ui.de?ui.de.split('-').reverse().join('/'):'início')+' até '+(ui.ate?ui.ate.split('-').reverse().join('/'):'hoje')):''}</div>${ui.cat==='Minucioso'?`<button type="button" class="btn sm" id="imprLista" ${l.length?'':'disabled'}>🖨 Imprimir todos (${l.length})</button>`:''}${ui.cat==='Avaria'?'<button type="button" class="btn sm" id="ctrlAv">📋 Controle de assinaturas</button>':''}<button type="button" class="btn sm" id="exportar" ${l.length?'':'disabled'}>⬇ Exportar Excel</button><button type="button" class="btn sm" id="exportarPdf" ${l.length?'':'disabled'}>📄 Exportar PDF</button></div>
   <div class="list">${l.length?l.map(cardHTML).join(''):`<div class="empty">${ocs.length?'Nenhuma ocorrência com esses filtros.':'Nenhuma ocorrência registrada ainda.<br>Toque em <b>+ Registrar</b> para criar a primeira.'}</div>`}</div></div>`}
 function setoresGridHTML(){
