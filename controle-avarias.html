@@ -1195,7 +1195,7 @@ const PAGS=[
   ['i-Baiano','Consertos Baiano',I.bai,'Consertos Baiano','Peças sem garantia enviadas para conserto.','Consertos Baiano'],
   ['i-Avaria','Avaria',I.alertT,'Avaria','Relatórios de avaria no formato oficial.','Avaria'],
   ['i-resumo','Resumo',I.res,'Resumo','Totais e custos por módulo e período.','@resumo'],
-  ['i-equipe','Equipe',I.eqp,'Equipe','Usuários, cargos e permissões do INVENTRA.','@equipe'],
+  ['i-equipe','Equipe',I.eqp,'Equipe','Gerencie usuários, cargos e permissões de acesso.','@equipe'],
   ['auditoria','Auditoria',I.lock,'Auditoria de segurança','Acessos, permissões e alterações registradas pelo banco. Visível só para administradores.'],
 ];
 const pags=()=>PAGS.filter(p=>p[0]==='auditoria'||p[0]==='i-equipe'?(eu&&eu.admin):true);

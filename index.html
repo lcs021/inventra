@@ -1611,56 +1611,91 @@ html.emb .exprow{display:flex!important;flex-wrap:wrap;align-items:center;gap:8p
 html.emb .exprow>.muted{margin-right:auto}
 html.emb .stack{gap:12px}
 
-/* embutido: Equipe simples */
-html.emb .eqtela .kpis{display:flex!important;flex-wrap:wrap;gap:4px!important;border-bottom:1px solid var(--line);margin:0 0 4px!important;padding:0!important}
-html.emb .eqtela .kpi{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex!important;flex-direction:row-reverse;align-items:center;gap:7px;padding:9px 12px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
-html.emb .eqtela .kpi b{font-size:12px!important;font-weight:600;color:var(--faint,var(--muted));font-family:inherit!important;line-height:1}
-html.emb .eqtela .kpi span{font-size:13px!important;font-weight:500;color:inherit}
-html.emb .eqtela .kpi[aria-pressed="true"]{color:var(--fg);border-bottom-color:var(--accent,#2366B0)}
-html.emb .eqtela .kpi[aria-pressed="true"] b{color:var(--accent,#2366B0)}
+/* embutido: Equipe — painel administrativo */
+html.emb .eqtela{gap:14px}
+html.emb .eqtela .kpis{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px!important;margin:0!important;padding:0!important;border:0!important}
+html.emb .eqtela .kpi{all:unset;box-sizing:border-box;cursor:pointer;display:flex!important;align-items:center;gap:12px;height:64px;padding:0 14px;background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:8px!important;transition:border-color .15s,background .15s,box-shadow .15s}
+html.emb .eqtela .kpi:hover{border-color:var(--line2)!important}
+html.emb .eqtela .kpi:focus-visible{outline:2px solid #2366B0;outline-offset:2px}
+html.emb .eqtela .kpi[aria-pressed="true"]{border-color:#2366B0!important;box-shadow:0 0 0 1px #2366B0 inset}
+html.emb .eqtela .kic{width:32px;height:32px;border-radius:7px;display:grid;place-items:center;flex:none;background:color-mix(in srgb,var(--k) 14%,transparent);color:var(--k)}
+html.emb .eqtela .kic svg{width:17px;height:17px}
+html.emb .eqtela .kt{display:flex;flex-direction:column;min-width:0;line-height:1.15}
+html.emb .eqtela .kt b{font-size:19px!important;font-weight:650;color:var(--fg);font-variant-numeric:tabular-nums;font-family:inherit!important}
+html.emb .eqtela .kt span{font-size:12px!important;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
 html.emb .eqtela .kpi::before,html.emb .eqtela .kpi::after{display:none!important}
-html.emb .eqsearch{max-width:420px}
-html.emb .eqsearch input{height:34px!important;font-size:13.5px!important}
-html.emb .eqtela .pgrid{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))!important;gap:10px!important}
-html.emb .eqtela .pcard{padding:12px 14px!important;gap:10px!important;box-shadow:none!important}
-html.emb .eqtela .pav{width:32px!important;height:32px!important;font-size:12px!important}
-html.emb .eqtela .pc-id b{font-size:14px!important}
-html.emb .eqtela .pc-id small{font-size:12px!important}
-html.emb .eqtela .pc-stats{display:flex!important;gap:16px!important}
-html.emb .eqtela .pc-stats>div{background:none!important;border:0!important;padding:0!important;display:flex;gap:5px;align-items:baseline}
-html.emb .eqtela .pc-stats b{font-size:13px!important}
-html.emb .eqtela .pc-stats span{font-size:12px!important}
-html.emb .eqtela .pc-act{display:flex!important;flex-wrap:wrap!important;align-items:center;gap:6px!important;border-top:1px solid var(--line);padding-top:10px!important;margin-top:2px}
-html.emb .eqtela .pc-sel{flex-direction:row!important;align-items:center;gap:6px;margin:0!important}
-html.emb .eqtela .pc-sel span{font-size:12px!important}
-html.emb .eqtela .pc-sel select,html.emb .eqtela select{height:30px!important;min-height:0!important;padding:0 24px 0 8px!important;font-size:12.5px!important;width:auto!important}
-html.emb .eqtela .btn,html.emb .eqtela .btn.sm,html.emb .permbox .btn{width:auto!important;height:30px!important;min-height:0!important;padding:0 11px!important;font-size:12.5px!important;font-weight:500!important;border-radius:6px!important;flex:none}
-html.emb .eqtela .ctl2{display:flex;gap:6px}
-html.emb .permbox{padding:0!important;border-radius:8px!important}
-html.emb .permbox .phead{padding:14px 16px!important;gap:14px!important}
-html.emb .permbox .pring{width:44px!important;height:44px!important}
-html.emb .permbox .pring span{font-size:15px!important}
-html.emb .permbox .ptx h3{font-size:15px!important;margin:0!important}
-html.emb .permbox .ptx p{font-size:12.5px!important;margin:2px 0 0!important}
-html.emb .permbox .pkick{display:none}
-html.emb .permbox .pbulk{display:flex;gap:6px}
-html.emb .permbox .plist{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px!important;padding:0 16px 12px!important}
-html.emb .permbox .prow{padding:8px 12px!important;min-height:0!important;gap:10px!important;box-shadow:none!important}
-html.emb .permbox .pic{width:28px!important;height:28px!important}
-html.emb .permbox .pt b{font-size:13px!important}
-html.emb .permbox .pt small{font-size:11.5px!important}
-html.emb .permbox .pst{font-size:11.5px!important}
-html.emb .permbox .pgh{padding:6px 16px!important}
-html.emb .eqtela .chefdel-b{font-size:12px!important;padding:4px 8px!important}
-
-html.emb .eqtela .kpi{background:none!important;border:0!important;border-bottom:2px solid transparent!important;box-shadow:none!important;border-radius:0!important;height:auto!important;min-height:0!important;width:auto!important}
-html.emb .eqtela .kpi[aria-pressed="true"]{border-bottom-color:#2366B0!important;background:none!important}
-html.emb .eqtela .pc-stats>div{flex-direction:row!important;align-items:baseline!important;text-align:left!important;margin:0!important}
-html.emb .eqtela .pc-stats{margin:0!important}
-html.emb .eqtela .pc-act{justify-content:flex-start!important}
+html.emb .eqsearch{max-width:none!important;width:100%;display:flex;align-items:center;position:relative}
+html.emb .eqsearch svg{position:absolute;left:12px;width:16px;height:16px;color:var(--muted);pointer-events:none}
+html.emb .eqsearch input{width:100%;height:38px!important;font-size:13.5px!important;padding-left:36px!important;border:1px solid var(--line)!important;border-radius:8px!important;background:var(--surface)!important;transition:border-color .15s,box-shadow .15s}
+html.emb .eqsearch input:focus{outline:0;border-color:#2366B0!important;box-shadow:0 0 0 3px color-mix(in srgb,#2366B0 18%,transparent)}
+html.emb .eqtela .pgrid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr))!important;gap:12px!important}
+html.emb .eqtela .pcard{display:flex;flex-direction:column;gap:12px!important;padding:14px!important;background:var(--surface)!important;border:1px solid var(--line)!important;border-radius:8px!important;box-shadow:none!important;transition:border-color .15s,transform .15s}
+html.emb .eqtela .pcard:hover{border-color:var(--line2)!important}
+html.emb .eqtela .pc-top{display:grid!important;grid-template-columns:36px 1fr;column-gap:12px;row-gap:8px;align-items:center}
+html.emb .eqtela .pav{width:36px!important;height:36px!important;font-size:13px!important;border-radius:50%!important}
+html.emb .eqtela .pc-id{min-width:0}
+html.emb .eqtela .pc-id b{font-size:14px!important;font-weight:600;display:flex;align-items:center;gap:6px}
+html.emb .eqtela .pc-id small{display:block;font-size:12px!important;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html.emb .eqtela .pc-badges{grid-column:2;display:flex;gap:6px;flex-wrap:wrap}
+html.emb .eqtela .cpill{font-size:11.5px!important;font-weight:500!important;padding:2px 8px!important;border-radius:5px!important;align-self:auto!important}
+html.emb .eqtela .stt{font-size:11.5px;font-weight:500;padding:2px 8px;border-radius:5px;display:inline-flex;align-items:center;gap:5px}
+html.emb .eqtela .stt.ok{color:var(--baixa,#2f8f5b);background:color-mix(in srgb,var(--baixa,#2f8f5b) 13%,transparent)}
+html.emb .eqtela .stt.ok::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+html.emb .eqtela .voce{font-size:10.5px!important;font-weight:600;padding:1px 6px;border-radius:4px;background:color-mix(in srgb,#2366B0 14%,transparent);color:#2366B0}
+html.emb .eqtela .pc-stats{display:grid!important;grid-template-columns:repeat(3,1fr);gap:0!important;margin:0!important;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+html.emb .eqtela .pc-stats>div{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:1px;background:none!important;border:0!important;border-right:1px solid var(--line)!important;padding:8px 10px!important;margin:0!important;text-align:left!important}
+html.emb .eqtela .pc-stats>div:last-child{border-right:0!important}
+html.emb .eqtela .pc-stats b{font-size:15px!important;font-weight:650;font-variant-numeric:tabular-nums;font-family:inherit!important}
+html.emb .eqtela .pc-stats span{font-size:11.5px!important;color:var(--muted)}
+html.emb .eqtela .pc-act{display:flex!important;flex-wrap:wrap!important;align-items:center;gap:6px!important;margin:0!important;padding:0!important;border:0!important}
 html.emb .eqtela .pc-act>*{margin:0!important}
-html.emb .eqtela .pc-top{align-items:center}
-html.emb .eqtela .pc-top .cpill{align-self:flex-start}
+html.emb .eqtela .pc-sel{display:flex!important;flex-direction:column!important;align-items:stretch!important;gap:4px;width:100%}
+html.emb .eqtela .pc-sel span{font-size:11.5px!important;color:var(--muted)}
+html.emb .eqtela select{height:32px!important;min-height:0!important;font-size:13px!important;width:100%!important;border-radius:6px!important}
+html.emb .eqtela .btn,html.emb .eqtela .btn.sm,html.emb .permbox .btn{width:auto!important;height:32px!important;min-height:0!important;padding:0 11px!important;font-size:12.5px!important;font-weight:500!important;border-radius:6px!important;flex:none;display:inline-flex!important;align-items:center;gap:6px;transition:background .15s,border-color .15s,color .15s}
+html.emb .eqtela .btn svg,html.emb .permbox .btn svg{width:14px;height:14px}
+html.emb .eqtela .btn.ghostd{color:var(--muted)}
+html.emb .eqtela .btn.ghostd:hover{color:var(--alta,#c0392b);border-color:color-mix(in srgb,var(--alta,#c0392b) 45%,transparent)}
+html.emb .eqtela .ctl2{display:flex;gap:6px}
+html.emb .confl{display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%;padding:8px 10px;border-radius:7px;background:color-mix(in srgb,var(--alta,#c0392b) 9%,transparent);border:1px solid color-mix(in srgb,var(--alta,#c0392b) 30%,transparent);font-size:12.5px;animation:eqIn .15s ease-out}
+html.emb .confl span{flex:1 1 140px}
+@keyframes eqIn{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+html.emb .eqtela .sbox{width:100%}
+html.emb .permbox{padding:0!important;border-radius:8px!important;background:var(--surface)!important;border:1px solid var(--line)!important;box-shadow:none!important;overflow:hidden}
+html.emb .permbox .phead{display:flex!important;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:16px 18px!important;border-bottom:1px solid var(--line);background:none!important}
+html.emb .permbox .pring{display:none!important}
+html.emb .permbox .pkick{display:block!important;font-size:11.5px;font-weight:600;color:var(--muted);margin:0}
+html.emb .permbox .ptx{flex:1 1 360px;min-width:0}
+html.emb .permbox .ptx h3{font-size:16px!important;margin:2px 0 6px!important}
+html.emb .permbox .ptx p{font-size:12.5px!important;margin:6px 0 0!important;color:var(--muted)}
+html.emb .permbox .pprog{display:flex;align-items:center;gap:10px}
+html.emb .permbox .pbar{flex:0 1 160px;height:6px;border-radius:99px;background:var(--line);overflow:hidden}
+html.emb .permbox .pbar i{display:block;height:100%;background:#2366B0;border-radius:99px;transition:width .3s ease}
+html.emb .permbox .pprog small{font-size:12px;color:var(--muted)}
+html.emb .permbox .pbulk{display:flex;gap:6px;align-items:center}
+html.emb .permbox .pgh{padding:12px 18px 6px!important;font-size:11.5px}
+html.emb .permbox .plist{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:8px!important;padding:0 18px 14px!important}
+html.emb .permbox .prow{display:flex!important;align-items:center;padding:8px 12px!important;min-height:52px!important;gap:10px!important;box-shadow:none!important;border:1px solid var(--line)!important;border-radius:7px!important;background:none!important;transition:border-color .15s,background .15s}
+html.emb .permbox .prow:hover{border-color:var(--line2)!important}
+html.emb .permbox .prow.on{border-color:color-mix(in srgb,var(--c) 35%,var(--line))!important}
+html.emb .permbox .pic{width:28px!important;height:28px!important;flex:none}
+html.emb .permbox .pt{flex:1;min-width:0}
+html.emb .permbox .pt b{font-size:13px!important;font-weight:600}
+html.emb .permbox .pt small{display:block;font-size:11.5px!important;color:var(--muted)}
+html.emb .permbox .pst{font-size:11.5px!important;color:var(--muted);font-weight:500}
+html.emb .permbox .prow.on .pst{color:var(--baixa,#2f8f5b)}
+html.emb .eqtela .chefdel-b{font-size:12px!important;padding:4px 8px!important}
+@media (max-width:1100px){html.emb .eqtela .kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){html.emb .eqtela .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}html.emb .eqtela .pgrid{grid-template-columns:1fr!important}html.emb .permbox .plist{grid-template-columns:1fr}html.emb .eqtela .kpi{height:56px}}
+html.emb .eqtela .pc-act{justify-content:flex-start!important}
+html.emb .eqtela select{height:34px!important;line-height:1.2!important;padding:0 28px 0 10px!important;box-sizing:border-box}
+html.emb .eqtela .pc-badges{justify-content:flex-start}
+html.emb .eqtela .pc-act{flex-direction:row!important;border-top:0!important}
+html.emb .eqtela .pc-act.chefe input{height:34px;padding:0 10px}
+html.emb .permbox .pbulk.confl{width:auto;flex:0 1 auto;flex-wrap:nowrap}
+html.emb .permbox .pbulk.confl span{flex:none;white-space:nowrap}
+html.emb .confl .btn.danger{background:#C0392B!important;border-color:#C0392B!important;color:#fff!important}
+html.emb .confl .btn.primary{background:#2366B0!important;border-color:#2366B0!important;color:#fff!important}
 </style>
 </head>
 <body>
@@ -4260,6 +4295,7 @@ function poeMigalhas(){const v=$('view');if(!v||ui.tab==='painel'||!eu)return;
 
 /* ---------- Equipe ---------- */
 const CARGO_COR={'Chefe de Inventário':'var(--gar)','Auxiliar de Inventário':'var(--accent)','Visitante':'var(--bai)'};
+const EQI={pend:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',ativos:'<path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="8" r="3.5"/><path d="m16.5 11 2 2 3.5-4"/>',recus:'<path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="8" r="3.5"/><path d="m17 8 5 5M22 8l-5 5"/>',chefes:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 4v16"/>',atv:'<path d="M22 12h-4l-3 8L9 4l-3 8H2"/>',key:'<circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 9.2-9.2M16 7l3 3"/>',userx:'<path d="M16 20v-1.5a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4V20"/><circle cx="9.5" cy="8" r="3.5"/><path d="m17 8 5 5M22 8l-5 5"/>',ok:'<path d="m5 12.5 4.5 4.5L19 7.5"/>',x:'<path d="M18 6 6 18M6 6l12 12"/>'};
 function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)-ts(a.criado));
   const pend=todos.filter(p=>!p.aprovado&&!p.admin&&!p.recusado),ativos=todos.filter(p=>p.aprovado||p.admin),recus=todos.filter(p=>!p.aprovado&&!p.admin&&p.recusado);
   if(!ui.eqTab)ui.eqTab=pend.length?'pend':'ativos';
@@ -4273,12 +4309,12 @@ function equipeHTML(){const todos=Object.values(perfis).sort((a,b)=>ts(b.criado)
   const cPend=(p,i)=>card(p,i,`${topo(p,'<span class="cpill nova">Novo</span>')}<div class="muted small">Cadastrou-se em ${fData(p.criado)}</div>
     <div class="pc-act"><label class="pc-sel"><span>Cargo</span><select data-cg="${esc(p.id)}" aria-label="Cargo de ${esc(p.nome)}">${opcoes('Auxiliar de Inventário')}</select></label>
     <div class="ctl2"><button class="btn sm primary" data-ok="${esc(p.id)}">✓ Liberar</button><button class="btn sm danger" data-nao="${esc(p.id)}">✕ Não liberar</button></div></div>`);
-  const cAtivo=(p,i)=>card(p,i,`${topo(p,cargoPill(p))}${stats(p)}
-    ${p.id!==uid&&!p.admin?`<div class="pc-act"><label class="pc-sel"><span>Cargo</span><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(cargoNome(p.cargo))}</select></label>${senhaBox(p)}<button class="btn sm" data-rev="${esc(p.id)}">Remover acesso</button></div>`:''}`);
+  const cAtivo=(p,i)=>card(p,i,`${topo(p,'<span class="pc-badges">'+cargoPill(p)+'<span class="stt ok">Ativo</span></span>')}${stats(p)}
+    ${p.id!==uid&&!p.admin?`<div class="pc-act"><label class="pc-sel"><span>Cargo</span><select data-cg="${esc(p.id)}" data-ativo="1" aria-label="Cargo de ${esc(p.nome)}">${opcoes(cargoNome(p.cargo))}</select></label>${senhaBox(p)}${ui.confRev===p.id?`<div class="confl"><span>Remover o acesso de <b>${esc(p.nome)}</b>?</span><button class="btn sm danger" data-revsim="${esc(p.id)}">Remover</button><button class="btn sm" data-revnao="1">Cancelar</button></div>`:`<button class="btn sm ghostd" data-rev="${esc(p.id)}">${svgI(EQI.userx)}Remover acesso</button>`}</div>`:''}`);
   const cRec=(p,i)=>card(p,i,`${topo(p,'<span class="cpill" style="--k:var(--alta)">Não liberado</span>')}<div class="muted small">Cadastrou-se em ${fData(p.criado)}</div>
     <div class="pc-act">${ui.confExcl===p.id?`<span class="small" style="font-weight:800;color:var(--alta)">Excluir de vez? Não dá para desfazer.</span><div class="ctl2"><button class="btn sm danger" data-exsim="${esc(p.id)}">Excluir</button><button class="btn sm" data-exnao="1">Cancelar</button></div>`:`<div class="ctl2"><button class="btn sm" data-rec="${esc(p.id)}">↺ Reconsiderar</button><button class="btn sm danger" data-excl="${esc(p.id)}">Excluir</button></div>`}</div>`);
   const tabs=[['pend','Aguardando',pend.length],['ativos','Com acesso',ativos.length],['recus','Não liberados',recus.length],['chefes','Chefes dos setores',SETORES.filter(s=>chefeDe(s)).length+'/'+SETORES.length]];
-  const kpi=(k,txt,v,cor)=>`<button class="kpi" data-eqtab="${k}" aria-pressed="${ui.eqTab===k}" style="--k:${cor}"><b>${v}</b><span>${txt}</span></button>`;
+  const kpi=(k,txt,v,cor)=>`<button class="kpi" data-eqtab="${k}" aria-pressed="${ui.eqTab===k}" style="--k:${cor}"><i class="kic">${svgI(EQI[k])}</i><span class="kt"><b>${v}</b><span>${txt}</span></span></button>`;
   let corpo='';
   if(ui.eqTab==='chefes'){
     corpo=`<datalist id="pessoasList">${ativos.map(p=>`<option value="${esc(p.nome)}">`).join('')}</datalist><div class="pgrid">${SETORES.map((s,i)=>{const ch=chefeDe(s),n=ocs.filter(o=>o.categoria==='Minucioso'&&o.setor===s).length;
@@ -4307,7 +4343,7 @@ const senhaFraca=(s,u)=>{const x=s.toLowerCase();return /^(.)\1+$/.test(s)||['12
 const geraSenha=()=>{const r=n=>{const a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n};const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<6;i++)s+=c[r(c.length)];for(let i=0;i<4;i++)s+=n[r(n.length)];return s};
 const geraSenhaOld=()=>{const c='abcdefghjkmnpqrstuvwxyz',n='23456789';let s='';for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];for(let i=0;i<4;i++)s+=n[Math.floor(Math.random()*n.length)];return s};
 function senhaBox(p){if(ui.senhaOk&&ui.senhaOk.id===p.id)return`<div class="sbox ok"><span class="lbl">Nova senha de ${esc(p.nome)}</span><div class="snova"><b class="mono" id="snTxt">${esc(ui.senhaOk.s)}</b><button type="button" class="btn sm" data-scopy="1">Copiar</button></div><small>Passe essa senha para a pessoa. Ela não fica salva em lugar nenhum, então anote se precisar.</small><button type="button" class="btn sm" data-sfim="1">Pronto</button></div>`;
-  if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">🔑 Redefinir senha</button>`;
+  if(ui.senhaDe!==p.id)return`<button class="btn sm" data-senha="${esc(p.id)}">${svgI(EQI.key)}Redefinir senha</button>`;
   return`<div class="sbox"><span class="lbl">Nova senha para ${esc(p.nome)}</span><div class="snova"><input id="snInp" class="mono" value="${esc(ui.senhaRasc||'')}" placeholder="mín. 6 caracteres" autocomplete="new-password"><button type="button" class="btn sm" data-sgera="1">Gerar</button></div>
   <div class="ctl2"><button type="button" class="btn sm primary" data-ssalva="${esc(p.id)}">Salvar senha</button><button type="button" class="btn sm" data-scanc="1">Cancelar</button></div></div>`}
 function permHTML(){const pcg=ui.permCargo||'Auxiliar de Inventário',pa=CARGOS[pcg]||[],on=PERMS.filter(p=>pa.includes(p[0])).length,pct=Math.round(on/PERMS.length*100);
@@ -4315,9 +4351,9 @@ function permHTML(){const pcg=ui.permCargo||'Auxiliar de Inventário',pa=CARGOS[
     return`<label class="prow${ok?' on':''}${k==='apagar'?' perigo':''}" style="--c:${PERM_COR[k]};--i:${i}"><span class="pic">${svgI(ic)}</span><span class="pt"><b>${n}</b><small>${d}</small></span><span class="pst">${ok?'Liberado':'Bloqueado'}</span><input type="checkbox" class="sw" data-perm="${esc(k)}" ${ok?'checked':''} ${cargosOk?'':'disabled'} aria-label="${esc(n)}"></label>`};
   const mods=PERMS.filter(p=>p[0].startsWith('mod:')),acs=PERMS.filter(p=>!p[0].startsWith('mod:'));
   return`<section class="permbox" id="perms">
-  <div class="phead"><div class="pring" style="--p:${pct}"><span>${on}<small>/${PERMS.length}</small></span></div>
-    <div class="ptx"><span class="pkick">Permissões</span><h3>${pcg}</h3><p>${pcg==='Visitante'?'O <b>Visitante</b> não tem função na equipe: ele só vê o que você marcar aqui. Tudo começa bloqueado.':'Escolha o que o auxiliar pode ver e fazer.'} Muda na hora para todos. O <b>Chefe de Inventário</b> sempre pode tudo.</p><div class="chips" style="margin-top:8px">${['Auxiliar de Inventário','Visitante'].map(c=>`<button type="button" class="chip" data-pcg="${esc(c)}" aria-pressed="${c===pcg}">${c==='Visitante'?'Visitante':'Auxiliar'}</button>`).join('')}</div></div>
-    <div class="pbulk"><button type="button" class="btn sm" data-pall="1" ${cargosOk?'':'disabled'}>Liberar tudo</button><button type="button" class="btn sm" data-pall="0" ${cargosOk?'':'disabled'}>Bloquear tudo</button></div></div>
+  <div class="phead">
+    <div class="ptx"><span class="pkick">Permissões e acessos</span><h3>${pcg}</h3><div class="pprog" title="${on} de ${PERMS.length} permissões liberadas"><div class="pbar"><i style="width:${pct}%"></i></div><small><b>${on}</b> de ${PERMS.length} liberadas</small></div><p>${pcg==='Visitante'?'O <b>Visitante</b> não tem função na equipe: ele só vê o que você marcar aqui. Tudo começa bloqueado.':'Escolha o que o auxiliar pode ver e fazer.'} Muda na hora para todos. O <b>Chefe de Inventário</b> sempre pode tudo.</p><div class="chips" style="margin-top:8px">${['Auxiliar de Inventário','Visitante'].map(c=>`<button type="button" class="chip" data-pcg="${esc(c)}" aria-pressed="${c===pcg}">${c==='Visitante'?'Visitante':'Auxiliar'}</button>`).join('')}</div></div>
+    ${ui.confAll?`<div class="pbulk confl"><span>${ui.confAll==='1'?'Liberar tudo':'Bloquear tudo'} para <b>${esc(pcg)}</b>?</span><button type="button" class="btn sm ${ui.confAll==='1'?'primary':'danger'}" data-pallsim="${ui.confAll}">Confirmar</button><button type="button" class="btn sm" data-pallnao="1">Cancelar</button></div>`:`<div class="pbulk"><button type="button" class="btn sm" data-pall="1" ${cargosOk?'':'disabled'}>Liberar tudo</button><button type="button" class="btn sm" data-pall="0" ${cargosOk?'':'disabled'}>Bloquear tudo</button></div>`}</div>
   ${cargosOk?'':'<div class="err">O banco precisa de uma atualização (permissões). Rode o SQL novo no Supabase.</div>'}
   <div class="pgrp"><div class="pgh"><span>Módulos</span><small>${mods.filter(p=>pa.includes(p[0])).length} de ${mods.length} liberados</small></div><div class="plist">${mods.map(row).join('')}</div></div>
   <div class="pgrp"><div class="pgh"><span>Ações</span><small>${acs.filter(p=>pa.includes(p[0])).length} de ${acs.length} liberadas</small></div><div class="plist">${acs.map((p,i)=>row(p,i+4)).join('')}</div></div>
@@ -4340,7 +4376,10 @@ function bindEquipe(){
   document.querySelectorAll('[data-perm]').forEach(c=>c.addEventListener('change',()=>{const atual=new Set(CARGOS[ui.permCargo||'Auxiliar de Inventário']||[]);c.checked?atual.add(c.dataset.perm):atual.delete(c.dataset.perm);
     const nm=PERMS.find(p=>p[0]===c.dataset.perm)[1];salvaPerms(TODAS.filter(k=>atual.has(k)),(c.checked?'Liberado: ':'Bloqueado: ')+nm)}));
   document.querySelectorAll('[data-pcg]').forEach(b=>b.addEventListener('click',()=>{ui.permCargo=b.dataset.pcg;const y=scrollY;render();scrollTo(0,y)}));
-  document.querySelectorAll('[data-pall]').forEach(b=>b.addEventListener('click',()=>salvaPerms(b.dataset.pall==='1'?[...TODAS]:[],b.dataset.pall==='1'?'Tudo liberado para '+(ui.permCargo||'o Auxiliar'):'Tudo bloqueado para '+(ui.permCargo||'o Auxiliar'))));
+  document.querySelectorAll('[data-pallnao]').forEach(b=>b.addEventListener('click',()=>{ui.confAll=null;const y=scrollY;render();scrollTo(0,y)}));
+  document.querySelectorAll('[data-pall]').forEach(b=>b.addEventListener('click',()=>{ui.confAll=b.dataset.pall;const y=scrollY;render();scrollTo(0,y)}));
+  document.querySelectorAll('[data-pallsim]').forEach(b=>b.addEventListener('click',()=>{ui.confAll=null;const v=b.dataset.pallsim;salvaPerms(v==='1'?[...TODAS]:[],v==='1'?'Tudo liberado para '+(ui.permCargo||'o Auxiliar'):'Tudo bloqueado para '+(ui.permCargo||'o Auxiliar'))}));
+  document.querySelectorAll('[data-pall-old]').forEach(b=>b.addEventListener('click',()=>salvaPerms(b.dataset.pall==='1'?[...TODAS]:[],b.dataset.pall==='1'?'Tudo liberado para '+(ui.permCargo||'o Auxiliar'):'Tudo bloqueado para '+(ui.permCargo||'o Auxiliar'))));
   document.querySelectorAll('[data-eqtab]').forEach(b=>b.addEventListener('click',()=>{ui.eqTab=b.dataset.eqtab;ui.eqBusca='';ui.confExcl=null;if(ui.eqTab==='atv')atv=null;render()}));
   if(ui.eqTab==='atv'){if(atv===null&&!atvErro)carregaAtv();const aq=$('atvq');if(aq)aq.oninput=()=>{ui.atvQ=aq.value;const p=aq.selectionStart;render();const n=$('atvq');n.focus();n.setSelectionRange(p,p)}}
   const eb=$('eqBusca');if(eb)eb.addEventListener('input',()=>{ui.eqBusca=eb.value;const p=eb.selectionStart;render();const n=$('eqBusca');n.focus();n.setSelectionRange(p,p)});
@@ -4363,7 +4402,9 @@ function bindEquipe(){
   document.querySelectorAll('select[data-ativo]').forEach(s=>s.addEventListener('change',()=>mudaPerfil(s.dataset.cg,{cargo:s.value},'Cargo alterado para '+s.value)));
   document.querySelectorAll('[data-ok]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;const cg=document.querySelector(`select[data-cg="${b.dataset.ok}"]`).value;mudaPerfil(b.dataset.ok,{aprovado:true,recusado:false,cargo:cg},'Acesso liberado como '+cg)}));
   document.querySelectorAll('[data-nao]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;mudaPerfil(b.dataset.nao,{aprovado:false,recusado:true},'Cadastro não liberado')}));
-  document.querySelectorAll('[data-rev]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;mudaPerfil(b.dataset.rev,{aprovado:false,recusado:true},'Acesso removido')}));
+  document.querySelectorAll('[data-rev]').forEach(b=>b.addEventListener('click',()=>{ui.confRev=b.dataset.rev;render()}));
+  document.querySelectorAll('[data-revnao]').forEach(b=>b.addEventListener('click',()=>{ui.confRev=null;render()}));
+  document.querySelectorAll('[data-revsim]').forEach(b=>b.addEventListener('click',()=>{b.disabled=true;ui.confRev=null;mudaPerfil(b.dataset.revsim,{aprovado:false,recusado:true},'Acesso removido')}));
   document.querySelectorAll('[data-excl]').forEach(b=>b.addEventListener('click',()=>{ui.confExcl=b.dataset.excl;render()}));
   document.querySelectorAll('[data-exnao]').forEach(b=>b.addEventListener('click',()=>{ui.confExcl=null;render()}));
   document.querySelectorAll('[data-exsim]').forEach(b=>b.addEventListener('click',async()=>{b.disabled=true;const id=b.dataset.exsim;
