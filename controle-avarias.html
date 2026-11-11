@@ -1406,7 +1406,7 @@ function pgInv(){
     sn.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>{invTab=b.dataset.it;sn.querySelectorAll('[data-it]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));invEnvia();invAltura()})}
   else{sn.hidden=true;sn.innerHTML=''}
   const fr=$('invFr');
-  if(!fr.getAttribute('src')){fr.onload=()=>{invEnvia()};fr.src='index.html?embed=1'}else invEnvia();
+  if(!fr.getAttribute('src')){fr.onload=()=>{invEnvia()};fr.src='modulos-inventra.html?embed=1'}else invEnvia();
   requestAnimationFrame(invAltura);
 }
 addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==($('invFr')||{}).contentWindow)return;const m=e.data||{};
