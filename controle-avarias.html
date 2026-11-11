@@ -991,6 +991,17 @@ td.c-ref{font-size:inherit}
 th.r,td.r{width:88px;text-align:left;padding-left:16px;padding-right:12px}
 .plan-g td.c.b{text-align:center}
 @media (forced-colors:active){.etq{border-left:4px solid CanvasText}}
+
+/* ---- módulos do INVENTRA dentro do Controle ---- */
+.invhost{flex:1 1 auto;min-height:460px;background:var(--bg);display:block}
+.invhost[hidden]{display:none}
+.invhost iframe{display:block;width:100%;height:100%;border:0;background:var(--bg)}
+.s-lbl.s-sub{margin-top:14px}
+@media (max-width:760px){
+  .mnav{overflow-x:auto;scrollbar-width:none}.mnav::-webkit-scrollbar{display:none}
+  .mnav button{flex:0 0 auto;min-width:64px}
+  .mnav .s-lbl{display:none}
+}
 </style>
 </head>
 <body>
@@ -1108,6 +1119,7 @@ th.r,td.r{width:88px;text-align:left;padding-left:16px;padding-right:12px}
     </header>
     <nav class="subnav" id="subnav" hidden></nav>
     <main class="content" id="pagina"></main>
+    <div class="invhost" id="invHost" hidden><iframe id="invFr" title="INVENTRA" allow="camera; microphone; clipboard-write; fullscreen"></iframe></div>
     <footer class="credito">Criado por <b>Lucas Carvalho</b></footer>
   </div>
   <nav class="mnav" id="mnav"></nav>
@@ -1142,6 +1154,11 @@ const I={
   painel:ic('<rect x="3" y="3" width="7.5" height="8.5" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="5" rx="1.5"/><rect x="13.5" y="11" width="7.5" height="10" rx="1.5"/><rect x="3" y="14.5" width="7.5" height="6.5" rx="1.5"/>'),
   controle:ic('<path d="M3 5.5A1.5 1.5 0 0 1 4.5 4h15A1.5 1.5 0 0 1 21 5.5v13a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 18.5z"/><path d="M3 9.5h18M3 14.5h18M9 9.5V20"/>'),
   truck:ic(TRUCK),
+  gar:ic('<path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z"/><path d="m9 12 2.2 2.2L15.5 10"/>'),
+  min:ic('<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1M8.5 10h7M8.5 14h7M8.5 18h4"/>'),
+  bai:ic('<path d="M14.7 6.3a4 4 0 0 0-5.4 5.2L3 17.8V21h3.2l6.3-6.3a4 4 0 0 0 5.2-5.4l-2.6 2.6-2.4-.4-.4-2.4z"/>'),
+  res:ic('<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'),
+  eqp:ic('<circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5a3 3 0 0 1 0 6M21 20c0-2.7-1.6-5-4-5.7"/>'),
   busca:ic('<circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.5-4.5"/>'),
   print:ic('<path d="M6.5 9V3.5h11V9"/><path d="M6.5 17.5h-2A1.5 1.5 0 0 1 3 16v-5.5A1.5 1.5 0 0 1 4.5 9h15a1.5 1.5 0 0 1 1.5 1.5V16a1.5 1.5 0 0 1-1.5 1.5h-2"/><path d="M6.5 14h11v6.5h-11z"/>'),
   excel:ic('<path d="M14.5 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V7.5z"/><path d="M14.5 3v4.5H19M9 12.5l4.5 5M13.5 12.5 9 17.5"/>'),
@@ -1173,9 +1190,16 @@ const PAGS=[
   ['controle','Controle',I.controle,'Controle de Relatórios','Gerenciamento e acompanhamento de ocorrências.'],
   ['entregas','Entregas',I.truck,'Entregas','Histórico do que foi entregue, dia a dia.'],
   ['planilha','Planilha',I.excel,'Planilha de Avarias','Todas as avarias em planilha, atualizada automaticamente.'],
-  ['auditoria','Auditoria',I.shield,'Auditoria de segurança','Acessos, permissões e alterações registradas pelo banco. Visível só para administradores.'],
+  ['i-Garantia','Garantia',I.gar,'Garantia','Peças quebradas ou com defeito para acionar a garantia do fornecedor.','Garantia'],
+  ['i-Minucioso','Minucioso',I.min,'Minucioso','Falta de produtos por setor, para o chefe assinar.','Minucioso'],
+  ['i-Baiano','Consertos Baiano',I.bai,'Consertos Baiano','Peças sem garantia enviadas para conserto.','Consertos Baiano'],
+  ['i-Avaria','Avaria',I.alertT,'Avaria','Relatórios de avaria no formato oficial.','Avaria'],
+  ['i-resumo','Resumo',I.res,'Resumo','Totais e custos por módulo e período.','@resumo'],
+  ['i-equipe','Equipe',I.eqp,'Equipe','Usuários, cargos e permissões do INVENTRA.','@equipe'],
+  ['auditoria','Auditoria',I.lock,'Auditoria de segurança','Acessos, permissões e alterações registradas pelo banco. Visível só para administradores.'],
 ];
-const pags=()=>PAGS.filter(p=>p[0]!=='auditoria'||(eu&&eu.admin));
+const pags=()=>PAGS.filter(p=>p[0]==='auditoria'||p[0]==='i-equipe'?(eu&&eu.admin):true);
+const GRUPO={'i-Garantia':'Módulos','i-resumo':'Gestão'};
 const erroMsg=e=>{const m=(e&&(e.message||e.error_description))||String(e||'');
   if(/Invalid login/i.test(m))return'Usuário ou senha incorretos.';
   if(/Failed to fetch|NetworkError|Load failed/i.test(m))return'Sem conexão com o banco. Verifique a internet.';
@@ -1229,7 +1253,7 @@ $('tagL').insertAdjacentHTML('afterbegin',I.shield);$('tagC').insertAdjacentHTML
 $('sg1').insertAdjacentHTML('afterbegin',I.alertT);$('sg2').insertAdjacentHTML('afterbegin',I.refresh);$('sg3').insertAdjacentHTML('afterbegin',I.excel);
 $('fu').insertAdjacentHTML('afterbegin',I.user);$('fs').insertAdjacentHTML('afterbegin',I.lock);$('cfu').insertAdjacentHTML('afterbegin',I.user);$('cfs').insertAdjacentHTML('afterbegin',I.lock);$('cfs2').insertAdjacentHTML('afterbegin',I.lock);
 $('olho').innerHTML=I.eye;$('btnSair').innerHTML=I.sair;$('atIc').outerHTML=I.refresh;
-function pintaTema(){const dark=(document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';
+function pintaTema(){invTema();const dark=(document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'))==='dark';
   $('temaIc').innerHTML=dark?I.sun:I.moon;$('temaTx').textContent=dark?'Tema claro':'Tema escuro';
   if(innerWidth<=1180){$('tema').dataset.tip=dark?'Tema claro':'Tema escuro';$('tema').dataset.tipPos='right'}else{delete $('tema').dataset.tip}}
 
@@ -1346,7 +1370,7 @@ function ouvir(){
     s.querySelector('.l').textContent=on?'Sincronizado':'Sem tempo real';s.dataset.tip=on?'Conectado ao INVENTRA em tempo real':'Atualiza ao voltar para a aba ou em Atualizar'});
 }
 document.addEventListener('visibilitychange',async()=>{if(!document.hidden&&eu&&!$('tapp').hidden&&Date.now()-(window._ultCarga||0)>30000){if(await carregar(true))render()}});
-$('atualizar').onclick=async()=>{const b=$('atualizar');ocupado(b,true);const ok=await carregar(true);ocupado(b,false);if(ok){render();toast(plural(regs.length,'ref. carregada','refs. carregadas')+' do INVENTRA.','ok','Dados atualizados')}};
+$('atualizar').onclick=async()=>{const b=$('atualizar');ocupado(b,true);const ok=await carregar(true);ocupado(b,false);invPost({inv:'recarregar'});if(ok){render();toast(plural(regs.length,'ref. carregada','refs. carregadas')+' do INVENTRA.','ok','Dados atualizados')}};
 
 /* grava no mesmo campo do Controle de assinaturas do INVENTRA (dados.ctrl).
    v106: o banco junta a mudança na hora de gravar (ctrl_definir), então duas pessoas mexendo
@@ -1366,26 +1390,51 @@ async function salvaCtrl(id,mud){
   const o=regs.find(x=>x.id===id);if(o)o.dados=dados;
 }
 
+
+/* ======================= MÓDULOS DO INVENTRA (embutidos) ======================= */
+let invTab='lista';
+const invPost=m=>{const f=$('invFr');try{f&&f.contentWindow&&f.getAttribute('src')&&f.contentWindow.postMessage(m,location.origin)}catch(e){}};
+function invTema(){const t=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');invPost({inv:'tema',v:t})}
+function invAltura(){const h=$('invHost');if(!h||h.hidden)return;const top=h.getBoundingClientRect().top+scrollY,mn=innerWidth<=760?($('mnav').offsetHeight||0):0;h.style.height=Math.max(460,innerHeight-top-mn)+'px'}
+function invEnvia(){const P=PAGS.find(p=>p[0]===pag);if(!P||!P[5])return;const m=P[5];
+  invTema();invPost(m[0]==='@'?{inv:'go',tab:m.slice(1)}:{inv:'go',tab:invTab,cat:m})}
+function pgInv(){
+  const P=PAGS.find(p=>p[0]===pag),mod=P[5]&&P[5][0]!=='@';
+  $('sumline').hidden=true;
+  const sn=$('subnav');
+  if(mod){sn.hidden=false;sn.innerHTML=[['lista','Registros'],['nova','Registrar']].map(([k,t])=>`<button class="sn" role="tab" data-it="${k}" aria-selected="${invTab===k}">${t}</button>`).join('');
+    sn.querySelectorAll('[data-it]').forEach(b=>b.onclick=()=>{invTab=b.dataset.it;sn.querySelectorAll('[data-it]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));invEnvia();invAltura()})}
+  else{sn.hidden=true;sn.innerHTML=''}
+  const fr=$('invFr');
+  if(!fr.getAttribute('src')){fr.onload=()=>{invEnvia()};fr.src='index.html?embed=1'}else invEnvia();
+  requestAnimationFrame(invAltura);
+}
+addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==($('invFr')||{}).contentWindow)return;const m=e.data||{};
+  if(m.inv==='estado'&&(m.tab==='lista'||m.tab==='nova')){invTab=m.tab;document.querySelectorAll('#subnav [data-it]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.it===invTab)))}});
+addEventListener('resize',()=>invAltura());
+
 /* ======================= NAVEGAÇÃO ======================= */
-function ir(p){pag=p;ls.set('pag',p);selec.clear();render();scrollTo(0,0)}
+function ir(p){if(p!==pag)invTab='lista';pag=p;ls.set('pag',p);selec.clear();render();scrollTo(0,0)}
 function render(){
   if(!eu)return;
   const rail=innerWidth<=1180;
   const pend=regs.filter(o=>sit(o)===0).length,entHj=regs.filter(o=>String(ctrlDe(o).ent||'').slice(0,10)===hoje()).length;
   const ct={controle:pend?`<span class="ct hot" title="Pendentes de entrega">${pend}</span>`:'',entregas:entHj?`<span class="ct" title="Entregues hoje">${entHj}</span>`:''};
-  if(pag==='auditoria'&&!(eu&&eu.admin))pag='controle';
+  if((pag==='auditoria'||pag==='i-equipe')&&!(eu&&eu.admin))pag='controle';
+  if(!PAGS.some(p=>p[0]===pag))pag='controle';
+  {const ehInv=pag.startsWith('i-');$('pagina').hidden=ehInv;$('invHost').hidden=!ehInv;document.querySelector('.credito').hidden=ehInv}
   const chegou=window._navPag!==undefined&&window._navPag!==pag;window._navPag=pag;
-  $('navs').innerHTML=pags().map(([k,t,i])=>`<button class="nav${chegou&&pag===k?' chegou':''}" data-pag="${k}" ${rail?`data-tip="${t}" data-tip-pos="right"`:''} ${pag===k?'aria-current="page"':''}>${i}<span class="lbl">${t}</span>${ct[k]||''}</button>`).join('');
+  $('navs').innerHTML=pags().map(([k,t,i])=>(GRUPO[k]?`<div class="s-lbl s-sub">${GRUPO[k]}</div>`:'')+`<button class="nav${chegou&&pag===k?' chegou':''}" data-pag="${k}" ${rail?`data-tip="${t}" data-tip-pos="right"`:''} ${pag===k?'aria-current="page"':''}>${i}<span class="lbl">${t}</span>${ct[k]||''}</button>`).join('');
   {const pl=$('navPill'),at=$('navs').querySelector('[aria-current="page"]');
     if(!at)pl.hidden=true;else{const novo=pl.hidden;pl.hidden=false;if(novo)pl.style.transition='none';
       pl.style.top=at.offsetTop+'px';pl.style.height=at.offsetHeight+'px';if(novo){pl.offsetHeight;pl.style.transition=''}
       if(chegou){pl.classList.remove('anda');pl.offsetHeight;pl.classList.add('anda')}}}
-  $('mnav').innerHTML=pags().map(([k,t,i])=>`<button data-pag="${k}" class="${chegou&&pag===k?'chegou':''}" ${pag===k?'aria-current="page"':''}>${i}<span>${k==='entregas'?'Entregas':t}</span></button>`).join('');
+  $('mnav').innerHTML=pags().map(([k,t,i])=>`<button data-pag="${k}" class="${chegou&&pag===k?'chegou':''}" ${pag===k?'aria-current="page"':''}>${i}<span>${t.replace('Consertos ','')}</span></button>`).join('');
   document.querySelectorAll('[data-pag]').forEach(b=>b.onclick=()=>ir(b.dataset.pag));
   const P=PAGS.find(p=>p[0]===pag)||PAGS[1];
   $('crumbPg').textContent=pag==='controle'?'Controle de Relatórios':P[1];if(pag!=='controle'){$('sumline').hidden=true}$('titulo').textContent=P[3];$('subtitulo').textContent=P[4];pintaTema();
   if(pag!=='controle'){$('subnav').hidden=true;$('subnav').innerHTML=''}
-  ({painel:pgPainel,controle:pgControle,entregas:pgEntregas,planilha:pgPlanilha,auditoria:pgAuditoria}[pag]||pgControle)();
+  (pag.startsWith('i-')?pgInv:{painel:pgPainel,controle:pgControle,entregas:pgEntregas,planilha:pgPlanilha,auditoria:pgAuditoria}[pag]||pgControle)();
   novos.clear();tabAnim=false;
 }
 let _w=innerWidth;addEventListener('resize',()=>{clearTimeout(window._rz);window._rz=setTimeout(()=>{if(eu&&(_w<=1180)!==(innerWidth<=1180))render();_w=innerWidth},150)});

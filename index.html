@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob: data: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cdn.jsdelivr.net; worker-src 'self' blob:; object-src 'none'; base-uri 'none'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="no-referrer">
-<script>try{if(top!==self)document.documentElement.style.display="none"}catch(e){document.documentElement.style.display="none"}</script>
+<script>try{/* anti-clickjacking: só aceita quadro do próprio Controle de Relatórios (mesma origem) */if(top!==self&&!(/[?&]embed=1/.test(location.search)&&parent.location.origin===location.origin&&/\/controle-avarias(\.html)?$/.test(parent.location.pathname)))document.documentElement.style.display="none"}catch(e){document.documentElement.style.display="none"}</script>
+<script>try{if(/[?&]embed=1/.test(location.search))document.documentElement.classList.add("emb")}catch(e){}</script>
 <script>try{var tm=localStorage.getItem("inv_tema");if(tm==="light"||tm==="dark")document.documentElement.dataset.theme=tm}catch(e){}</script>
 <title>INVENTRA</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2048%2048%22%20aria-hidden=%22true%22%3E%3Cdefs%3E%3ClinearGradient%20id=%22lgBg%22%20x1=%220%22%20y1=%220%22%20x2=%2248%22%20y2=%2248%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230F3B3A%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%2306181B%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id=%22lgTop%22%20x1=%228%22%20y1=%2240%22%20x2=%2240%22%20y2=%228%22%20gradientUnits=%22userSpaceOnUse%22%3E%3Cstop%20offset=%220%22%20stop-color=%22%230D9488%22/%3E%3Cstop%20offset=%221%22%20stop-color=%22%235EEAD4%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width=%2248%22%20height=%2248%22%20rx=%2212%22%20fill=%22url%28%23lgBg%29%22/%3E%3Cpath%20d=%22M12.5%2020v-5a2.5%202.5%200%200%201%202.5-2.5h5M28%2012.5h5a2.5%202.5%200%200%201%202.5%202.5v5M35.5%2028v5a2.5%202.5%200%200%201-2.5%202.5h-5M20%2035.5h-5a2.5%202.5%200%200%201-2.5-2.5v-5%22%20fill=%22none%22%20stroke=%22url%28%23lgTop%29%22%20stroke-width=%223%22%20stroke-linecap=%22round%22%20stroke-linejoin=%22round%22/%3E%3Crect%20x=%2217.8%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2222%22%20y=%2218%22%20width=%224%22%20height=%2212%22%20rx=%221.6%22%20fill=%22url%28%23lgTop%29%22/%3E%3Crect%20x=%2227.6%22%20y=%2218%22%20width=%222.6%22%20height=%2212%22%20rx=%221.3%22%20fill=%22url%28%23lgTop%29%22/%3E%3C/svg%3E"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1586,6 +1587,13 @@ nav#nav,nav#nav *{color:var(--sfg)}nav#nav button[aria-current="true"],nav#nav b
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) #busca{background:var(--sunken)!important}}
 .btn,.btn.sm,button.btn{border-radius:6px!important}
 }
+
+/* ===== Modo embutido (dentro do Controle de Relatórios): sem topo, menu, rodapé e abas próprias ===== */
+html.emb .topbar,html.emb #side,html.emb #sideBack,html.emb #hoverzone,html.emb #nav,html.emb .rodape,html.emb .skip,html.emb [data-abremenu],html.emb #alertas .alerta[data-bai]{display:none!important}
+html.emb body,html.emb body.withside{background:var(--bg)!important;background-image:none!important}
+html.emb body.withside main#view,html.emb body.withside #alertas{margin-left:0!important}
+html.emb .wrap,html.emb body.withside .wrap{max-width:none!important;margin:0!important;padding:16px 24px 32px!important}
+@media (max-width:760px){html.emb .wrap,html.emb body.withside .wrap{padding:12px 12px 24px!important}}
 </style>
 </head>
 <body>
@@ -2711,6 +2719,20 @@ const hoverAbre=()=>{if(!mqHover.matches||$('side').hidden)return;clearTimeout(t
 const hoverFecha=()=>{if(!mqHover.matches)return;clearTimeout(tFecha);tFecha=setTimeout(()=>abreMenu(false),280)};
 ['menuBtn','side','hoverzone'].forEach(id=>{$(id).addEventListener('mouseenter',hoverAbre);$(id).addEventListener('mouseleave',hoverFecha)});
 $('sideBack').addEventListener('click',()=>abreMenu(false));
+
+/* ---------- Modo embutido: o Controle de Relatórios comanda a navegação ---------- */
+const EMB=document.documentElement.classList.contains('emb');
+function embAplica(m){
+  if(!m)return;
+  if(m.inv==='tema'){if(m.v==='light'||m.v==='dark')document.documentElement.dataset.theme=m.v;return}
+  if(m.inv==='recarregar'){carregar();return}
+  if(m.inv!=='go')return;
+  if(!eu||!carregou){window._go=m;return}
+  if(m.cat){ui={...ui,tab:m.tab==='nova'?'nova':'lista',peca:null,det:null,ctrlav:false};if(ui.tab==='nova'&&!draft)draft=novo();escolheMenu(m.cat,m.setor||'');if(ui.tab==='lista')carregar()}
+  else go(m.tab||'lista');
+}
+function embEstado(){if(EMB&&parent!==window)try{parent.postMessage({inv:'estado',tab:ui.tab,cat:ui.cat,det:!!(ui.det||ui.peca),logado:!!eu},location.origin)}catch(e){}}
+if(EMB)addEventListener('message',e=>{if(e.origin!==location.origin||e.source!==parent)return;embAplica(e.data)});
 function go(tab){ui={...ui,tab,peca:null,det:null,confDel:false};if(tab==='nova'&&!draft)draft=novo();render();scrollTo(0,0);if(tab!=='nova')carregar()}
 const CATS={'Garantia':'Peça quebrada ou com defeito para acionar a garantia do fornecedor','Relatório':'Registro de fato do inventário, sem garantia','Minucioso':'Relatório de falta de produtos por setor, para o chefe assinar','Consertos Baiano':'Peças sem garantia enviadas para conserto','Avaria':'Relatório de avaria no formato oficial'};
 let SETORES=['Expedição','Shopee','Mercado Livre','Cofre','1º andar','2º andar','3º andar','Carga e descarga','Recebimento','Parachoque'];
@@ -2798,6 +2820,7 @@ function render(){
   else{v.innerHTML=equipeHTML();bindEquipe()}
   poeMigalhas();
   pedirUrls();
+  if(EMB){embEstado();if(window._go&&eu&&carregou){const g=window._go;window._go=null;setTimeout(()=>embAplica(g),0)}}
 }
 
 /* ---------- Fotos e vídeos (links temporários) ---------- */
@@ -4153,7 +4176,8 @@ document.addEventListener('click',e=>{const bb=e.target.closest&&e.target.closes
   if(!(e.target.closest&&e.target.closest('.pop')))fechaPops()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')fechaPops()});
 function poeMigalhas(){const v=$('view');if(!v||ui.tab==='painel'||!eu)return;
-  const ra=[['INVENTRA',()=>go('painel')]];
+  if(EMB&&!(ui.det||ui.peca))return;
+  const ra=[[EMB?(ui.cat||'Registros'):'INVENTRA',()=>{if(EMB){ui={...ui,peca:null,det:null};render()}else go('painel')}]];
   if(ui.peca)ra.push(['Histórico da peça']);
   else if(ui.tab==='resumo')ra.push(['Resumo']);
   else if(ui.tab==='equipe')ra.push(['Equipe']);
@@ -4304,7 +4328,7 @@ function telaConfig(){document.body.classList.add('auth');
     const fb=()=>{box.value=t;box.hidden=false;box.select();toast('Selecione o texto e copie com Ctrl+C')};
     try{navigator.clipboard.writeText(t).then(()=>{$('sqlOk').hidden=false},fb)}catch(e){fb()}};
   let cfg=null;
-  if(window.top!==window){$('view').insertAdjacentHTML('afterbegin','<div class="box err" style="margin-bottom:14px">Este arquivo está aberto dentro de outro aplicativo, e assim a conexão não funciona. Baixe o arquivo inventario-cd.html, abra a pasta Downloads e dê dois cliques nele para abrir no Chrome ou no Edge.</div>')}
+  if(window.top!==window&&!EMB){$('view').insertAdjacentHTML('afterbegin','<div class="box err" style="margin-bottom:14px">Este arquivo está aberto dentro de outro aplicativo, e assim a conexão não funciona. Baixe o arquivo inventario-cd.html, abra a pasta Downloads e dê dois cliques nele para abrir no Chrome ou no Edge.</div>')}
   $('fcfg').addEventListener('submit',async e=>{e.preventDefault();const m=$('cfgMsg'),btn=e.target.querySelector('[type=submit]');
     let url=$('cfgUrl').value.trim().replace(/\s/g,''),key=$('cfgKey').value.trim().replace(/\s/g,'');
     const ref=url.match(/project\/([a-z0-9]{10,})/i);if(ref)url='https://'+ref[1]+'.supabase.co';
