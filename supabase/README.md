@@ -23,8 +23,11 @@ Nada aqui é carregado pelo site. São scripts para diagnosticar, versionar e te
 3. **Nunca** coloque a chave `service_role` no site; use apenas a `anon` em `config.js`.
 4. Só depois de passar no teste, a mesma migração vai ao banco real, com backup antes.
 
-## Achados do baseline (a corrigir na Fase 3)
-- **Grave:** qualquer admin de qualquer empresa edita `cargos` (a policy consulta `galpoes` sob RLS e sempre vê só o próprio galpão).
-- `cargos` e `ajustes` são globais, sem empresa.
-- `lista_galpoes()` e `meu_galpao()` executáveis por visitante anônimo.
-- Nome de usuário é único no sistema todo, não por empresa.
+## Fase 3 (em andamento, só no banco de teste)
+- `migrations/0003_cargos_por_empresa.sql` (+ `rollback/0003_down.sql`): cargos por empresa, policy corrigida, `meu_galpao()` fechada ao anônimo. Testado: backfill com 3 empresas, rollback e reaplicação.
+- Site: o salvar cargos usa `onConflict 'galpao_id,nome'` e cai no modo antigo se o banco ainda não tem a 0003.
+- Baseline atual: 12 PASS / 2 FAIL.
+
+## Ainda pendente (exige mudança no cadastro/login do site)
+- `lista_galpoes()` aberta ao anônimo (T7): precisa de código de convite no cadastro.
+- Usuário único por empresa (T8): o login precisa saber a empresa.

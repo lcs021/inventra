@@ -66,9 +66,20 @@ insert into resultado select 'T4 setores: A não vê setores de B',
 
 -- T5 (LACUNA GRAVE): a policy 'admin edita cargos' compara com o galpão mais antigo, mas a subconsulta roda sob RLS
 -- e só enxerga o próprio galpão => qualquer admin de qualquer empresa edita os cargos globais.
-insert into resultado select 'T5 cargos: admin de B não altera cargos que A usa',
-  pg_temp.como('b0000000-0000-0000-0000-00000000000b','authenticated',
-    $q$with u as (update public.cargos set perms='{}' returning 1) select count(*)::text from u$q$)='0', null;
+insert into public.cargos(nome,perms,galpao_id) select 'Conferente', array['ver'], 'aaaaaaaa-0000-0000-0000-000000000001'
+  where exists (select 1 from information_schema.columns where table_schema='public' and table_name='cargos' and column_name='galpao_id');
+insert into resultado select 'T5 cargos: admin de B não altera cargos da empresa A',
+  case when exists (select 1 from information_schema.columns where table_schema='public' and table_name='cargos' and column_name='galpao_id')
+   then pg_temp.como('b0000000-0000-0000-0000-00000000000b','authenticated',
+    $q$with u as (update public.cargos set perms='{}' where nome='Conferente' returning 1) select count(*)::text from u$q$)='0'
+   else pg_temp.como('b0000000-0000-0000-0000-00000000000b','authenticated',
+    $q$with u as (update public.cargos set perms='{}' returning 1) select count(*)::text from u$q$)='0' end, null;
+insert into resultado select 'T5b cargos: admin de A altera os cargos da própria empresa',
+  pg_temp.como('a0000000-0000-0000-0000-00000000000a','authenticated',
+    $q$with u as (update public.cargos set perms=array['ver','x'] where nome='Conferente' returning 1) select count(*)::text from u$q$)='1', null;
+insert into resultado select 'T5c cargos: usuário da B não enxerga cargos da A',
+  pg_temp.como('b0000000-0000-0000-0000-0000000000b1','authenticated',$q$select count(*)::text from public.cargos where nome='Conferente'$q$)='0', null;
+
 -- T6 (LACUNA estrutural): cargos precisam pertencer a uma empresa (hoje a tabela é global, sem galpao_id)
 insert into resultado select 'T6 cargos: tabela tem coluna de empresa',
   exists (select 1 from information_schema.columns where table_schema='public' and table_name='cargos' and column_name in ('galpao_id','organizacao_id')),

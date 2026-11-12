@@ -4469,7 +4469,7 @@ function permHTML(){const pcg=ui.permCargo||'Auxiliar de Inventário',pa=CARGOS[
   <div class="pgrp"><div class="pgh"><span>Ações</span><small>${acs.filter(p=>pa.includes(p[0])).length} de ${acs.length} liberadas</small></div><div class="plist">${acs.map((p,i)=>row(p,i+4)).join('')}</div></div>
   </section>`}
 async function salvaPerms(perms,msg){document.querySelectorAll('[data-perm],[data-pall]').forEach(x=>x.disabled=true);
-  const pcg=ui.permCargo||'Auxiliar de Inventário';const {error}=await sb.from('cargos').upsert({nome:pcg,perms});
+  const pcg=ui.permCargo||'Auxiliar de Inventário';let {error}=await sb.from('cargos').upsert({nome:pcg,perms},{onConflict:'galpao_id,nome'});if(error&&/no unique|constraint|galpao_id/i.test(error.message||''))({error}=await sb.from('cargos').upsert({nome:pcg,perms}));
   if(error){toast(/cargos|schema cache|relation/i.test(error.message||'')?'O banco precisa de uma atualização (permissões). Rode o SQL novo no Supabase.':erroMsg(error));render();return}
   CARGOS[pcg]=perms;toast(msg);const y=scrollY;render();scrollTo(0,y)}
 async function mudaPerfil(id,campos,msg){const {error}=await sb.from('perfis').update(campos).eq('id',id);if(error){toast(erroMsg(error));return}Object.assign(perfis[id],campos);toast(msg);render()}
